@@ -1,8 +1,9 @@
 {
-  "generatedAt": "2026-06-16T11:02:49.799Z",
+  "generatedAt": "2026-06-16T11:09:15.301Z",
   "sourceRoot": "outputs/figma_prototype_work",
   "entry": "index.html",
   "homepage": "outputs/figma_prototype_work/c-end-home-aggregate-feed-v1/index.html",
+  "runtimeAssetVersion": "20260616-subpath-routing-v2",
   "pageCount": 13,
   "pages": [
     {
