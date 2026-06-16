@@ -1,0 +1,1195 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>多元拾光 收藏夹 - C端原型</title>
+  <link rel="icon" type="image/svg+xml" href="../_assets/brand/duoyuan-shiguang-favicon.svg" />
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --panel: #ffffff;
+      --panel-soft: #f8fafc;
+      --line: #e5e7eb;
+      --line-strong: #d1d5db;
+      --text: #111827;
+      --muted: #6b7280;
+      --subtle: #9ca3af;
+      --brand: #2563eb;
+      --brand-soft: #eff6ff;
+      --green: #059669;
+      --green-soft: #ecfdf5;
+      --amber: #b45309;
+      --amber-soft: #fffbeb;
+      --red: #dc2626;
+      --shadow: 0 12px 32px rgba(15, 23, 42, 0.08);
+      font-family: "Inter", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-width: 1920px;
+      min-height: 1080px;
+      color: var(--text);
+      background: var(--bg);
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .page {
+      min-height: 1080px;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.82), rgba(245, 247, 251, 0.94) 42%),
+        radial-gradient(circle at 18% 12%, rgba(37, 99, 235, 0.08), transparent 30%),
+        radial-gradient(circle at 86% 10%, rgba(5, 150, 105, 0.08), transparent 32%),
+        var(--bg);
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      width: 1920px;
+      height: 72px;
+      background: rgba(255, 255, 255, 0.9);
+      border-bottom: 1px solid rgba(229, 231, 235, 0.92);
+      backdrop-filter: blur(16px);
+    }
+
+    .nav-shell {
+      width: 1440px;
+      height: 72px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 198px 424px 1fr auto;
+      align-items: center;
+      gap: 28px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--text);
+      text-decoration: none;
+    }
+
+    .brand-mark {
+      width: 36px;
+      height: 36px;
+      display: grid;
+      place-items: center;
+      border-radius: 10px;
+      background: var(--brand);
+      color: #fff;
+      font-weight: 800;
+      letter-spacing: 0;
+    }
+
+    .brand-name {
+      font-size: 18px;
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: 0;
+    }
+
+    .brand-sub {
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing: 0;
+    }
+
+    .primary-nav {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-item {
+      height: 38px;
+      padding: 0 13px;
+      border-radius: 8px;
+      color: #374151;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0;
+    }
+
+    .nav-item:hover {
+      background: var(--panel-soft);
+    }
+
+    .top-search {
+      height: 40px;
+      border: 1px solid var(--line);
+      background: var(--panel-soft);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 14px;
+      color: var(--muted);
+    }
+
+    [data-icon],
+    .icon-img {
+      width: 18px;
+      height: 18px;
+      display: block;
+      flex: 0 0 auto;
+    }
+
+    .top-search input {
+      width: 100%;
+      border: 0;
+      outline: 0;
+      background: transparent;
+      color: var(--text);
+      font-size: 14px;
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .creator-btn,
+    .icon-btn {
+      height: 40px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      color: #374151;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .creator-btn {
+      padding: 0 14px;
+      color: #fff;
+      background: var(--brand);
+      border-color: var(--brand);
+    }
+
+    .creator-btn img {
+      filter: invert(1);
+    }
+
+    .icon-btn {
+      width: 40px;
+    }
+
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #fff;
+      box-shadow: 0 0 0 1px var(--line);
+      cursor: pointer;
+    }
+
+    .favorites-shell {
+      width: 1380px;
+      margin: 28px auto 80px;
+      display: grid;
+      grid-template-columns: 960px 380px;
+      gap: 40px;
+      align-items: start;
+    }
+
+    .main-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .hero-card,
+    .filter-card,
+    .list-card,
+    .rail-card {
+      background: rgba(255, 255, 255, 0.96);
+      border: 1px solid rgba(229, 231, 235, 0.94);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-card {
+      min-height: 188px;
+      padding: 26px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 24px;
+      overflow: hidden;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      height: 28px;
+      padding: 0 10px;
+      border-radius: 999px;
+      color: var(--brand);
+      background: var(--brand-soft);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .hero-card h1 {
+      margin: 14px 0 8px;
+      font-size: 30px;
+      line-height: 1.18;
+      letter-spacing: 0;
+    }
+
+    .hero-card p {
+      margin: 0;
+      max-width: 660px;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.72;
+    }
+
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    .btn {
+      height: 40px;
+      padding: 0 14px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      color: #374151;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-weight: 800;
+    }
+
+    .btn-primary {
+      border-color: var(--brand);
+      background: var(--brand);
+      color: #fff;
+    }
+
+    .btn-primary img {
+      filter: invert(1);
+    }
+
+    .stats-grid {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-top: 8px;
+    }
+
+    .stat {
+      min-height: 78px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel-soft);
+    }
+
+    .stat span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .stat strong {
+      display: block;
+      margin-top: 8px;
+      font-size: 24px;
+      line-height: 1;
+      letter-spacing: 0;
+    }
+
+    .filter-card {
+      padding: 18px;
+    }
+
+    .filter-section {
+      display: grid;
+      grid-template-columns: 86px 1fr;
+      align-items: start;
+      gap: 14px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .filter-section:first-child {
+      padding-top: 0;
+    }
+
+    .filter-section:last-child {
+      border-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .filter-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+      line-height: 34px;
+    }
+
+    .filter-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .pill {
+      height: 34px;
+      padding: 0 12px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      color: #374151;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .pill.active {
+      border-color: rgba(37, 99, 235, 0.24);
+      background: var(--brand-soft);
+      color: var(--brand);
+    }
+
+    .list-card {
+      padding: 20px;
+    }
+
+    .list-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .list-head h2 {
+      margin: 0;
+      font-size: 20px;
+      line-height: 1.2;
+      letter-spacing: 0;
+    }
+
+    .list-head p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .sort-tabs {
+      display: inline-flex;
+      padding: 3px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel-soft);
+    }
+
+    .sort-tab {
+      height: 30px;
+      padding: 0 12px;
+      border: 0;
+      border-radius: 6px;
+      background: transparent;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .sort-tab.active {
+      color: var(--text);
+      background: var(--panel);
+      box-shadow: 0 1px 6px rgba(15, 23, 42, 0.08);
+    }
+
+    .favorite-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      padding-top: 18px;
+    }
+
+    .favorite-card {
+      min-height: 202px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: 156px 1fr;
+      transition: border-color 0.16s ease, transform 0.16s ease, box-shadow 0.16s ease;
+    }
+
+    .favorite-card:hover {
+      border-color: rgba(37, 99, 235, 0.36);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+    }
+
+    .cover {
+      width: 156px;
+      height: 100%;
+      min-height: 202px;
+      object-fit: cover;
+      background: var(--panel-soft);
+    }
+
+    .card-body {
+      min-width: 0;
+      padding: 16px 16px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 11px;
+    }
+
+    .meta-line,
+    .metric-line,
+    .card-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .type-chip {
+      height: 24px;
+      padding: 0 8px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .type-article {
+      color: #0369a1;
+      background: #e0f2fe;
+    }
+
+    .type-aigc {
+      color: #7c3aed;
+      background: #f3e8ff;
+    }
+
+    .type-model {
+      color: #047857;
+      background: #d1fae5;
+    }
+
+    .type-ai-plus {
+      color: #b45309;
+      background: #fffbeb;
+    }
+
+    .saved-at {
+      color: var(--subtle);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .favorite-card h3 {
+      margin: 0;
+      font-size: 17px;
+      line-height: 1.42;
+      letter-spacing: 0;
+    }
+
+    .favorite-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .tag {
+      min-height: 24px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: var(--panel-soft);
+      color: #4b5563;
+      border: 1px solid var(--line);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .metric {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .card-actions {
+      margin-top: auto;
+      justify-content: space-between;
+    }
+
+    .text-btn {
+      height: 30px;
+      border: 0;
+      background: transparent;
+      color: var(--brand);
+      font-size: 13px;
+      font-weight: 900;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 0;
+    }
+
+    .text-btn.danger {
+      color: var(--red);
+    }
+
+    .empty-card {
+      min-height: 360px;
+      border: 1px dashed var(--line-strong);
+      border-radius: 8px;
+      background: var(--panel-soft);
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 40px;
+    }
+
+    .empty-icon {
+      width: 56px;
+      height: 56px;
+      margin: 0 auto 16px;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      background: var(--brand-soft);
+    }
+
+    .empty-icon img {
+      width: 26px;
+      height: 26px;
+    }
+
+    .empty-card h3 {
+      margin: 0 0 8px;
+      font-size: 20px;
+      letter-spacing: 0;
+    }
+
+    .empty-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .right-rail {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .rail-card {
+      padding: 18px;
+    }
+
+    .rail-card h3 {
+      margin: 0 0 14px;
+      font-size: 16px;
+      letter-spacing: 0;
+    }
+
+    .rail-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .rail-row {
+      min-height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel-soft);
+    }
+
+    .rail-main {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      min-width: 0;
+      color: #374151;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .rail-main span {
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .rail-count {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .source-card {
+      background: linear-gradient(135deg, #ffffff, #f8fbff);
+    }
+
+    .source-metric {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .source-metric div {
+      min-height: 68px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      padding: 12px;
+    }
+
+    .source-metric span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .source-metric strong {
+      display: block;
+      margin-top: 6px;
+      font-size: 20px;
+      letter-spacing: 0;
+    }
+
+    /* Brand lockup override: pure SVG mark, frontend-rendered wordmark. */
+    .brand .brand-mark {
+      width: 62px !important;
+      height: 42px !important;
+      object-fit: contain !important;
+      border-radius: 0 !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      color: transparent !important;
+      flex: 0 0 auto !important;
+    }
+
+    .brand .brand-mark::before,
+    .brand .brand-mark::after {
+      content: none !important;
+      display: none !important;
+    }
+
+    .brand .brand-name {
+      font-size: 24px !important;
+      line-height: 28px !important;
+      font-weight: 900 !important;
+      letter-spacing: 0 !important;
+      transform: skewX(-8deg) scaleX(1.04) !important;
+      transform-origin: left center !important;
+      text-shadow: 1px 0 0 currentColor !important;
+      white-space: nowrap !important;
+    }
+
+    .brand .brand-sub {
+      margin-top: 2px !important;
+      font-size: 11px !important;
+      line-height: 14px !important;
+      font-weight: 680 !important;
+      letter-spacing: 0 !important;
+      color: #4f4f4f !important;
+      white-space: nowrap !important;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="page" data-page>
+    <header class="topbar" data-topbar>
+      <div class="nav-shell" data-nav-shell>
+        <a class="brand" href="../c-end-home-aggregate-feed-v1/index.html" aria-label="多元拾光首页">
+          <img class="brand-mark" src="../_assets/brand/duoyuan-shiguang-logo-mark.svg?v=20260616-nav2" alt="" aria-hidden="true" />
+          <span>
+            <span class="brand-name">多元拾光</span>
+            <span class="brand-sub">AI原生实践者社区</span>
+          </span>
+        </a>
+        <nav class="primary-nav" aria-label="一级导航" data-primary-nav>
+          <a class="nav-item" href="../c-end-home-aggregate-feed-v1/index.html">首页</a>
+          <a class="nav-item" href="../c-end-flash-channel-v1/index.html">闪念</a>
+          <a class="nav-item" href="../c-end-aigc-experience-center-v2/index.html">AIGC</a>
+          <a class="nav-item" href="../c-end-model-service-channel-v1/index.html">模型服务</a>
+          <a class="nav-item" href="../c-end-ai-plus-channel-v1/index.html">AI+</a>
+        </nav>
+        <label class="top-search" data-top-search>
+          <img class="icon-img" data-icon src="../../../resources/icons/remixicon/svg/System/search-line.svg" alt="" />
+          <input value="收藏内容检索" aria-label="搜索收藏内容" />
+        </label>
+        <div class="top-actions">
+          <button class="creator-btn" type="button" data-creator-button>
+            <img data-icon src="../../../resources/icons/remixicon/svg/Design/edit-box-line.svg" alt="" />
+            创作中心
+          </button>
+          <button class="icon-btn" type="button" aria-label="通知">
+            <img data-icon src="../../../resources/icons/remixicon/svg/Media/notification-line.svg" alt="" />
+          </button>
+          <img class="avatar" src="../_assets/figma/other-profile-avatar-source.png" alt="用户头像" data-my-profile-entry />
+        </div>
+      </div>
+    </header>
+
+    <main class="favorites-shell" data-favorites-shell>
+      <section class="main-stack">
+        <section class="hero-card" data-favorites-hero>
+          <div>
+            <span class="eyebrow">
+              <img data-icon src="../../../resources/icons/remixicon/svg/Business/bookmark-line.svg" alt="" />
+              默认收藏夹
+            </span>
+            <h1>把有用的 AI 内容留下来</h1>
+            <p>收藏夹统一收文章、AIGC 作品、模型服务和 AI+ 资源。分类和标签会保留内容来源，方便你从最近收藏中快速找回有用资料。</p>
+          </div>
+          <div class="hero-actions">
+            <button class="btn" type="button" data-profile-entry>
+              <img data-icon src="../../../resources/icons/remixicon/svg/User & Faces/user-line.svg" alt="" />
+              返回主页
+            </button>
+            <button class="btn btn-primary" type="button" data-state-link="default">
+              <img data-icon src="../../../resources/icons/remixicon/svg/System/time-line.svg" alt="" />
+              最近收藏
+            </button>
+          </div>
+          <div class="stats-grid" data-summary-panel></div>
+        </section>
+
+        <section class="filter-card" data-filter-panel>
+          <div class="filter-section">
+            <div class="filter-label">
+              <img data-icon src="../../../resources/icons/remixicon/svg/System/apps-2-line.svg" alt="" />
+              类型
+            </div>
+            <div class="filter-pills" data-type-filters></div>
+          </div>
+          <div class="filter-section">
+            <div class="filter-label">
+              <img data-icon src="../../../resources/icons/remixicon/svg/Finance/price-tag-3-line.svg" alt="" />
+              标签
+            </div>
+            <div class="filter-pills" data-tag-filters></div>
+          </div>
+        </section>
+
+        <section class="list-card" data-list-card>
+          <div class="list-head">
+            <div>
+              <h2 data-list-title>收藏内容</h2>
+              <p data-list-desc>按最近收藏排序，保留来源、类型、标签和关键热度信息。</p>
+            </div>
+            <div class="sort-tabs" data-sort-tabs>
+              <button class="sort-tab active" type="button">最近收藏</button>
+              <button class="sort-tab" type="button">热度</button>
+            </div>
+          </div>
+          <div class="favorite-grid" data-favorites-list></div>
+        </section>
+      </section>
+
+      <aside class="right-rail" data-right-rail>
+        <section class="rail-card" data-right-module="top-tags">
+          <h3>高频标签</h3>
+          <div class="rail-list" data-hot-tags></div>
+        </section>
+        <section class="rail-card" data-right-module="content-types">
+          <h3>类型分布</h3>
+          <div class="rail-list" data-type-summary></div>
+        </section>
+        <section class="rail-card source-card" data-right-module="source-summary">
+          <h3>收藏来源</h3>
+          <p style="margin:0;color:var(--muted);font-size:13px;line-height:1.7;">记录你从详情页和频道卡片保留的内容，方便后续回看和复用。</p>
+          <div class="source-metric">
+            <div><span>详情页收藏</span><strong>24</strong></div>
+            <div><span>频道卡片收藏</span><strong>12</strong></div>
+          </div>
+        </section>
+      </aside>
+    </main>
+  </div>
+
+  <script>
+    const iconBase = "../../../resources/icons/remixicon/svg/";
+    const assetBase = "../_assets/figma/";
+    const icon = (name) => iconBase + name;
+
+    const typeFilters = [
+      ["all", "全部"],
+      ["article", "文章"],
+      ["aigc", "AIGC"],
+      ["model", "模型服务"],
+      ["ai-plus", "AI+资源"]
+    ];
+
+    const tagFilters = [
+      ["all", "全部"],
+      ["vibe", "Vibe Coding"],
+      ["api", "API 接入"],
+      ["workflow", "工作流"],
+      ["prompt", "Prompt"],
+      ["mcp", "MCP"],
+      ["rag", "RAG"],
+      ["image", "图像生成"]
+    ];
+
+    const items = [
+      {
+        type: "文章",
+        typeKey: "article",
+        title: "Codex 与 Claude Code 在多人仓库里的分工边界",
+        desc: "从上下文、审查、回滚和本地验证四个角度整理 AI 编程工具的协作方式。",
+        author: "煎饼",
+        cover: "featured-cover-11-abstract-wide.png",
+        tags: ["Vibe Coding", "代码审查", "协作"],
+        tagKeys: ["vibe"],
+        saved: "今天 09:42",
+        reads: "8.2k",
+        comments: "96"
+      },
+      {
+        type: "模型服务",
+        typeKey: "model",
+        title: "RAG 应用如何选择向量模型和重排模型",
+        desc: "适合知识库、企业问答和客服场景的模型组合判断清单。",
+        author: "DataMind 团队",
+        cover: "featured-cover-15-branch.png",
+        tags: ["RAG", "模型服务", "企业问答"],
+        tagKeys: ["rag", "api"],
+        saved: "昨天 22:18",
+        reads: "5.9k",
+        comments: "48"
+      },
+      {
+        type: "AIGC",
+        typeKey: "aigc",
+        title: "ComfyUI 人像风格工作流参数复用",
+        desc: "保留节点组合、参数区间和失败样例，方便下一次直接调整。",
+        author: "视觉实验室",
+        cover: "featured-cover-14-white-warrior-offscreen.png",
+        tags: ["图像生成", "工作流", "参数"],
+        tagKeys: ["image", "workflow"],
+        saved: "昨天 17:31",
+        reads: "9.7k",
+        comments: "132"
+      },
+      {
+        type: "AI+资源",
+        typeKey: "ai-plus",
+        title: "接口文档生成测试用例的 Prompt 模板",
+        desc: "把接口字段、异常回包和边界条件拆成可复用提示词。",
+        author: "PromptPlayer",
+        cover: "featured-cover-13-iceland.png",
+        tags: ["Prompt", "测试", "自动化"],
+        tagKeys: ["prompt", "workflow", "api"],
+        saved: "06-15 20:04",
+        reads: "4.6k",
+        comments: "37"
+      },
+      {
+        type: "文章",
+        typeKey: "article",
+        title: "API 限流、重试和降级策略的最小实现",
+        desc: "从 429、超时、余额不足和模型不可用四类异常开始做兜底。",
+        author: "API 小林",
+        cover: "featured-cover-10-kiribati.png",
+        tags: ["API 接入", "限流", "重试"],
+        tagKeys: ["api"],
+        saved: "06-15 12:22",
+        reads: "6.4k",
+        comments: "51"
+      },
+      {
+        type: "模型服务",
+        typeKey: "model",
+        title: "Claude、GPT 与 Gemini 的长上下文任务拆法",
+        desc: "按文档理解、代码修改、审查和长报告生成拆出不同工具路径。",
+        author: "北方的郎",
+        cover: "featured-cover-08-viet-nam.png",
+        tags: ["模型服务", "长上下文", "Vibe Coding"],
+        tagKeys: ["vibe", "api"],
+        saved: "06-14 18:10",
+        reads: "7.1k",
+        comments: "84"
+      },
+      {
+        type: "AIGC",
+        typeKey: "aigc",
+        title: "视频提示词为什么要单独写镜头运动",
+        desc: "用镜头、主体、场景和节奏四层拆开，让视频生成结果更稳定。",
+        author: "PromptPlayer",
+        cover: "featured-cover-07-armored-box.png",
+        tags: ["Prompt", "视频生成", "AIGC"],
+        tagKeys: ["prompt"],
+        saved: "06-14 11:36",
+        reads: "3.8k",
+        comments: "29"
+      },
+      {
+        type: "AI+资源",
+        typeKey: "ai-plus",
+        title: "GitHub MCP 接入前要确认的读写边界",
+        desc: "把授权范围、文件写入、仓库操作和团队使用说明提前列清楚。",
+        author: "MCP Note",
+        cover: "featured-cover-12-armored-box-offscreen.png",
+        tags: ["MCP", "权限", "工具连接"],
+        tagKeys: ["mcp"],
+        saved: "06-13 16:45",
+        reads: "4.1k",
+        comments: "22"
+      }
+    ];
+
+    const states = {
+      default: { type: "all", tag: "all", title: "全部收藏", desc: "最近收藏的内容集中展示，用户可以按类型或标签快速回看。" },
+      article: { type: "article", tag: "all", title: "文章收藏", desc: "保留教程、经验复盘和工具选型判断，适合再次阅读。" },
+      aigc: { type: "aigc", tag: "all", title: "AIGC 收藏", desc: "保留作品、工作流和生成参数，便于下一次复用。" },
+      model: { type: "model", tag: "all", title: "模型服务收藏", desc: "保留模型/API 服务判断，便于灰度前再次对比。" },
+      "ai-plus": { type: "ai-plus", tag: "all", title: "AI+资源收藏", desc: "保留工作流、模板和工具连接资源。" },
+      "tag-api": { type: "all", tag: "api", title: "API 接入标签", desc: "按 API 接入标签筛出模型、文章和模板内容。" },
+      empty: { type: "ai-plus", tag: "rag", title: "暂无匹配收藏", desc: "当前类型和标签组合下还没有收藏内容。" }
+    };
+
+    function currentState() {
+      return new URLSearchParams(window.location.search).get("state") || "default";
+    }
+
+    function goState(state) {
+      const url = new URL(window.location.href);
+      url.searchParams.set("state", state);
+      window.history.replaceState({}, "", url.toString());
+      render();
+    }
+
+    function typeIcon(typeKey) {
+      if (typeKey === "article") return icon("Document/article-line.svg");
+      if (typeKey === "aigc") return icon("Media/image-line.svg");
+      if (typeKey === "model") return icon("Development/code-box-line.svg");
+      return icon("System/apps-2-line.svg");
+    }
+
+    function typeClass(typeKey) {
+      if (typeKey === "article") return "type-article";
+      if (typeKey === "aigc") return "type-aigc";
+      if (typeKey === "model") return "type-model";
+      return "type-ai-plus";
+    }
+
+    function stateForType(typeKey) {
+      if (typeKey === "all") return "default";
+      return typeKey;
+    }
+
+    function filterItems(config) {
+      return items.filter((item) => {
+        const typeOk = config.type === "all" || item.typeKey === config.type;
+        const tagOk = config.tag === "all" || item.tagKeys.includes(config.tag);
+        return typeOk && tagOk;
+      });
+    }
+
+    function renderSummary(config, visibleItems) {
+      const stats = [
+        ["收藏总数", "36"],
+        ["当前筛选", String(visibleItems.length)],
+        ["本周新增", "8"],
+        ["覆盖类型", "4"]
+      ];
+      document.querySelector("[data-summary-panel]").innerHTML = stats.map(([label, value]) => `
+        <div class="stat" data-favorite-stat>
+          <span>${label}</span>
+          <strong>${value}</strong>
+        </div>
+      `).join("");
+    }
+
+    function renderFilters(config) {
+      document.querySelector("[data-type-filters]").innerHTML = typeFilters.map(([key, label]) => `
+        <button class="pill ${config.type === key ? "active" : ""}" type="button" data-state-link="${stateForType(key)}" data-filter-type="${key}">
+          ${label}
+        </button>
+      `).join("");
+
+      document.querySelector("[data-tag-filters]").innerHTML = tagFilters.map(([key, label]) => {
+        const target = key === "api" ? "tag-api" : key === "all" ? stateForType(config.type) : "empty";
+        return `
+          <button class="pill ${config.tag === key ? "active" : ""}" type="button" data-state-link="${target}" data-filter-tag="${key}">
+            ${label}
+          </button>
+        `;
+      }).join("");
+    }
+
+    function renderCard(item) {
+      return `
+        <article class="favorite-card" data-favorite-card data-favorite-type="${item.typeKey}">
+          <img class="cover" src="${assetBase}${item.cover}" alt="${item.title}" />
+          <div class="card-body">
+            <div class="meta-line">
+              <span class="type-chip ${typeClass(item.typeKey)}">
+                <img data-icon src="${typeIcon(item.typeKey)}" alt="" />${item.type}
+              </span>
+              <span class="saved-at">${item.saved}</span>
+            </div>
+            <h3>${item.title}</h3>
+            <p>${item.desc}</p>
+            <div class="tag-list">${item.tags.map((tag) => `<span class="tag" data-favorite-tag>${tag}</span>`).join("")}</div>
+            <div class="metric-line">
+              <span class="metric"><img data-icon src="${icon("User & Faces/user-line.svg")}" alt="" />${item.author}</span>
+              <span class="metric"><img data-icon src="${icon("System/eye-line.svg")}" alt="" />${item.reads}</span>
+              <span class="metric"><img data-icon src="${icon("Communication/chat-3-line.svg")}" alt="" />${item.comments}</span>
+            </div>
+            <div class="card-actions">
+              <button class="text-btn" type="button">查看内容<img data-icon src="${icon("Arrows/arrow-right-s-line.svg")}" alt="" /></button>
+              <button class="text-btn danger" type="button">取消收藏</button>
+            </div>
+          </div>
+        </article>
+      `;
+    }
+
+    function renderList(config, visibleItems) {
+      document.querySelector("[data-list-title]").textContent = config.title;
+      document.querySelector("[data-list-desc]").textContent = config.desc;
+      const list = document.querySelector("[data-favorites-list]");
+      if (!visibleItems.length) {
+        list.innerHTML = `
+          <div class="empty-card" data-empty-favorites>
+            <div>
+              <div class="empty-icon"><img data-icon src="${icon("Business/bookmark-line.svg")}" alt="" /></div>
+              <h3>还没有匹配的收藏</h3>
+              <p>可以切回全部收藏，或从内容详情页继续收藏文章、AIGC 作品、模型服务和 AI+ 资源。</p>
+            </div>
+          </div>
+        `;
+        list.style.gridTemplateColumns = "1fr";
+        return;
+      }
+      list.style.gridTemplateColumns = "repeat(2, minmax(0, 1fr))";
+      list.innerHTML = visibleItems.map(renderCard).join("");
+    }
+
+    function renderRail() {
+      const tagRows = [
+        ["Vibe Coding", "6"],
+        ["API 接入", "5"],
+        ["工作流", "5"],
+        ["Prompt", "4"],
+        ["MCP", "3"]
+      ];
+      document.querySelector("[data-hot-tags]").innerHTML = tagRows.map(([name, count]) => `
+        <div class="rail-row" data-hot-tag-row>
+          <span class="rail-main"><img data-icon src="${icon("Finance/price-tag-3-line.svg")}" alt="" /><span>${name}</span></span>
+          <span class="rail-count">${count} 条</span>
+        </div>
+      `).join("");
+
+      const typeRows = [
+        ["文章", "12"],
+        ["AIGC", "9"],
+        ["模型服务", "8"],
+        ["AI+资源", "7"]
+      ];
+      document.querySelector("[data-type-summary]").innerHTML = typeRows.map(([name, count]) => `
+        <div class="rail-row" data-type-row>
+          <span class="rail-main"><img data-icon src="${icon("System/apps-2-line.svg")}" alt="" /><span>${name}</span></span>
+          <span class="rail-count">${count} 条</span>
+        </div>
+      `).join("");
+    }
+
+    function bindLinks() {
+      document.querySelectorAll("[data-state-link]").forEach((node) => {
+        node.addEventListener("click", (event) => {
+          event.preventDefault();
+          goState(node.getAttribute("data-state-link"));
+        });
+      });
+
+      document.querySelectorAll("[data-profile-entry]").forEach((node) => {
+        node.addEventListener("click", (event) => {
+          event.preventDefault();
+          window.location.href = new URL("../c-end-user-profile-v1/index.html", window.location.href).toString();
+        });
+      });
+    }
+
+    function render() {
+      const key = currentState();
+      const config = states[key] || states.default;
+      document.body.setAttribute("data-state", key);
+      const visibleItems = filterItems(config);
+      renderSummary(config, visibleItems);
+      renderFilters(config);
+      renderList(config, visibleItems);
+      renderRail();
+      bindLinks();
+    }
+
+    render();
+  </script>
+  <script src="../_shared/c-end-prototype-interactions.js"></script>
+</body>
+</html>

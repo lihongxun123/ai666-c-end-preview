@@ -1,0 +1,1608 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>多元拾光 C端详情页多状态原型 V1</title>
+  <link rel="icon" type="image/svg+xml" href="../_assets/brand/duoyuan-shiguang-favicon.svg" />
+  <style>
+    :root {
+      --bg: #ffffff;
+      --panel: #ffffff;
+      --panel-soft: #f8f8f8;
+      --line: #f0f0f0;
+      --line-strong: #e4e4e4;
+      --text: #242424;
+      --body-text: #4f4f4f;
+      --muted: #6b6b6b;
+      --weak: #9a9a9a;
+      --brand: #242424;
+      --brand-soft: rgba(36, 36, 36, 0.08);
+      --icon-ink: #4a4a4a;
+      --blue: #4f4f4f;
+      --orange: #767676;
+      --purple: #5f5f5f;
+      --green: #5f5f5f;
+      --red: #5f5f5f;
+      --shadow: 0 16px 42px rgba(0, 0, 0, 0.055);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 1920px;
+      min-height: 1080px;
+      margin: 0;
+      overflow-x: hidden;
+      overflow-y: auto;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+      letter-spacing: 0;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    button {
+      border: 0;
+      cursor: default;
+    }
+
+    .page {
+      width: 1920px;
+      min-height: 1080px;
+      position: relative;
+    }
+
+    .topbar {
+      height: 72px;
+      background: rgba(255, 255, 255, 0.94);
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(16px);
+    }
+
+    .nav-shell {
+      width: 1440px;
+      height: 72px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 34px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 184px;
+      flex-shrink: 0;
+    }
+
+    .brand-mark {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: #242424;
+      position: relative;
+    }
+
+    .brand-mark::after {
+      content: "";
+      position: absolute;
+      left: 8px;
+      top: 8px;
+      width: 16px;
+      height: 16px;
+      border: 3px solid rgba(255, 255, 255, 0.92);
+      border-left: 0;
+      border-bottom: 0;
+      transform: rotate(45deg);
+      border-radius: 2px;
+    }
+
+    .brand-name {
+      font-size: 28px;
+      line-height: 34px;
+      font-weight: 820;
+      color: var(--text);
+    }
+
+    .brand-sub {
+      margin-left: 2px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 18px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      height: 72px;
+      flex-shrink: 0;
+    }
+
+    .nav-item {
+      height: 72px;
+      display: flex;
+      align-items: center;
+      color: var(--body-text);
+      font-size: 16px;
+      line-height: 22px;
+      font-weight: 720;
+      position: relative;
+      white-space: nowrap;
+    }
+
+    .nav-item.active {
+      color: var(--brand);
+    }
+
+    .nav-item.active::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 3px;
+      border-radius: 3px 3px 0 0;
+      background: var(--brand);
+    }
+
+    .top-search {
+      margin-left: auto;
+      width: 420px;
+      height: 40px;
+      border: 1px solid var(--line-strong);
+      border-radius: 8px;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 14px;
+      color: var(--weak);
+      font-size: 14px;
+      line-height: 20px;
+      font-weight: 560;
+    }
+
+    .icon-img {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+      opacity: 0.74;
+    }
+
+    .creator-button {
+      height: 40px;
+      padding: 0 18px;
+      border: 1px solid var(--line-strong);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--text);
+      font-size: 14px;
+      line-height: 20px;
+      font-weight: 760;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      object-fit: cover;
+      flex-shrink: 0;
+      border: 1px solid var(--line);
+    }
+
+    .detail-layout {
+      width: 1240px;
+      min-height: 968px;
+      margin: 24px auto 0;
+      display: grid;
+      grid-template-columns: 820px 340px;
+      gap: 24px;
+      align-items: start;
+      position: relative;
+    }
+
+    .content-panel,
+    .rail-card {
+      background: rgba(255, 255, 255, 0.96);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      box-shadow: var(--shadow);
+    }
+
+    .content-panel {
+      min-height: 968px;
+      padding: 26px 28px;
+      overflow: visible;
+    }
+
+    .rail {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      min-height: 968px;
+      overflow: visible;
+      padding: 12px;
+      border-radius: 0;
+      border: 0;
+      background: transparent;
+    }
+
+    .rail-card {
+      padding: 18px;
+      box-shadow: none;
+    }
+
+    .eyebrow-row,
+    .meta-row,
+    .topic-row,
+    .action-row,
+    .module-grid,
+    .author-line,
+    .comment-head,
+    .comment-actions,
+    .rail-head,
+    .stat-line {
+      display: flex;
+      align-items: center;
+    }
+
+    .eyebrow-row {
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .type-badge,
+    .topic,
+    .topic-chip,
+    .small-badge {
+      display: inline-flex;
+      align-items: center;
+      height: 22px;
+      font-size: 12px;
+      line-height: 20px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .type-badge {
+      position: relative;
+      padding: 0 12px 0 14px;
+      border: 0;
+      border-radius: 0 4px 4px 0;
+      background: linear-gradient(90deg, rgba(36, 36, 36, 0.12) 0%, rgba(36, 36, 36, 0.055) 52%, rgba(36, 36, 36, 0) 100%);
+      color: #343434;
+      overflow: hidden;
+    }
+
+    .type-badge::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 4px;
+      height: 100%;
+      background: #242424;
+      border-radius: 0 1px 1px 0;
+    }
+
+    .topic,
+    .topic-chip {
+      gap: 7px;
+      padding: 0 8px 0 0;
+      border: 1px solid #e2e2e2;
+      border-radius: 5px;
+      background: #fff;
+      color: #4b4b4b;
+      font-weight: 500;
+      overflow: hidden;
+    }
+
+    .topic::before,
+    .topic-chip::before {
+      content: "#";
+      width: 20px;
+      height: 100%;
+      display: grid;
+      place-items: center;
+      flex: 0 0 20px;
+      border-right: 1px solid #dfdfdf;
+      background: #f2f2f2;
+      color: #242424;
+      font-size: 12px;
+      font-weight: 650;
+    }
+
+    .small-badge {
+      position: relative;
+      padding: 0 8px 0 11px;
+      border-radius: 0 4px 4px 0;
+      color: #4f4f4f;
+      background: linear-gradient(90deg, rgba(118, 118, 118, 0.12), rgba(118, 118, 118, 0.04) 62%, rgba(118, 118, 118, 0));
+      overflow: hidden;
+    }
+
+    .small-badge::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 3px;
+      height: 100%;
+      background: #767676;
+    }
+
+    .title {
+      margin: 0;
+      color: var(--text);
+      font-size: 32px;
+      line-height: 42px;
+      font-weight: 820;
+      letter-spacing: 0;
+    }
+
+    .summary {
+      margin: 12px 0 0;
+      max-width: 720px;
+      color: var(--body-text);
+      font-size: 16px;
+      line-height: 26px;
+      font-weight: 520;
+    }
+
+    .meta-row {
+      justify-content: space-between;
+      margin-top: 18px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 18px;
+      font-weight: 560;
+    }
+
+    .author-line {
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .meta-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+
+    .metrics {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      white-space: nowrap;
+    }
+
+    .metric {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .action-row {
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .action-button {
+      height: 36px;
+      padding: 0 14px;
+      border-radius: 8px;
+      background: #fafafa;
+      border: 1px solid #e6e6e6;
+      color: var(--body-text);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      line-height: 18px;
+      font-weight: 720;
+    }
+
+    .action-button.primary {
+      color: var(--text);
+      border-color: var(--text);
+      background: #fff;
+    }
+
+    .quick-dock {
+      position: fixed;
+      left: calc((100vw - 1240px) / 2 - 78px);
+      top: 132px;
+      z-index: 12;
+      width: 56px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      padding: 10px 0;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.78);
+      border: 1px solid var(--line-strong);
+      box-shadow: 0 14px 34px rgba(0, 0, 0, 0.08);
+      backdrop-filter: blur(14px);
+    }
+
+    .quick-action {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--icon-ink);
+      border: 1px solid var(--line-strong);
+      background: #fff;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.06);
+    }
+
+    .quick-action.primary {
+      color: var(--text);
+      border-color: var(--text);
+      background: #fff;
+    }
+
+    .quick-action .icon-img {
+      width: 18px;
+      height: 18px;
+      opacity: 0.82;
+    }
+
+    .quick-badge {
+      position: absolute;
+      top: -6px;
+      right: -7px;
+      min-width: 20px;
+      height: 18px;
+      padding: 0 5px;
+      border-radius: 999px;
+      background: #f2f2f2;
+      border: 1px solid #dedede;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 17px;
+      font-weight: 760;
+    }
+
+    .media {
+      margin-top: 18px;
+      width: 764px;
+      height: 172px;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background: #fafafa;
+      display: none;
+    }
+
+    .media img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    body[data-media="true"] .media {
+      display: block;
+    }
+
+    .body-section {
+      margin-top: 22px;
+      color: var(--body-text);
+      font-size: 15px;
+      line-height: 25px;
+    }
+
+    .body-section h2,
+    .asset-module h2,
+    .comments h2 {
+      margin: 0 0 12px;
+      color: var(--text);
+      font-size: 18px;
+      line-height: 26px;
+      font-weight: 820;
+    }
+
+    .body-section p {
+      margin: 0 0 10px;
+    }
+
+    .code-block {
+      margin-top: 12px;
+      padding: 12px 14px;
+      border-radius: 8px;
+      background: #242424;
+      color: #f4f4f4;
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      font-size: 12px;
+      line-height: 20px;
+      white-space: pre-wrap;
+    }
+
+    .asset-module {
+      margin-top: 18px;
+      padding: 16px;
+      border-radius: 10px;
+      border: 1px solid #e6e6e6;
+      background: linear-gradient(180deg, rgba(248, 248, 248, 0.96), rgba(255, 255, 255, 0.98));
+    }
+
+    .module-grid {
+      align-items: stretch;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .field-card {
+      width: 236px;
+      min-height: 74px;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #e6e6e6;
+      background: #fff;
+    }
+
+    .field-label {
+      color: #7a7a7a;
+      font-size: 12px;
+      line-height: 18px;
+      font-weight: 680;
+    }
+
+    .field-value {
+      margin-top: 4px;
+      color: var(--text);
+      font-size: 14px;
+      line-height: 20px;
+      font-weight: 720;
+    }
+
+    .boundary {
+      margin-top: 12px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      color: var(--body-text);
+      background: #fafafa;
+      border: 1px solid #e6e6e6;
+      font-size: 13px;
+      line-height: 20px;
+      font-weight: 560;
+    }
+
+    .comments {
+      margin-top: 18px;
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+    }
+
+    .comment-box {
+      height: 40px;
+      border-radius: 8px;
+      border: 1px solid var(--line-strong);
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 12px;
+      color: var(--weak);
+      font-size: 13px;
+      line-height: 18px;
+      font-weight: 560;
+    }
+
+    .comment-send {
+      height: 28px;
+      padding: 0 12px;
+      border-radius: 7px;
+      color: #fff;
+      background: var(--brand);
+      font-size: 12px;
+      line-height: 18px;
+      font-weight: 760;
+    }
+
+    .comment-list {
+      margin-top: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .comment-item {
+      padding: 12px;
+      border-radius: 8px;
+      background: #fafafa;
+      border: 1px solid #eeeeee;
+    }
+
+    .comment-head {
+      gap: 8px;
+      color: var(--text);
+      font-size: 13px;
+      line-height: 18px;
+      font-weight: 760;
+    }
+
+    .comment-time {
+      color: var(--weak);
+      font-weight: 560;
+    }
+
+    .comment-text {
+      margin: 8px 0 0 36px;
+      color: var(--body-text);
+      font-size: 13px;
+      line-height: 20px;
+      font-weight: 540;
+    }
+
+    .comment-actions {
+      margin: 8px 0 0 36px;
+      gap: 10px;
+      color: #7a7a7a;
+      font-size: 12px;
+      line-height: 18px;
+      font-weight: 650;
+    }
+
+    .comment-action {
+      width: 28px;
+      height: 24px;
+      padding: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      border: 0;
+      background: transparent;
+      color: var(--icon-ink);
+      font-size: 12px;
+      line-height: 18px;
+      font-weight: 500;
+    }
+
+    .comment-action::before {
+      content: "";
+      width: 14px;
+      height: 14px;
+      display: block;
+      flex: 0 0 14px;
+      background: currentColor;
+      opacity: 0.72;
+    }
+
+    .comment-like::before {
+      -webkit-mask: url("../../../resources/icons/remixicon/svg/Health & Medical/heart-line.svg") center / contain no-repeat;
+      mask: url("../../../resources/icons/remixicon/svg/Health & Medical/heart-line.svg") center / contain no-repeat;
+    }
+
+    .comment-reply::before {
+      -webkit-mask: url("../../../resources/icons/remixicon/svg/Communication/chat-3-line.svg") center / contain no-repeat;
+      mask: url("../../../resources/icons/remixicon/svg/Communication/chat-3-line.svg") center / contain no-repeat;
+    }
+
+    .reply {
+      margin: 10px 0 0 36px;
+      padding: 9px 10px;
+      border-left: 2px solid #d8d8d8;
+      background: #fff;
+      border-radius: 6px;
+      color: var(--body-text);
+      font-size: 12px;
+      line-height: 18px;
+    }
+
+    .empty-comments {
+      display: none;
+      margin-top: 12px;
+      height: 112px;
+      border-radius: 10px;
+      border: 1px dashed #d9d9d9;
+      background: #fbfbfb;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 22px;
+      font-weight: 620;
+    }
+
+    body[data-state="no-comments"] .comment-list {
+      display: none;
+    }
+
+    body[data-state="no-comments"] .empty-comments {
+      display: flex;
+    }
+
+    .rail-head {
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .rail-title {
+      color: var(--text);
+      font-size: 16px;
+      line-height: 22px;
+      font-weight: 820;
+    }
+
+    .rail-link {
+      color: var(--weak);
+      font-size: 12px;
+      line-height: 18px;
+      font-weight: 650;
+    }
+
+    .rail-icon-link {
+      width: 28px;
+      height: 28px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0;
+      line-height: 0;
+      color: var(--icon-ink);
+    }
+
+    .rail-icon-link::after {
+      content: "";
+      width: 14px;
+      height: 14px;
+      display: block;
+      background: currentColor;
+      opacity: 0.68;
+      -webkit-mask: url("../../../resources/icons/remixicon/svg/Arrows/arrow-right-line.svg") center / contain no-repeat;
+      mask: url("../../../resources/icons/remixicon/svg/Arrows/arrow-right-line.svg") center / contain no-repeat;
+    }
+
+    .default-rail {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .author-card .author-top {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .author-name {
+      color: var(--text);
+      font-size: 15px;
+      line-height: 22px;
+      font-weight: 800;
+    }
+
+    .author-desc {
+      margin-top: 2px;
+      color: #7a7a7a;
+      font-size: 12px;
+      line-height: 18px;
+      font-weight: 560;
+    }
+
+    .author-stats {
+      margin-top: 16px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      padding: 12px 0;
+      border-top: 1px solid #eeeeee;
+      border-bottom: 1px solid #eeeeee;
+    }
+
+    .author-stat {
+      text-align: center;
+      color: var(--text);
+    }
+
+    .author-stat strong {
+      display: block;
+      font-size: 16px;
+      line-height: 22px;
+      font-weight: 820;
+    }
+
+    .author-stat span {
+      display: block;
+      margin-top: 2px;
+      color: var(--weak);
+      font-size: 12px;
+      line-height: 18px;
+      font-weight: 620;
+    }
+
+    .author-actions {
+      margin-top: 14px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+
+    .follow-btn {
+      width: 100%;
+      height: 34px;
+      border-radius: 8px;
+      background: #fff;
+      border: 1px solid var(--text);
+      color: var(--text);
+      font-size: 13px;
+      line-height: 18px;
+      font-weight: 760;
+    }
+
+    .message-btn {
+      width: 100%;
+      height: 34px;
+      border-radius: 8px;
+      background: #fafafa;
+      border: 1px solid var(--line-strong);
+      color: var(--body-text);
+      font-size: 13px;
+      line-height: 18px;
+      font-weight: 760;
+    }
+
+    .side-actions {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .side-action {
+      height: 44px;
+      border-radius: 8px;
+      background: #fafafa;
+      border: 1px solid #e6e6e6;
+      color: var(--body-text);
+      font-size: 13px;
+      line-height: 18px;
+      font-weight: 720;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .toc-list {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding-top: 2px;
+    }
+
+    .toc-item {
+      min-height: 32px;
+      padding: 7px 10px 7px 12px;
+      border-left: 3px solid transparent;
+      border-radius: 7px;
+      color: var(--body-text);
+      font-size: 13px;
+      line-height: 18px;
+      font-weight: 650;
+      background: transparent;
+    }
+
+    .toc-item.active {
+      color: var(--text);
+      border-left-color: var(--brand);
+      background: rgba(36, 36, 36, 0.06);
+    }
+
+    .related-list,
+    .topic-list,
+    .panel-comments {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .related-item {
+      padding-bottom: 10px;
+      border-bottom: 1px solid #eeeeee;
+      color: var(--body-text);
+      font-size: 13px;
+      line-height: 20px;
+      font-weight: 650;
+    }
+
+    .related-item:last-child {
+      border-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .topic-list {
+      flex-direction: row;
+      flex-wrap: wrap;
+    }
+
+    .ad-card {
+      min-height: 104px;
+      background: #242424;
+      border-color: #242424;
+    }
+
+    .ad-label {
+      display: inline-flex;
+      height: 20px;
+      padding: 0 7px;
+      border-radius: 5px;
+      background: rgba(255, 255, 255, 0.08);
+      color: rgba(255, 255, 255, 0.72);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      font-size: 11px;
+      line-height: 20px;
+      font-weight: 780;
+    }
+
+    .ad-title {
+      margin-top: 10px;
+      color: #fff;
+      font-size: 14px;
+      line-height: 22px;
+      font-weight: 760;
+    }
+
+    .comment-panel {
+      display: none;
+      height: 596px;
+      padding: 18px;
+    }
+
+    body[data-state="comments"] .default-rail {
+      display: none;
+    }
+
+    body[data-state="comments"] .comment-panel {
+      display: block;
+    }
+
+    .panel-comment {
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #eeeeee;
+      background: #fafafa;
+    }
+
+    .panel-comment .comment-text {
+      margin-left: 0;
+    }
+
+    .login-banner {
+      display: none;
+      margin-top: 12px;
+      padding: 12px 14px;
+      border-radius: 8px;
+      border: 1px solid #d7d7d7;
+      background: #f5f5f5;
+      color: var(--body-text);
+      font-size: 13px;
+      line-height: 20px;
+      font-weight: 650;
+    }
+
+    body[data-state="logged-out"] .login-banner {
+      display: block;
+    }
+
+    body[data-state="logged-out"] .action-button,
+    body[data-state="logged-out"] .quick-action,
+    body[data-state="logged-out"] .follow-btn {
+      opacity: 0.58;
+    }
+
+    .unavailable {
+      display: none;
+      height: 968px;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 0 80px;
+    }
+
+    body[data-state="unavailable"] .content-inner,
+    body[data-state="unavailable"] .rail,
+    body[data-state="unavailable"] .quick-dock,
+    body[data-state="load-failed"] .content-inner,
+    body[data-state="load-failed"] .rail,
+    body[data-state="load-failed"] .quick-dock,
+    body[data-state="permission-denied"] .content-inner,
+    body[data-state="permission-denied"] .rail,
+    body[data-state="permission-denied"] .quick-dock {
+      display: none;
+    }
+
+    body[data-state="unavailable"] .unavailable,
+    body[data-state="load-failed"] .unavailable,
+    body[data-state="permission-denied"] .unavailable {
+      display: flex;
+    }
+
+    .unavailable-card {
+      width: 460px;
+      padding: 34px;
+      border-radius: 12px;
+      background: #fff;
+      border: 1px solid #eeeeee;
+      box-shadow: var(--shadow);
+    }
+
+    .unavailable-title {
+      margin: 0;
+      color: var(--text);
+      font-size: 22px;
+      line-height: 30px;
+      font-weight: 820;
+    }
+
+    .unavailable-desc {
+      margin: 10px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 22px;
+      font-weight: 560;
+    }
+
+    /* Brand lockup override: pure SVG mark, frontend-rendered wordmark. */
+    .brand .brand-mark {
+      width: 62px !important;
+      height: 42px !important;
+      object-fit: contain !important;
+      border-radius: 0 !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      color: transparent !important;
+      flex: 0 0 auto !important;
+    }
+
+    .brand .brand-mark::before,
+    .brand .brand-mark::after {
+      content: none !important;
+      display: none !important;
+    }
+
+    .brand .brand-name {
+      font-size: 24px !important;
+      line-height: 28px !important;
+      font-weight: 900 !important;
+      letter-spacing: 0 !important;
+      transform: skewX(-8deg) scaleX(1.04) !important;
+      transform-origin: left center !important;
+      text-shadow: 1px 0 0 currentColor !important;
+      white-space: nowrap !important;
+    }
+
+    .brand .brand-sub {
+      margin-top: 2px !important;
+      font-size: 11px !important;
+      line-height: 14px !important;
+      font-weight: 680 !important;
+      letter-spacing: 0 !important;
+      color: #4f4f4f !important;
+      white-space: nowrap !important;
+    }
+
+  </style>
+</head>
+<body data-state="default" data-media="false">
+  <div class="page" data-page>
+    <header class="topbar" data-topbar>
+      <div class="nav-shell" data-nav-shell>
+        <div class="brand">
+          <img class="brand-mark" src="../_assets/brand/duoyuan-shiguang-logo-mark.svg?v=20260616-nav2" alt="" aria-hidden="true" />
+          <div>
+            <div class="brand-name">多元拾光</div>
+            <div class="brand-sub">AI原生实践者社区</div>
+          </div>
+        </div>
+        <nav class="nav" data-nav>
+          <div class="nav-item active">首页</div>
+          <div class="nav-item">闪念</div>
+          <div class="nav-item">AIGC</div>
+          <div class="nav-item">模型服务</div>
+          <div class="nav-item">AI+</div>
+        </nav>
+        <div class="top-search" data-top-search>
+          <img class="icon-img" src="../../../resources/icons/remixicon/svg/System/search-line.svg" alt="" />
+          搜索模型服务、工作流、Skill、MCP
+        </div>
+        <button class="creator-button" data-creator-button>
+          <img class="icon-img" src="../../../resources/icons/remixicon/svg/Design/edit-box-line.svg" alt="" />
+          创作中心
+        </button>
+        <img class="avatar" src="../_assets/figma/detail-author-jianbing-avatar-source.png" alt="" />
+      </div>
+    </header>
+
+    <main class="detail-layout" data-detail-layout>
+      <aside class="quick-dock" data-left-actions data-actions>
+        <button class="quick-action primary" aria-label="点赞" title="点赞">
+          <img class="icon-img" src="../../../resources/icons/remixicon/svg/Health & Medical/heart-line.svg" alt="" />
+          <span class="quick-badge" data-quick-likes>128</span>
+        </button>
+        <button class="quick-action" aria-label="评论" title="评论">
+          <img class="icon-img" src="../../../resources/icons/remixicon/svg/Communication/chat-3-line.svg" alt="" />
+          <span class="quick-badge" data-quick-comments>42</span>
+        </button>
+        <button class="quick-action" aria-label="收藏" title="收藏">
+          <img class="icon-img" src="../../../resources/icons/remixicon/svg/Business/bookmark-line.svg" alt="" />
+          <span class="quick-badge" data-quick-favorites>316</span>
+        </button>
+        <button class="quick-action" aria-label="转发" title="转发">
+          <img class="icon-img" src="../../../resources/icons/remixicon/svg/System/share-forward-line.svg" alt="" />
+        </button>
+      </aside>
+
+      <section class="content-panel" data-main-detail>
+        <div class="content-inner">
+          <div class="eyebrow-row">
+            <span class="type-badge" data-type>教程案例</span>
+            <span class="topic topic-chip" data-topic-a>AI Coding</span>
+            <span class="topic topic-chip" data-topic-b>开发提效</span>
+            <span class="small-badge" data-featured>精选</span>
+          </div>
+
+          <h1 class="title" data-title>Claude Code 实战 Harness 工程：开发效率翻倍</h1>
+          <p class="summary" data-summary>用一个真实工程拆解 AI 编码协作的最小闭环：需求拆分、代码生成、测试补齐和人工验收。</p>
+
+          <div class="meta-row">
+            <div class="author-line">
+              <img class="meta-avatar" src="../_assets/figma/detail-author-jianbing-avatar-source.png" alt="" />
+              <span data-author>@多元拾光官方</span>
+              <span>·</span>
+              <span data-updated>2 小时前更新</span>
+            </div>
+            <div class="metrics">
+              <span class="metric" data-detail-metric aria-label="8.1k 阅读">
+                <img class="icon-img" src="../../../resources/icons/remixicon/svg/System/eye-line.svg" alt="" />
+                <span data-reads>8.1k</span>
+              </span>
+              <span class="metric" data-detail-metric aria-label="42 评论">
+                <img class="icon-img" src="../../../resources/icons/remixicon/svg/Communication/chat-3-line.svg" alt="" />
+                <span data-comments-count>42</span>
+              </span>
+              <span class="metric" data-detail-metric aria-label="128 点赞">
+                <img class="icon-img" src="../../../resources/icons/remixicon/svg/Health & Medical/heart-line.svg" alt="" />
+                <span data-likes>128</span>
+              </span>
+              <span class="metric" data-detail-metric aria-label="316 收藏">
+                <img class="icon-img" src="../../../resources/icons/remixicon/svg/Business/bookmark-line.svg" alt="" />
+                <span data-favorites>316</span>
+              </span>
+            </div>
+          </div>
+
+          <div class="login-banner" data-login-banner>登录后可点赞、收藏、评论和关注作者。当前页面仍可正常阅读公开内容。</div>
+
+          <div class="media" data-media-block>
+            <img data-cover src="../_assets/figma/cover-08-wide.png" alt="" />
+          </div>
+
+          <section class="body-section" data-body-section>
+            <h2>正文说明</h2>
+            <p data-body-a>先把目标拆成可验证的小任务，再让 AI 负责生成候选实现，最后用测试和人工审查把风险收口。</p>
+            <p data-body-b>这类内容的价值不是炫技，而是让团队知道什么时候可以复用，什么时候必须停下来人工判断。</p>
+            <div class="code-block" data-code>npm test
+git diff --check
+node scripts/validate-detail-fields.mjs</div>
+          </section>
+
+          <section class="asset-module" data-asset-module>
+            <h2 data-module-title>教程案例要点</h2>
+            <div class="module-grid" data-module-grid>
+              <div class="field-card">
+                <div class="field-label" data-field-label-a>背景问题</div>
+                <div class="field-value" data-field-a>AI 编码流程难以稳定复用</div>
+              </div>
+              <div class="field-card">
+                <div class="field-label" data-field-label-b>适用人群</div>
+                <div class="field-value" data-field-b>技术类用户、独立开发者</div>
+              </div>
+              <div class="field-card">
+                <div class="field-label" data-field-label-c>结果</div>
+                <div class="field-value" data-field-c>形成可复查的协作流程</div>
+              </div>
+            </div>
+            <div class="boundary" data-boundary>边界：该案例只提供流程参考，不承诺自动生成代码可直接上线。</div>
+          </section>
+
+          <section class="comments" data-bottom-comments>
+            <h2>全部评论</h2>
+            <div class="comment-box" data-comment-input>
+              <span data-comment-placeholder>写下你的问题、补充或实践反馈</span>
+              <button class="comment-send">发布</button>
+            </div>
+            <div class="empty-comments" data-empty-comments>还没有评论。可以从一个具体问题开始。</div>
+            <div class="comment-list">
+              <article class="comment-item">
+                <div class="comment-head">
+                  <img class="meta-avatar" src="../_assets/figma/detail-comment-devon-avatar-source.png" alt="" />
+                  <span>Devon</span>
+                  <span class="comment-time">18 分钟前</span>
+                  <span class="small-badge">作者回复</span>
+                </div>
+                <p class="comment-text">这个流程适合先从接口测试用例开始试，失败成本最低。</p>
+                <div class="comment-actions"><span class="comment-action comment-like" aria-label="点赞 12">12</span><span class="comment-action comment-reply" aria-label="回复"></span></div>
+                <div class="reply">多元拾光官方：是的，首批样例会优先放低风险流程。</div>
+              </article>
+              <article class="comment-item">
+                <div class="comment-head">
+                  <img class="meta-avatar" src="../_assets/figma/detail-comment-xiaobai-avatar-source.png" alt="" />
+                  <span>北方的郎</span>
+                  <span class="comment-time">42 分钟前</span>
+                </div>
+                <p class="comment-text">如果团队没有自动化测试，是否应该先补检查清单？</p>
+                <div class="comment-actions"><span class="comment-action comment-like" aria-label="点赞 8">8</span><span class="comment-action comment-reply" aria-label="回复"></span></div>
+              </article>
+            </div>
+          </section>
+        </div>
+
+        <div class="unavailable" data-unavailable>
+          <div class="unavailable-card">
+            <h2 class="unavailable-title" data-unavailable-title>内容暂时不可查看</h2>
+            <p class="unavailable-desc" data-unavailable-desc>这条内容可能已下架、删除，或仅作者本人可见。你可以返回首页继续浏览推荐内容。</p>
+          </div>
+        </div>
+      </section>
+
+      <aside class="rail" data-right-rail>
+        <div class="default-rail">
+          <section class="rail-card author-card" data-right-module="author">
+            <div class="author-top">
+              <img class="avatar" src="../_assets/figma/detail-author-jianbing-avatar-source.png" alt="" />
+              <div>
+                <div class="author-name" data-rail-author>多元拾光官方</div>
+                <div class="author-desc">持续整理可复用 AI 实战资产</div>
+              </div>
+            </div>
+            <div class="author-stats">
+              <div class="author-stat">
+                <strong data-author-posts>117</strong>
+                <span data-author-stat-label>内容</span>
+              </div>
+              <div class="author-stat">
+                <strong data-author-reads>148k</strong>
+                <span data-author-stat-label>阅读</span>
+              </div>
+              <div class="author-stat">
+                <strong data-author-followers>144</strong>
+                <span data-author-stat-label>粉丝</span>
+              </div>
+            </div>
+            <div class="author-actions">
+              <button class="follow-btn">关注作者</button>
+            </div>
+          </section>
+
+          <section class="rail-card" data-right-module="toc">
+            <div class="rail-head">
+              <div class="rail-title">目录</div>
+              <div class="rail-link rail-icon-link" aria-label="收起">收起</div>
+            </div>
+            <div class="toc-list">
+              <div class="toc-item active" data-toc-item>正文说明</div>
+              <div class="toc-item" data-toc-item data-toc-module>教程案例要点</div>
+              <div class="toc-item" data-toc-item>边界说明</div>
+            </div>
+          </section>
+
+          <section class="rail-card" data-right-module="related">
+            <div class="rail-head">
+              <div class="rail-title">相关内容</div>
+              <div class="rail-link rail-icon-link" aria-label="查看更多">更多</div>
+            </div>
+            <div class="related-list">
+              <div class="related-item">接口文档转测试用例的工作流</div>
+              <div class="related-item">代码审查 Skill 最小结构</div>
+              <div class="related-item">GitHub MCP 使用边界</div>
+            </div>
+          </section>
+
+          <section class="rail-card" data-right-module="topics">
+            <div class="rail-head">
+              <div class="rail-title">推荐话题</div>
+              <div class="rail-link rail-icon-link" aria-label="换一换">换一换</div>
+            </div>
+            <div class="topic-list">
+              <span class="topic topic-chip">AI Coding</span>
+              <span class="topic topic-chip">Vibe Coding</span>
+              <span class="topic topic-chip">MCP</span>
+              <span class="topic topic-chip">工作流自动化</span>
+            </div>
+          </section>
+
+          <section class="rail-card ad-card" data-right-module="ad">
+            <span class="ad-label">广告</span>
+            <div class="ad-title">模型服务灰度体验名额开放，适合开发者优先申请。</div>
+          </section>
+        </div>
+
+        <section class="rail-card comment-panel" data-comment-panel>
+          <div class="rail-head">
+            <div class="rail-title">评论</div>
+            <div class="rail-link rail-icon-link" aria-label="收起">收起</div>
+          </div>
+          <div class="comment-box">
+            <span>边读边写一条反馈</span>
+            <button class="comment-send">发布</button>
+          </div>
+          <div class="panel-comments" style="margin-top: 12px;">
+            <div class="panel-comment">
+              <div class="comment-head">
+                <img class="meta-avatar" src="../_assets/figma/detail-comment-devon-avatar-source.png" alt="" />
+                <span>Devon</span>
+                <span class="comment-time">18 分钟前</span>
+              </div>
+              <p class="comment-text">这个流程适合先从接口测试用例开始试。</p>
+              <div class="comment-actions" style="margin-left: 0;"><span class="comment-action comment-like" aria-label="点赞 12">12</span><span class="comment-action comment-reply" aria-label="回复"></span></div>
+            </div>
+            <div class="panel-comment">
+              <div class="comment-head">
+                <img class="meta-avatar" src="../_assets/figma/detail-comment-xiaobai-avatar-source.png" alt="" />
+                <span>北方的郎</span>
+                <span class="comment-time">42 分钟前</span>
+              </div>
+              <p class="comment-text">没有自动化测试时是否先做检查清单？</p>
+              <div class="comment-actions" style="margin-left: 0;"><span class="comment-action comment-like" aria-label="点赞 8">8</span><span class="comment-action comment-reply" aria-label="回复"></span></div>
+            </div>
+          </div>
+        </section>
+      </aside>
+    </main>
+  </div>
+
+  <script>
+    const assetBase = "../_assets/figma/";
+    const states = {
+      default: {
+        type: "教程案例",
+        topics: ["AI Coding", "开发提效"],
+        title: "Claude Code 实战 Harness 工程：开发效率翻倍",
+        summary: "用一个真实工程拆解 AI 编码协作的最小闭环：需求拆分、代码生成、测试补齐和人工验收。",
+        author: "多元拾光官方",
+        reads: "8.1k 阅读",
+        comments: "42 评论",
+        likes: "128 点赞",
+        favorites: "316 收藏",
+        authorPosts: "117",
+        authorReads: "148k",
+        authorFollowers: "144",
+        media: false,
+        moduleTitle: "教程案例要点",
+        fields: [["背景问题", "AI 编码流程难以稳定复用"], ["适用人群", "技术类用户、独立开发者"], ["结果", "形成可复查的协作流程"]],
+        boundary: "边界：该案例只提供流程参考，不承诺自动生成代码可直接上线。"
+      },
+      comments: {},
+      "no-comments": { comments: "0 评论", likes: "128 点赞", favorites: "316 收藏" },
+      "logged-out": {},
+      article: {
+        type: "文章",
+        topics: ["AI Coding", "Vibe Coding"],
+        title: "长文：Claude Code 实践 Harness 工程，开发效率翻倍",
+        summary: "面向技术类用户的完整经验复盘，重点说明从需求拆分、代码生成到测试验收的稳定路径。",
+        reads: "10.2k 阅读",
+        comments: "64 评论",
+        likes: "246 点赞",
+        favorites: "512 收藏",
+        media: false,
+        moduleTitle: "文章阅读信息",
+        fields: [["内容长度", "长文结构化阅读"], ["适用场景", "经验复盘、方法论沉淀"], ["阅读收益", "形成可复用判断框架"]],
+        boundary: "边界：文章详情承载完整论述，不把可执行附件、模型调用或 MCP 配置硬塞进正文。"
+      },
+      "image-text": {
+        type: "图文",
+        topics: ["AIGC", "图文复盘"],
+        title: "图文：一次 AI 海报方向从草图到成稿的过程",
+        summary: "用图片封面、步骤说明和提示词片段讲清楚创作过程，适合用户快速判断是否值得收藏。",
+        reads: "7.6k 阅读",
+        comments: "31 评论",
+        likes: "186 点赞",
+        favorites: "428 收藏",
+        media: true,
+        cover: "cover-08-wide.png",
+        moduleTitle: "图文内容信息",
+        fields: [["图片数量", "6 张过程图"], ["正文结构", "步骤说明 + 关键提示词"], ["复用方式", "收藏后进入详情查看完整过程"]],
+        boundary: "边界：图文不做在线编辑器和图片批量管理，当前只定义消费页展示和详情承载。"
+      },
+      video: {
+        type: "视频",
+        topics: ["AI Coding", "视频教程"],
+        title: "视频：从 0 完成第一次 API 调用和错误排查",
+        summary: "用视频封面和文字摘要承接新手路径，详情页保留评论、收藏、转发等基础互动。",
+        reads: "8.9k 阅读",
+        comments: "52 评论",
+        likes: "214 点赞",
+        favorites: "390 收藏",
+        media: true,
+        cover: "create-video-cover-source.png",
+        moduleTitle: "视频内容信息",
+        fields: [["视频时长", "08:24"], ["配套资料", "命令清单、错误排查表"], ["适用人群", "第一次调用 API 的技术类用户"]],
+        boundary: "边界：V0.1 不做真实播放器、转码、弹幕和在线剪辑，只定义视频内容在详情页的承载方式。"
+      },
+      model: {
+        type: "模型服务",
+        topics: ["模型服务", "API 调用"],
+        title: "Qwen3-32B API 接入实践与成本优化",
+        summary: "从首次调用、错误处理、上下文控制和成本边界四个角度判断模型服务是否适合接入。",
+        reads: "12.6k 阅读",
+        comments: "86 评论",
+        likes: "328 点赞",
+        favorites: "674 收藏",
+        media: false,
+        moduleTitle: "模型服务信息",
+        fields: [["服务名称", "Qwen3-32B"], ["适用场景", "长上下文问答、代码辅助"], ["主要限制", "成本与上下文策略需先评估"]],
+        boundary: "边界：价格、可用性和性能以实际服务为准，本页不提供实时价格承诺或在线调用。"
+      },
+      workflow: {
+        type: "工作流",
+        topics: ["工作流自动化", "测试调试"],
+        title: "把接口文档转成测试用例的工作流",
+        summary: "输入接口文档，输出测试用例清单、边界条件和回归检查点，适合研发提效。",
+        reads: "6.8k 阅读",
+        comments: "39 评论",
+        likes: "156 点赞",
+        favorites: "298 收藏",
+        media: false,
+        moduleTitle: "工作流结构",
+        fields: [["输入", "接口文档、返回示例"], ["输出", "测试用例和边界清单"], ["可复制资产", "Markdown 流程 + 示例表格"]],
+        boundary: "边界：V0.1 只提供流程和附件，不做在线运行、节点编辑器或自动依赖检测。"
+      },
+      skill: {
+        type: "Skill",
+        topics: ["Skill", "代码审查"],
+        title: "代码审查 Skill 最小结构：从提示到验收",
+        summary: "把审查目标、触发场景、输入输出和能力边界整理成可复制的 SKILL.md。",
+        reads: "5.2k 阅读",
+        comments: "28 评论",
+        likes: "119 点赞",
+        favorites: "255 收藏",
+        media: false,
+        moduleTitle: "Skill 能力说明",
+        fields: [["触发场景", "PR 自检、提交前审查"], ["输入输出", "代码 diff -> 风险清单"], ["使用方式", "复制 SKILL.md 到工具目录"]],
+        boundary: "边界：本页不承诺自动安装、自动执行或跨平台适配，示例只用于结构参考。"
+      },
+      mcp: {
+        type: "MCP",
+        topics: ["MCP", "工具连接"],
+        title: "GitHub MCP 使用边界：Tools、Resources 与权限",
+        summary: "说明 GitHub MCP 能做什么、需要哪些配置、哪些写操作必须由用户确认。",
+        reads: "4.6k 阅读",
+        comments: "24 评论",
+        likes: "104 点赞",
+        favorites: "221 收藏",
+        media: false,
+        moduleTitle: "MCP 连接说明",
+        fields: [["连接对象", "GitHub 仓库和 Issue"], ["Tools", "读取、搜索、创建草稿"], ["权限边界", "敏感凭证不在 C端展示"]],
+        boundary: "边界：不保存真实凭证，不直接连接真实账号，不提供一键安装或可用性自动监控。"
+      },
+      aigc: {
+        type: "AIGC",
+        topics: ["图像生成", "提示词工程"],
+        title: "Midjourney 提示词库精选：产品海报视觉方向",
+        summary: "展示成品预览、创作目标、提示词摘要和可复用参数，适合 AIGC 频道卡片流承接。",
+        reads: "9.8k 阅读",
+        comments: "56 评论",
+        likes: "272 点赞",
+        favorites: "602 收藏",
+        media: true,
+        cover: "featured-cover-11-abstract-wide.png",
+        moduleTitle: "AIGC 复用信息",
+        fields: [["创作目标", "AI 产品海报概念"], ["提示词摘要", "未来感、清爽、弱玻璃拟态"], ["参数", "16:9、低饱和、品牌青"]],
+        boundary: "边界：不做在线生成，不自动判断版权；公开 Prompt 仅供学习和复用参考。"
+      },
+      flash: {
+        type: "闪念",
+        topics: ["Vibe Coding", "代码片段"],
+        title: "闪念：Cursor 里这段规则很管用",
+        summary: "把需求拆成可验证的小块，再让 AI 只处理当前最小任务，返工会少很多。",
+        reads: "2.4k 阅读",
+        comments: "18 评论",
+        likes: "76 点赞",
+        favorites: "143 收藏",
+        media: false,
+        moduleTitle: "闪念内容",
+        fields: [["短内容", "一条轻量技术经验"], ["代码片段", "支持 Markdown 代码块"], ["互动", "点赞、评论、转发、收藏"]],
+        boundary: "边界：闪念不承载复杂长文编辑和专业资产区，高价值内容后续可沉淀为教程或工作流。"
+      }
+    };
+
+    const queryState = new URLSearchParams(location.search).get("state") || "default";
+    const base = states.default;
+    const current = { ...base, ...(states[queryState] || {}) };
+    document.body.dataset.state = queryState;
+    document.body.dataset.media = current.media ? "true" : "false";
+
+    const setText = (selector, value) => {
+      const node = document.querySelector(selector);
+      if (node) node.textContent = value;
+    };
+
+    const metricNumber = (value) => String(value || "").split(/\s+/)[0] || "0";
+    const setMetricText = (selector, value) => {
+      const node = document.querySelector(selector);
+      if (!node) return;
+      node.textContent = metricNumber(value);
+      const metric = node.closest("[data-detail-metric]");
+      if (metric) metric.setAttribute("aria-label", value);
+    };
+
+    setText("[data-type]", current.type);
+    setText("[data-topic-a]", current.topics[0]);
+    setText("[data-topic-b]", current.topics[1]);
+    setText("[data-title]", current.title);
+    setText("[data-summary]", current.summary);
+    setText("[data-author]", `@${current.author || base.author}`);
+    setText("[data-rail-author]", current.author || base.author);
+    setMetricText("[data-reads]", current.reads);
+    setMetricText("[data-comments-count]", current.comments);
+    setMetricText("[data-likes]", current.likes);
+    setMetricText("[data-favorites]", current.favorites);
+    setText("[data-quick-likes]", metricNumber(current.likes));
+    setText("[data-quick-comments]", metricNumber(current.comments));
+    setText("[data-quick-favorites]", metricNumber(current.favorites));
+    setText("[data-author-posts]", current.authorPosts || base.authorPosts);
+    setText("[data-author-reads]", current.authorReads || base.authorReads);
+    setText("[data-author-followers]", current.authorFollowers || base.authorFollowers);
+    setText("[data-module-title]", current.moduleTitle);
+    setText("[data-toc-module]", current.moduleTitle);
+    setText("[data-field-label-a]", current.fields[0][0]);
+    setText("[data-field-a]", current.fields[0][1]);
+    setText("[data-field-label-b]", current.fields[1][0]);
+    setText("[data-field-b]", current.fields[1][1]);
+    setText("[data-field-label-c]", current.fields[2][0]);
+    setText("[data-field-c]", current.fields[2][1]);
+    setText("[data-boundary]", current.boundary);
+
+    if (current.cover) {
+      document.querySelector("[data-cover]").src = assetBase + current.cover;
+    }
+
+    const unavailableCopy = {
+      "load-failed": {
+        title: "内容加载失败",
+        desc: "网络或服务异常导致内容暂时没有加载出来，可以刷新页面或稍后再试。"
+      },
+      "permission-denied": {
+        title: "暂无查看权限",
+        desc: "这条内容可能仅作者、白名单或特定灰度用户可见。当前页面只展示权限不足提示，不暴露正文。"
+      }
+    };
+
+    if (unavailableCopy[queryState]) {
+      setText("[data-unavailable-title]", unavailableCopy[queryState].title);
+      setText("[data-unavailable-desc]", unavailableCopy[queryState].desc);
+    }
+
+    if (queryState === "no-comments") {
+      setText("[data-comment-placeholder]", "成为第一位评论的人");
+    }
+  </script>
+  <script src="../_shared/c-end-prototype-interactions.js"></script>
+</body>
+</html>

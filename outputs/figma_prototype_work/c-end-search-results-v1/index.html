@@ -1,0 +1,1316 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>多元拾光 C端搜索结果页多状态原型 V1</title>
+  <link rel="icon" type="image/svg+xml" href="../_assets/brand/duoyuan-shiguang-favicon.svg" />
+  <style>
+    :root {
+      --bg: #ffffff;
+      --panel: #ffffff;
+      --panel-soft: #fafafa;
+      --line: #f1f1f1;
+      --line-strong: #e8e8e8;
+      --text: #242424;
+      --muted: #4f4f4f;
+      --weak: #8a8a8a;
+      --brand: #242424;
+      --brand-deep: #242424;
+      --brand-soft: rgba(36, 36, 36, 0.06);
+      --blue: #242424;
+      --blue-soft: rgba(36, 36, 36, 0.05);
+      --purple: #4f4f4f;
+      --purple-soft: rgba(36, 36, 36, 0.05);
+      --orange: #6b6b6b;
+      --orange-soft: rgba(36, 36, 36, 0.07);
+      --green: #4f4f4f;
+      --green-soft: rgba(36, 36, 36, 0.05);
+      --red: #6b6b6b;
+      --red-soft: rgba(36, 36, 36, 0.07);
+      --shadow: none;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 1920px;
+      min-height: 1080px;
+      margin: 0;
+      overflow-x: hidden;
+      overflow-y: auto;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+      letter-spacing: 0;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    button {
+      border: 0;
+      cursor: default;
+    }
+
+    .page {
+      width: 1920px;
+      min-height: 1080px;
+      position: relative;
+    }
+
+    .topbar {
+      height: 72px;
+      background: #fff;
+      border-bottom: 1px solid #f2f2f2;
+      backdrop-filter: none;
+    }
+
+    .nav-shell {
+      width: 1440px;
+      height: 72px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 30px;
+    }
+
+    .brand {
+      width: 184px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .brand-mark {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: #242424;
+      position: relative;
+      box-shadow: none;
+    }
+
+    .brand-mark::after {
+      content: "";
+      position: absolute;
+      left: 8px;
+      top: 8px;
+      width: 16px;
+      height: 16px;
+      border: 3px solid rgba(255, 255, 255, 0.94);
+      border-left: 0;
+      border-bottom: 0;
+      transform: rotate(45deg);
+      border-radius: 2px;
+    }
+
+    .brand-name {
+      font-size: 28px;
+      line-height: 34px;
+      font-weight: 820;
+      color: #242424;
+    }
+
+    .brand-sub {
+      margin-left: 2px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 18px;
+      font-weight: 650;
+      white-space: nowrap;
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      gap: 26px;
+      height: 72px;
+      flex-shrink: 0;
+    }
+
+    .nav-item {
+      height: 72px;
+      display: flex;
+      align-items: center;
+      color: #5f5f5f;
+      font-size: 16px;
+      line-height: 22px;
+      font-weight: 740;
+      position: relative;
+      white-space: nowrap;
+    }
+
+    .nav-item.active {
+      color: var(--brand-deep);
+    }
+
+    .nav-item.active::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 1px;
+      border-radius: 0;
+      background: var(--brand);
+    }
+
+    .top-search {
+      margin-left: auto;
+      width: 460px;
+      height: 40px;
+      border: 1px solid var(--line-strong);
+      border-radius: 999px;
+      background: #fafafa;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 14px;
+      color: #6b6b6b;
+      font-size: 14px;
+      line-height: 20px;
+      font-weight: 560;
+      box-shadow: none;
+    }
+
+    .top-search .search-value {
+      color: #242424;
+      font-weight: 650;
+    }
+
+    .creator-button {
+      height: 40px;
+      padding: 0 18px;
+      border: 1px solid var(--line-strong);
+      border-radius: 4px;
+      background: #fff;
+      color: var(--brand-deep);
+      font-size: 14px;
+      line-height: 20px;
+      font-weight: 760;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+    }
+
+    .avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      object-fit: cover;
+      flex-shrink: 0;
+      border: 1px solid var(--line);
+    }
+
+    .icon-img {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+      opacity: 0.74;
+    }
+
+    .search-layout {
+      width: 1240px;
+      min-height: 964px;
+      margin: 24px auto 0;
+      display: grid;
+      grid-template-columns: 820px 340px;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .results-panel,
+    .rail-card {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .results-panel {
+      min-height: 888px;
+      overflow: hidden;
+    }
+
+    .control-row {
+      height: 62px;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--line);
+      background: #fff;
+    }
+
+    .tabs {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .tab {
+      height: 34px;
+      padding: 0 14px;
+      border-radius: 0;
+      color: #5f5f5f;
+      background: transparent;
+      font-size: 14px;
+      line-height: 20px;
+      font-weight: 720;
+    }
+
+    .tab.active {
+      color: var(--brand-deep);
+      background: var(--brand-soft);
+      border: 1px solid #d8d8d8;
+    }
+
+    .sorts {
+      display: flex;
+      align-items: center;
+      padding: 3px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fafafa;
+    }
+
+    .sort {
+      height: 30px;
+      padding: 0 12px;
+      border-radius: 8px;
+      color: #6b6b6b;
+      background: transparent;
+      font-size: 13px;
+      line-height: 18px;
+      font-weight: 700;
+    }
+
+    .sort.active {
+      color: #242424;
+      background: #fff;
+      box-shadow: none;
+    }
+
+    .results-list {
+      padding: 0;
+      background: #fff;
+    }
+
+    .result-card {
+      min-height: 134px;
+      padding: 22px 24px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 136px;
+      gap: 16px;
+      border-bottom: 1px solid var(--line);
+      background: #fff;
+    }
+
+    .result-card.featured {
+      background: linear-gradient(90deg, rgba(36, 36, 36, 0.045), #fff 55%);
+    }
+
+    .result-card.flash-result {
+      min-height: 118px;
+    }
+
+    .type-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--line);
+      background: #f4f4f4;
+    }
+
+    .type-icon img {
+      width: 24px;
+      height: 24px;
+      opacity: 0.82;
+    }
+
+    .type-icon.content {
+      background: var(--brand-soft);
+      border-color: #e8e8e8;
+    }
+
+    .type-icon.topic {
+      background: var(--blue-soft);
+      border-color: #e8e8e8;
+    }
+
+    .type-icon.model {
+      background: var(--purple-soft);
+      border-color: #e8e8e8;
+    }
+
+    .type-icon.ai-plus {
+      background: var(--orange-soft);
+      border-color: #e8e8e8;
+    }
+
+    .result-main {
+      min-width: 0;
+    }
+
+    .result-meta-top {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .type-tag,
+    .asset-tag {
+      height: 22px;
+      padding: 0 8px;
+      border-radius: 0 4px 4px 0;
+      font-size: 12px;
+      line-height: 22px;
+      font-weight: 760;
+      white-space: nowrap;
+    }
+
+    .type-tag.content {
+      background: var(--brand-soft);
+      color: var(--brand-deep);
+    }
+
+    .type-tag.topic {
+      background: var(--blue-soft);
+      color: var(--blue);
+    }
+
+    .type-tag.model {
+      background: var(--purple-soft);
+      color: var(--purple);
+    }
+
+    .type-tag.ai-plus {
+      background: var(--orange-soft);
+      color: var(--orange);
+    }
+
+    .type-tag.flash {
+      color: #4f4f4f;
+      background: linear-gradient(90deg, rgba(36, 36, 36, 0.12), rgba(36, 36, 36, 0.055), rgba(36, 36, 36, 0));
+    }
+
+    .asset-tag {
+      background: #f4f4f4;
+      color: #6b6b6b;
+    }
+
+    .result-title {
+      margin: 0;
+      font-size: 18px;
+      line-height: 26px;
+      font-weight: 800;
+      color: #242424;
+      max-width: 560px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .result-title-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    mark {
+      color: #242424;
+      background: rgba(36, 36, 36, 0.08);
+      border-radius: 4px;
+      padding: 0 2px;
+    }
+
+    .result-desc {
+      margin: 6px 0 0;
+      max-width: 600px;
+      color: #4f4f4f;
+      font-size: 14px;
+      line-height: 22px;
+      font-weight: 500;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+
+    .result-desc.flash-text {
+      max-width: 760px;
+      color: #4f4f4f;
+      font-size: 15px;
+      line-height: 24px;
+    }
+
+    .topic-line {
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .topic-chip {
+      height: 22px;
+      padding: 0 8px;
+      border-radius: 5px;
+      color: #4f4f4f;
+      background: #fff;
+      border: 1px solid #e2e2e2;
+      font-size: 12px;
+      line-height: 22px;
+      font-weight: 650;
+    }
+
+    .byline {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 18px;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .result-side {
+      width: 136px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .cover {
+      width: 116px;
+      height: 66px;
+      object-fit: cover;
+      border-radius: 6px;
+      border: 1px solid var(--line);
+      background: #f4f4f4;
+    }
+
+    .metrics {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 12px;
+      color: #6b6b6b;
+      font-size: 12px;
+      line-height: 18px;
+      font-weight: 650;
+    }
+
+    .metric {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .metric img {
+      width: 14px;
+      height: 14px;
+      opacity: 0.64;
+    }
+
+    .topic-stat,
+    .model-stat {
+      width: 136px;
+      min-height: 66px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: #fafafa;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-end;
+      gap: 2px;
+      padding: 10px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 18px;
+      font-weight: 650;
+    }
+
+    .topic-stat strong,
+    .model-stat strong {
+      color: #242424;
+      font-size: 18px;
+      line-height: 24px;
+      font-weight: 820;
+    }
+
+    .rail {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .rail-card {
+      padding: 18px;
+    }
+
+    .rail-title {
+      margin: 0 0 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: #242424;
+      font-size: 16px;
+      line-height: 22px;
+      font-weight: 800;
+    }
+
+    .rail-link {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 18px;
+      font-weight: 700;
+    }
+
+    .term-list,
+    .topic-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .term-item,
+    .topic-item {
+      min-height: 38px;
+      padding: 9px 10px;
+      border-radius: 8px;
+      background: #fafafa;
+      border: 1px solid #f1f1f1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .term-name,
+    .topic-name {
+      color: #242424;
+      font-size: 13px;
+      line-height: 18px;
+      font-weight: 720;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .rail-item-main {
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .rail-item-main img {
+      width: 15px;
+      height: 15px;
+      opacity: 0.70;
+      flex-shrink: 0;
+    }
+
+    .term-count,
+    .topic-count {
+      color: var(--weak);
+      font-size: 12px;
+      line-height: 18px;
+      font-weight: 650;
+      white-space: nowrap;
+    }
+
+    .ad-card {
+      overflow: hidden;
+      padding: 0;
+      min-height: 164px;
+    }
+
+    .ad-media {
+      height: 92px;
+      background-position: center;
+      background-size: cover;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .ad-body {
+      padding: 14px 16px 16px;
+    }
+
+    .ad-kicker {
+      display: inline-flex;
+      height: 22px;
+      padding: 0 8px;
+      align-items: center;
+      border-radius: 0 4px 4px 0;
+      background: linear-gradient(90deg, rgba(36, 36, 36, 0.12), rgba(36, 36, 36, 0.055), rgba(36, 36, 36, 0));
+      color: #242424;
+      font-size: 12px;
+      line-height: 22px;
+      font-weight: 760;
+      margin-bottom: 8px;
+    }
+
+    .ad-title {
+      margin: 0;
+      font-size: 15px;
+      line-height: 22px;
+      color: #242424;
+      font-weight: 820;
+    }
+
+    .ad-desc {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 18px;
+      font-weight: 600;
+    }
+
+    .skeleton-wrap {
+      padding: 18px 24px;
+    }
+
+    .skeleton-card {
+      min-height: 112px;
+      border-bottom: 1px solid var(--line);
+      display: grid;
+      grid-template-columns: 52px 1fr 116px;
+      gap: 16px;
+      padding: 18px 0;
+    }
+
+    .skeleton {
+      border-radius: 8px;
+      background: linear-gradient(90deg, #eeeeee, #fafafa, #eeeeee);
+      background-size: 220% 100%;
+      animation: shimmer 1.4s infinite linear;
+    }
+
+    @keyframes shimmer {
+      from { background-position: 100% 0; }
+      to { background-position: -100% 0; }
+    }
+
+    .skeleton-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 12px;
+    }
+
+    .skeleton-line {
+      height: 14px;
+      margin-bottom: 12px;
+    }
+
+    .skeleton-title {
+      height: 22px;
+      width: 70%;
+      margin-bottom: 14px;
+    }
+
+    .skeleton-cover {
+      width: 116px;
+      height: 66px;
+      border-radius: 8px;
+    }
+
+    .state-card {
+      min-height: 600px;
+      padding: 90px 88px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      background: #fff;
+    }
+
+    .state-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 8px;
+      background: var(--brand-soft);
+      border: 1px solid #e8e8e8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .state-icon img {
+      width: 30px;
+      height: 30px;
+      opacity: 0.82;
+    }
+
+    .state-title {
+      margin: 0;
+      color: #242424;
+      font-size: 22px;
+      line-height: 30px;
+      font-weight: 820;
+    }
+
+    .state-desc {
+      margin: 10px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 22px;
+      font-weight: 560;
+      max-width: 420px;
+    }
+
+    .state-actions {
+      margin-top: 22px;
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .state-chip {
+      height: 30px;
+      padding: 0 12px;
+      border-radius: 5px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: #4f4f4f;
+      font-size: 13px;
+      line-height: 28px;
+      font-weight: 720;
+    }
+
+    .retry-button {
+      height: 36px;
+      padding: 0 16px;
+      border-radius: 4px;
+      color: #fff;
+      background: var(--brand);
+      font-size: 14px;
+      line-height: 20px;
+      font-weight: 760;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* Brand lockup override: pure SVG mark, frontend-rendered wordmark. */
+    .brand .brand-mark {
+      width: 62px !important;
+      height: 42px !important;
+      object-fit: contain !important;
+      border-radius: 0 !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      color: transparent !important;
+      flex: 0 0 auto !important;
+    }
+
+    .brand .brand-mark::before,
+    .brand .brand-mark::after {
+      content: none !important;
+      display: none !important;
+    }
+
+    .brand .brand-name {
+      font-size: 24px !important;
+      line-height: 28px !important;
+      font-weight: 900 !important;
+      letter-spacing: 0 !important;
+      transform: skewX(-8deg) scaleX(1.04) !important;
+      transform-origin: left center !important;
+      text-shadow: 1px 0 0 currentColor !important;
+      white-space: nowrap !important;
+    }
+
+    .brand .brand-sub {
+      margin-top: 2px !important;
+      font-size: 11px !important;
+      line-height: 14px !important;
+      font-weight: 680 !important;
+      letter-spacing: 0 !important;
+      color: #4f4f4f !important;
+      white-space: nowrap !important;
+    }
+
+    html.prototype-ai666-home-skin .tabs [data-tab].tab {
+      height: 46px !important;
+      padding: 0 14px !important;
+      border: 0 !important;
+      border-radius: 0 !important;
+      background: transparent !important;
+      color: #5f5f5f !important;
+      position: relative !important;
+    }
+
+    html.prototype-ai666-home-skin .tabs [data-tab].tab.active {
+      color: #242424 !important;
+      background: transparent !important;
+      box-shadow: none !important;
+    }
+
+    html.prototype-ai666-home-skin .tabs [data-tab].tab.active::after {
+      content: "" !important;
+      position: absolute !important;
+      left: 14px !important;
+      right: 14px !important;
+      bottom: -1px !important;
+      height: 1px !important;
+      border-radius: 0 !important;
+      background: #242424 !important;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="page" data-page>
+    <header class="topbar" data-topbar>
+      <div class="nav-shell" data-nav-shell>
+        <div class="brand">
+          <img class="brand-mark" src="../_assets/brand/duoyuan-shiguang-logo-mark.svg?v=20260616-nav2" alt="" aria-hidden="true" />
+          <div>
+            <div class="brand-name">多元拾光</div>
+            <div class="brand-sub">AI原生实践者社区</div>
+          </div>
+        </div>
+        <nav class="nav" aria-label="主导航">
+          <div class="nav-item active">首页</div>
+          <div class="nav-item">闪念</div>
+          <div class="nav-item">AIGC</div>
+          <div class="nav-item">模型服务</div>
+          <div class="nav-item">AI+</div>
+        </nav>
+        <div class="top-search" data-top-search>
+          <img class="icon-img" data-icon src="../../../resources/icons/remixicon/svg/System/search-line.svg" alt="" />
+          <span>搜索</span>
+          <span class="search-value" data-top-query>Vibe Coding</span>
+        </div>
+        <button class="creator-button">
+          <img class="icon-img" data-icon src="../../../resources/icons/remixicon/svg/Design/edit-box-line.svg" alt="" />
+          创作中心
+        </button>
+        <img class="icon-img" data-icon src="../../../resources/icons/remixicon/svg/Media/notification-line.svg" alt="" />
+        <img class="avatar" src="../_assets/figma/detail-author-jianbing-avatar-source.png" alt="" />
+      </div>
+    </header>
+
+    <main class="search-layout" data-search-layout>
+      <section class="results-panel" data-results-panel>
+        <div class="control-row">
+          <div class="tabs" data-tabs></div>
+          <div class="sorts" data-sorts>
+            <button class="sort active" data-sort>综合</button>
+            <button class="sort" data-sort>最新</button>
+          </div>
+        </div>
+
+        <div class="results-list" data-results-list></div>
+      </section>
+
+      <aside class="rail" data-right-rail>
+        <section class="rail-card" data-right-module="recommended-search">
+          <h2 class="rail-title">
+            推荐搜索
+            <span class="rail-link">换一组</span>
+          </h2>
+          <div class="term-list" data-recommend-search></div>
+        </section>
+
+        <section class="rail-card" data-right-module="recommended-topic">
+          <h2 class="rail-title">
+            推荐话题
+            <span class="rail-link">更多</span>
+          </h2>
+          <div class="topic-list" data-recommend-topic></div>
+        </section>
+
+        <section class="rail-card ad-card" data-right-module="ad-banner">
+          <div class="ad-media" data-ad-media></div>
+          <div class="ad-body">
+            <span class="ad-kicker">合作</span>
+            <h2 class="ad-title">高质量向量数据库服务</h2>
+            <p class="ad-desc">稳定、高效、安全，适合 RAG 与检索增强应用。</p>
+          </div>
+        </section>
+      </aside>
+    </main>
+  </div>
+
+  <script>
+    const assetBase = "../_assets/figma/";
+    const iconBase = "../../../resources/icons/remixicon/svg/";
+
+    const icons = {
+      content: iconBase + "Document/file-text-line.svg",
+      topic: iconBase + "Finance/price-tag-3-line.svg",
+      model: iconBase + "User & Faces/robot-2-line.svg",
+      aiPlus: iconBase + "System/apps-ai-line.svg",
+      eye: iconBase + "System/eye-line.svg",
+      comment: iconBase + "Communication/message-line.svg",
+      search: iconBase + "System/search-line.svg",
+      warning: iconBase + "System/error-warning-line.svg"
+    };
+
+    const tabs = ["全部", "内容", "话题", "模型服务", "AI+资源"];
+
+    const results = [
+      {
+        group: "内容",
+        type: "文章",
+        typeClass: "content",
+        title: "<mark>Vibe Coding</mark> 从 0 到 1 的开发工作台搭建",
+        desc: "把需求拆解、上下文管理、代码审查和回归验证串成一条可复用的 AI 开发流程。",
+        topics: ["Vibe Coding", "AI 编程", "工作流"],
+        byline: "多元拾光官方 · 06-14 更新",
+        reads: "12.6k",
+        comments: "86",
+        cover: assetBase + "cover-08-wide.png",
+        featured: true
+      },
+      {
+        group: "话题",
+        type: "话题",
+        typeClass: "topic",
+        title: "#<mark>Vibe Coding</mark>",
+        desc: "围绕 AI 辅助开发、上下文工程、代码代理和自动化验证的实践讨论。",
+        topics: ["AI 编程", "Agent", "开发效率"],
+        byline: "128 条内容 · 32 位创作者参与",
+        statKind: "topic",
+        statMain: "128",
+        statSub: "条内容"
+      },
+      {
+        group: "模型服务",
+        type: "模型服务",
+        typeClass: "model",
+        title: "Qwen3-32B API 接入实践与成本优化",
+        desc: "适合技术类用户快速判断接入流程、并发控制、缓存策略和降本边界。",
+        topics: ["Qwen3", "模型服务", "成本优化"],
+        byline: "ModelOps 团队 · 06-12 更新",
+        statKind: "model",
+        statMain: "24",
+        statSub: "相关内容"
+      },
+      {
+        group: "AI+资源",
+        type: "MCP",
+        typeClass: "ai-plus",
+        title: "GitHub MCP 使用边界与权限配置清单",
+        desc: "整理仓库访问、Issue 读取、PR 操作和访问权限最小化的配置注意事项。",
+        topics: ["MCP", "GitHub", "权限"],
+        byline: "CodeOps · 06-11 更新",
+        reads: "8.9k",
+        comments: "42",
+        asset: "含配置片段"
+      },
+      {
+        group: "AI+资源",
+        type: "工作流",
+        typeClass: "ai-plus",
+        title: "接口文档转测试用例的自动化工作流",
+        desc: "输入接口说明，输出测试用例草稿、边界条件和回归检查点，适合研发提效。",
+        topics: ["工作流", "测试", "自动化"],
+        byline: "FlowCraft · 06-10 更新",
+        reads: "6.8k",
+        comments: "38",
+        asset: "含附件"
+      },
+      {
+        group: "内容",
+        type: "闪念",
+        typeClass: "flash",
+        text: "短内容记录一次真实改造：先约束上下文，再让 AI 写计划，最后用脚本检查边界。",
+        topics: ["闪念", "Claude Code", "开发效率"],
+        byline: "北方的郎 · 06-09 更新",
+        reads: "3.2k",
+        comments: "19"
+      },
+      {
+        group: "AI+资源",
+        type: "Skill",
+        typeClass: "ai-plus",
+        title: "长文内容结构化提炼 Skill",
+        desc: "把文章、访谈或调研材料拆成摘要、判断、风险和可执行动作。",
+        topics: ["Skill", "内容生产", "结构化"],
+        byline: "PromptLayer · 06-08 更新",
+        reads: "5.1k",
+        comments: "27",
+        asset: "含示例输入"
+      }
+    ];
+
+    const contentResults = results.filter((item) => item.group === "内容");
+    const topicResults = results.filter((item) => item.group === "话题").concat([
+      {
+        group: "话题",
+        type: "话题",
+        typeClass: "topic",
+        title: "#Agent",
+        desc: "智能体设计、工具调用、上下文管理和自动化流程的实践集合。",
+        topics: ["Agent", "工具调用", "自动化"],
+        byline: "216 条内容 · 58 位创作者参与",
+        statKind: "topic",
+        statMain: "216",
+        statSub: "条内容"
+      },
+      {
+        group: "话题",
+        type: "话题",
+        typeClass: "topic",
+        title: "#AI 编程",
+        desc: "记录用 AI 辅助需求拆解、编码、审查和验证的完整路径。",
+        topics: ["AI 编程", "代码代理", "验证"],
+        byline: "342 条内容 · 91 位创作者参与",
+        statKind: "topic",
+        statMain: "342",
+        statSub: "条内容"
+      }
+    ]);
+
+    const modelResults = results.filter((item) => item.group === "模型服务").concat([
+      {
+        group: "模型服务",
+        type: "模型服务",
+        typeClass: "model",
+        title: "Claude 3.5 Sonnet 长文本开发场景评估",
+        desc: "对比需求分析、代码解释、测试建议和长上下文处理中的稳定性表现。",
+        topics: ["Claude", "模型服务", "长文本"],
+        byline: "DataMind · 06-09 更新",
+        statKind: "model",
+        statMain: "31",
+        statSub: "相关内容"
+      },
+      {
+        group: "模型服务",
+        type: "模型服务",
+        typeClass: "model",
+        title: "OpenRouter 多模型接入与降级策略",
+        desc: "为不同场景准备模型路由、失败重试和成本上限，适合技术类用户接入前评估。",
+        topics: ["OpenRouter", "模型路由", "稳定性"],
+        byline: "RouteLab · 06-08 更新",
+        statKind: "model",
+        statMain: "18",
+        statSub: "相关内容"
+      }
+    ]);
+
+    const aiPlusResults = results.filter((item) => item.group === "AI+资源");
+
+    const recommendedTerms = [
+      ["API 429", "12.6k"],
+      ["GitHub MCP", "8.9k"],
+      ["Qwen3 成本优化", "7.6k"],
+      ["RAG 工作流", "6.8k"]
+    ];
+
+    const recommendedTopics = [
+      ["#Agent", "216"],
+      ["#模型服务", "184"],
+      ["#AI 编程", "342"],
+      ["#工作流", "128"]
+    ];
+
+    function getState() {
+      const params = new URLSearchParams(window.location.search);
+      return params.get("state") || "default";
+    }
+
+    function stateConfig(state) {
+      const map = {
+        default: { query: "Vibe Coding", tab: "全部", mode: "results", data: results },
+        content: { query: "API 429", tab: "内容", mode: "results", data: contentResults },
+        topic: { query: "Agent", tab: "话题", mode: "results", data: topicResults },
+        model: { query: "Qwen3", tab: "模型服务", mode: "results", data: modelResults },
+        "ai-plus": { query: "GitHub MCP", tab: "AI+资源", mode: "results", data: aiPlusResults },
+        loading: { query: "Vibe Coding", tab: "全部", mode: "loading", data: [] },
+        "no-results": { query: "ZK-Model-Private", tab: "全部", mode: "empty", data: [] },
+        "load-failed": { query: "Vibe Coding", tab: "全部", mode: "failed", data: [] }
+      };
+      return map[state] || map.default;
+    }
+
+    function renderTabs(active) {
+      const box = document.querySelector("[data-tabs]");
+      box.innerHTML = tabs.map((tab) => (
+        `<button class="tab ${tab === active ? "active" : ""}" data-tab>${tab}</button>`
+      )).join("");
+    }
+
+    function typeIconClass(item) {
+      if (item.type === "闪念") return "flash";
+      return item.typeClass === "topic" ? "topic" : item.typeClass === "model" ? "model" : item.typeClass === "ai-plus" ? "ai-plus" : "content";
+    }
+
+    function iconFor(item) {
+      if (item.type === "闪念") return icons.content;
+      if (item.typeClass === "topic") return icons.topic;
+      if (item.typeClass === "model") return icons.model;
+      if (item.typeClass === "ai-plus") return icons.aiPlus;
+      return icons.content;
+    }
+
+    function renderResult(item) {
+      if (item.type === "闪念") {
+        const compactMetrics = `<div class="metrics"><span class="metric"><img data-icon src="${icons.eye}" alt="" />${item.reads}</span><span class="metric"><img data-icon src="${icons.comment}" alt="" />${item.comments}</span></div>`;
+        return `
+        <article class="result-card flash-result" data-result-card data-flash-card data-no-detail="flash" data-group="${item.group}" data-result-type="${item.type}">
+          <div class="result-main">
+            <div class="result-title-row">
+              <span class="type-tag flash">${item.type}</span>
+              <span class="byline">${item.byline}</span>
+            </div>
+            <p class="result-desc flash-text">${item.text || item.desc || ""}</p>
+            <div class="topic-line">
+              ${item.topics.map((topic) => `<span class="topic-chip">${topic}</span>`).join("")}
+            </div>
+          </div>
+          <div class="result-side">
+            ${compactMetrics}
+          </div>
+        </article>
+      `;
+      }
+
+      const hasCover = Boolean(item.cover);
+      const compactMetrics = item.statKind
+        ? `<div class="metrics"><span class="metric text-metric">${item.statMain} ${item.statSub}</span></div>`
+        : `<div class="metrics"><span class="metric"><img data-icon src="${icons.eye}" alt="" />${item.reads}</span><span class="metric"><img data-icon src="${icons.comment}" alt="" />${item.comments}</span></div>`;
+      const side = hasCover ? `<img class="cover" src="${item.cover}" alt="" />` : compactMetrics;
+
+      const metrics = !hasCover
+        ? ""
+        : compactMetrics;
+
+      const asset = item.asset ? `<span class="asset-tag">${item.asset}</span>` : "";
+
+      return `
+        <article class="result-card ${item.featured ? "featured" : ""}" data-result-card data-group="${item.group}" data-result-type="${item.type}">
+          <div class="result-main">
+            <div class="result-title-row">
+              <span class="type-tag ${typeIconClass(item)}">${item.type}</span>
+              <h2 class="result-title">${item.title}</h2>
+            </div>
+            <p class="result-desc">${item.desc}</p>
+            <div class="topic-line">
+              ${item.topics.map((topic) => `<span class="topic-chip">${topic}</span>`).join("")}
+              ${asset}
+              <span class="byline">${item.byline}</span>
+            </div>
+          </div>
+          <div class="result-side">
+            ${side}
+            ${metrics}
+          </div>
+        </article>
+      `;
+    }
+
+    function renderResults(data) {
+      document.querySelector("[data-results-list]").innerHTML = data.map(renderResult).join("");
+    }
+
+    function renderLoading() {
+      const rows = Array.from({ length: 5 }, () => `
+        <div class="skeleton-card" data-skeleton-card>
+          <div class="skeleton skeleton-icon"></div>
+          <div>
+            <div class="skeleton skeleton-line" style="width: 110px"></div>
+            <div class="skeleton skeleton-title"></div>
+            <div class="skeleton skeleton-line" style="width: 92%"></div>
+            <div class="skeleton skeleton-line" style="width: 58%"></div>
+          </div>
+          <div class="skeleton skeleton-cover"></div>
+        </div>
+      `).join("");
+      document.querySelector("[data-results-list]").innerHTML = `<div class="skeleton-wrap" data-loading>${rows}</div>`;
+    }
+
+    function renderEmpty(config) {
+      document.querySelector("[data-results-list]").innerHTML = `
+        <div class="state-card" data-empty>
+          <div class="state-icon"><img data-icon src="${icons.search}" alt="" /></div>
+          <h2 class="state-title">没有找到与「${config.query}」相关的结果</h2>
+          <p class="state-desc">可以换一个更常用的关键词，或先从推荐话题进入相关内容。</p>
+          <div class="state-actions">
+            <span class="state-chip">API 429</span>
+            <span class="state-chip">Vibe Coding</span>
+            <span class="state-chip">GitHub MCP</span>
+            <span class="state-chip">Agent</span>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderFailed(config) {
+      document.querySelector("[data-results-list]").innerHTML = `
+        <div class="state-card" data-failed>
+          <div class="state-icon"><img data-icon src="${icons.warning}" alt="" /></div>
+          <h2 class="state-title">结果加载失败</h2>
+          <p class="state-desc">当前搜索没有完成，可以稍后重试，或先查看右侧推荐搜索。</p>
+          <div class="state-actions">
+            <button class="retry-button">重新搜索</button>
+            <span class="state-chip">${config.query}</span>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderRail() {
+      document.querySelector("[data-recommend-search]").innerHTML = recommendedTerms.map(([name, count]) => `
+        <div class="term-item"><span class="rail-item-main"><img data-icon src="${icons.search}" alt="" /><span class="term-name">${name}</span></span><span class="term-count">${count}</span></div>
+      `).join("");
+
+      document.querySelector("[data-recommend-topic]").innerHTML = recommendedTopics.map(([name, count]) => `
+        <div class="topic-item"><span class="rail-item-main"><img data-icon src="${icons.topic}" alt="" /><span class="topic-name">${name}</span></span><span class="topic-count">${count} 条</span></div>
+      `).join("");
+
+      document.querySelector("[data-ad-media]").style.backgroundImage = `url("${assetBase}featured-cover-11-abstract-wide.png")`;
+    }
+
+    function render() {
+      const state = getState();
+      const config = stateConfig(state);
+      document.body.setAttribute("data-state", state);
+      document.querySelector("[data-top-query]").textContent = config.query;
+      renderTabs(config.tab);
+      renderRail();
+
+      if (config.mode === "loading") {
+        renderLoading();
+        return;
+      }
+      if (config.mode === "empty") {
+        renderEmpty(config);
+        return;
+      }
+      if (config.mode === "failed") {
+        renderFailed(config);
+        return;
+      }
+      renderResults(config.data);
+    }
+
+    render();
+  </script>
+  <script src="../_shared/c-end-prototype-interactions.js"></script>
+</body>
+</html>

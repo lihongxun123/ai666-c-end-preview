@@ -1,0 +1,1087 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>多元拾光 C端话题广场多状态原型 V1</title>
+  <link rel="icon" type="image/svg+xml" href="../_assets/brand/duoyuan-shiguang-favicon.svg" />
+  <style>
+    :root {
+      --bg: #ffffff;
+      --panel: #ffffff;
+      --panel-soft: #fafafa;
+      --line: #f1f1f1;
+      --line-strong: #e2e2e2;
+      --text: #242424;
+      --muted: #4f4f4f;
+      --weak: #8a8a8a;
+      --brand: #242424;
+      --brand-deep: #242424;
+      --brand-soft: rgba(36, 36, 36, 0.06);
+      --blue: #4f4f4f;
+      --blue-soft: rgba(36, 36, 36, 0.06);
+      --purple: #4f4f4f;
+      --purple-soft: rgba(36, 36, 36, 0.06);
+      --orange: #4f4f4f;
+      --orange-soft: rgba(36, 36, 36, 0.06);
+      --green: #4f4f4f;
+      --green-soft: rgba(36, 36, 36, 0.06);
+      --red: #4f4f4f;
+      --red-soft: rgba(36, 36, 36, 0.06);
+      --shadow: none;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 1920px;
+      min-height: 1080px;
+      margin: 0;
+      overflow-x: hidden;
+      overflow-y: auto;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+      letter-spacing: 0;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    button {
+      border: 0;
+      cursor: default;
+    }
+
+    .page {
+      width: 1920px;
+      min-height: 1080px;
+      position: relative;
+    }
+
+    .topbar {
+      height: 72px;
+      background: rgba(255, 255, 255, 0.88);
+      border-bottom: 1px solid rgba(219, 227, 239, 0.86);
+      backdrop-filter: blur(16px);
+    }
+
+    .nav-shell {
+      width: 1440px;
+      height: 72px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 220px 438px 430px 280px;
+      gap: 24px;
+      align-items: center;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .brand-mark {
+      width: 36px;
+      height: 36px;
+      border-radius: 9px;
+      position: relative;
+      background: linear-gradient(135deg, #16b8a6 0%, #2563eb 100%);
+      box-shadow: 0 10px 24px rgba(22, 184, 166, 0.18);
+    }
+
+    .brand-mark::before,
+    .brand-mark::after {
+      content: "";
+      position: absolute;
+      background: #fff;
+      border-radius: 2px;
+      transform-origin: center;
+    }
+
+    .brand-mark::before {
+      width: 19px;
+      height: 5px;
+      left: 9px;
+      top: 17px;
+      transform: rotate(-58deg);
+    }
+
+    .brand-mark::after {
+      width: 20px;
+      height: 5px;
+      left: 15px;
+      top: 17px;
+      transform: rotate(58deg);
+    }
+
+    .brand-copy {
+      min-width: 0;
+    }
+
+    .brand-name {
+      display: block;
+      font-size: 25px;
+      line-height: 30px;
+      font-weight: 800;
+      color: #121826;
+    }
+
+    .brand-sub {
+      display: block;
+      margin-top: 1px;
+      font-size: 12px;
+      line-height: 16px;
+      color: var(--weak);
+      white-space: nowrap;
+    }
+
+    .primary-nav {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      justify-content: flex-start;
+    }
+
+    .nav-item {
+      height: 72px;
+      padding: 0 14px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      font-size: 15px;
+      line-height: 20px;
+      font-weight: 650;
+      color: #344054;
+      white-space: nowrap;
+    }
+
+    .nav-item.active {
+      color: #242424;
+    }
+
+    .nav-item.active::after {
+      content: "";
+      position: absolute;
+      left: 14px;
+      right: 14px;
+      bottom: 0;
+      height: 1px;
+      border-radius: 0;
+      background: #242424;
+    }
+
+    .top-search {
+      width: 430px;
+      height: 42px;
+      border: 1px solid var(--line-strong);
+      border-radius: 8px;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 14px;
+      color: #46566c;
+      font-size: 14px;
+      line-height: 20px;
+      font-weight: 560;
+      box-shadow: 0 8px 24px rgba(22, 32, 54, 0.04);
+    }
+
+    .top-search img,
+    .icon-img,
+    [data-icon] {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+    }
+
+    .top-search input {
+      width: 100%;
+      border: 0;
+      outline: 0;
+      background: transparent;
+      color: var(--text);
+      font-size: 14px;
+      line-height: 20px;
+    }
+
+    .top-search input::placeholder {
+      color: var(--weak);
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 14px;
+    }
+
+    .creator-btn {
+      height: 40px;
+      min-width: 116px;
+      padding: 0 16px;
+      border-radius: 8px;
+      background: #101828;
+      color: #fff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 14px;
+      line-height: 20px;
+      font-weight: 650;
+      box-shadow: 0 12px 26px rgba(16, 24, 40, 0.18);
+    }
+
+    .creator-btn img {
+      filter: invert(1);
+      width: 16px;
+      height: 16px;
+    }
+
+    .icon-btn {
+      width: 40px;
+      height: 40px;
+      padding: 0;
+      border: 1px solid #e7ecf3;
+      border-radius: 20px;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      flex-shrink: 0;
+      border: 2px solid #fff;
+    }
+
+    .topic-square-layout {
+      width: 1240px;
+      min-height: 984px;
+      margin: 24px auto 0;
+      display: grid;
+      grid-template-columns: 820px 340px;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .main-panel,
+    .rail-card {
+      background: rgba(255, 255, 255, 0.95);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .main-panel {
+      min-height: 900px;
+      overflow: hidden;
+    }
+
+    .square-header {
+      padding: 24px 24px 18px;
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(249, 251, 255, 0.98), rgba(255, 255, 255, 0.95));
+    }
+
+    .header-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      margin-bottom: 8px;
+      font-size: 13px;
+      line-height: 18px;
+      color: #6b6b6b;
+      font-weight: 760;
+    }
+
+    .square-title {
+      margin: 0;
+      color: #111827;
+      font-size: 28px;
+      line-height: 36px;
+      font-weight: 820;
+    }
+
+    .square-desc {
+      width: 560px;
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 22px;
+    }
+
+    .square-summary {
+      width: 180px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fafafa;
+    }
+
+    .summary-num {
+      color: #242424;
+      font-size: 24px;
+      line-height: 30px;
+      font-weight: 820;
+    }
+
+    .summary-label {
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 18px;
+      font-weight: 650;
+    }
+
+    .tabs-card {
+      padding: 0 20px;
+      height: 58px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: rgba(255, 255, 255, 0.96);
+    }
+
+    .tabs {
+      height: 58px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      overflow: hidden;
+    }
+
+    .tab {
+      height: 58px;
+      padding: 0 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      color: #344054;
+      font-size: 14px;
+      line-height: 20px;
+      font-weight: 650;
+      white-space: nowrap;
+    }
+
+    .tab.active {
+      color: var(--brand-deep);
+    }
+
+    .tab.active::after {
+      content: "";
+      position: absolute;
+      left: 12px;
+      right: 12px;
+      bottom: 0;
+      height: 1px;
+      border-radius: 0;
+      background: #242424;
+    }
+
+    .sort-tabs {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel-soft);
+    }
+
+    .sort-tab {
+      height: 30px;
+      padding: 0 10px;
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 18px;
+      font-weight: 700;
+    }
+
+    .sort-tab.active {
+      background: #fff;
+      color: #242424;
+      box-shadow: none;
+    }
+
+    .topic-grid {
+      padding: 18px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .topic-card {
+      min-height: 176px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 14px;
+      box-shadow: 0 10px 26px rgba(22, 32, 54, 0.045);
+    }
+
+    .topic-card:hover,
+    .topic-card.is-hot {
+      border-color: var(--line-strong);
+      background: linear-gradient(180deg, #ffffff, #fafafa);
+    }
+
+    .topic-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .topic-name {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #111827;
+      font-size: 18px;
+      line-height: 24px;
+      font-weight: 800;
+    }
+
+    .topic-name img {
+      width: 20px;
+      height: 20px;
+    }
+
+    .topic-badge {
+      height: 24px;
+      padding: 0 8px;
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      line-height: 18px;
+      font-weight: 740;
+      white-space: nowrap;
+    }
+
+    .topic-badge.hot {
+      background: var(--orange-soft);
+      color: #3f3f3f;
+    }
+
+    .topic-badge.new {
+      background: var(--blue-soft);
+      color: #3f3f3f;
+    }
+
+    .topic-badge.followed {
+      background: var(--brand-soft);
+      color: var(--brand-deep);
+    }
+
+    .topic-badge.quiet {
+      background: #f2f5f9;
+      color: var(--muted);
+    }
+
+    .topic-desc {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 20px;
+      min-height: 40px;
+    }
+
+    .topic-chips {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .chip {
+      height: 24px;
+      padding: 0 8px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--panel-soft);
+      color: var(--muted);
+      display: inline-flex;
+      align-items: center;
+      font-size: 12px;
+      line-height: 18px;
+      font-weight: 650;
+    }
+
+    .topic-footer {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      padding-top: 12px;
+      border-top: 1px solid var(--line);
+    }
+
+    .topic-stat {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+    }
+
+    .topic-stat strong {
+      color: #111827;
+      font-size: 14px;
+      line-height: 20px;
+      font-weight: 820;
+    }
+
+    .topic-stat span {
+      color: var(--weak);
+      font-size: 12px;
+      line-height: 16px;
+      font-weight: 620;
+    }
+
+    .state-card {
+      grid-column: 1 / -1;
+      margin: 18px;
+      min-height: 430px;
+      border: 1px dashed var(--line-strong);
+      border-radius: 8px;
+      background: var(--panel-soft);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      text-align: center;
+      padding: 48px;
+    }
+
+    .state-icon {
+      width: 54px;
+      height: 54px;
+      border-radius: 16px;
+      background: var(--brand-soft);
+      color: var(--brand-deep);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 14px;
+    }
+
+    .state-icon img {
+      width: 26px;
+      height: 26px;
+    }
+
+    .state-title {
+      margin: 0;
+      color: #111827;
+      font-size: 20px;
+      line-height: 28px;
+      font-weight: 820;
+    }
+
+    .state-desc {
+      width: 420px;
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 22px;
+    }
+
+    .state-actions {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .state-action {
+      height: 36px;
+      padding: 0 14px;
+      border: 1px solid var(--line-strong);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--brand-deep);
+      font-size: 13px;
+      line-height: 18px;
+      font-weight: 760;
+    }
+
+    .skeleton-card {
+      min-height: 176px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .skeleton-block {
+      border-radius: 8px;
+      background: linear-gradient(90deg, #eef3f8, #f6f9fd, #eef3f8);
+      background-size: 200% 100%;
+      animation: pulse 1.4s ease-in-out infinite;
+    }
+
+    .skeleton-line {
+      height: 14px;
+    }
+
+    .skeleton-line.short {
+      width: 42%;
+    }
+
+    .skeleton-line.long {
+      width: 92%;
+    }
+
+    .skeleton-line.mid {
+      width: 68%;
+    }
+
+    @keyframes pulse {
+      0% { background-position: 0 0; }
+      100% { background-position: 200% 0; }
+    }
+
+    .right-rail {
+      display: grid;
+      gap: 16px;
+    }
+
+    .rail-card {
+      padding: 16px;
+    }
+
+    .rail-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .rail-title {
+      color: #111827;
+      font-size: 15px;
+      line-height: 20px;
+      font-weight: 820;
+    }
+
+    .rail-more {
+      color: var(--brand-deep);
+      font-size: 12px;
+      line-height: 18px;
+      font-weight: 760;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .rail-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .rail-item {
+      min-height: 44px;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel-soft);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .rail-item-main {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+      color: #242424;
+      font-size: 13px;
+      line-height: 18px;
+      font-weight: 700;
+    }
+
+    .rail-item-main span {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .rail-sub {
+      flex-shrink: 0;
+      color: var(--weak);
+      font-size: 12px;
+      line-height: 18px;
+      font-weight: 650;
+    }
+
+    .ad-card {
+      overflow: hidden;
+      background:
+        linear-gradient(135deg, rgba(36, 36, 36, 0.08), rgba(36, 36, 36, 0.02)),
+        #fff;
+    }
+
+    .ad-title {
+      color: #111827;
+      font-size: 18px;
+      line-height: 24px;
+      font-weight: 820;
+    }
+
+    .ad-sub {
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 20px;
+    }
+
+    /* Brand lockup override: pure SVG mark, frontend-rendered wordmark. */
+    .brand .brand-mark {
+      width: 62px !important;
+      height: 42px !important;
+      object-fit: contain !important;
+      border-radius: 0 !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      color: transparent !important;
+      flex: 0 0 auto !important;
+    }
+
+    .brand .brand-mark::before,
+    .brand .brand-mark::after {
+      content: none !important;
+      display: none !important;
+    }
+
+    .brand .brand-name {
+      font-size: 24px !important;
+      line-height: 28px !important;
+      font-weight: 900 !important;
+      letter-spacing: 0 !important;
+      transform: skewX(-8deg) scaleX(1.04) !important;
+      transform-origin: left center !important;
+      text-shadow: 1px 0 0 currentColor !important;
+      white-space: nowrap !important;
+    }
+
+    .brand .brand-sub {
+      margin-top: 2px !important;
+      font-size: 11px !important;
+      line-height: 14px !important;
+      font-weight: 680 !important;
+      letter-spacing: 0 !important;
+      color: #4f4f4f !important;
+      white-space: nowrap !important;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="page" data-page>
+    <header class="topbar" data-topbar>
+      <div class="nav-shell" data-nav-shell>
+        <div class="brand" aria-label="多元拾光">
+          <img class="brand-mark" src="../_assets/brand/duoyuan-shiguang-logo-mark.svg?v=20260616-nav2" alt="" aria-hidden="true" />
+          <div class="brand-copy">
+            <span class="brand-name">多元拾光</span>
+            <span class="brand-sub">AI原生实践者社区</span>
+          </div>
+        </div>
+        <nav class="primary-nav" aria-label="一级导航" data-primary-nav>
+          <span class="nav-item active">首页</span>
+          <span class="nav-item">闪念</span>
+          <span class="nav-item">AIGC</span>
+          <span class="nav-item">模型服务</span>
+          <span class="nav-item">AI+</span>
+        </nav>
+        <label class="top-search" data-top-search>
+          <img src="../../../resources/icons/remixicon/svg/System/search-line.svg" alt="" />
+          <input type="text" placeholder="搜索内容、话题、模型服务、工作流" />
+        </label>
+        <div class="top-actions">
+          <button class="creator-btn" type="button" data-creator-button>
+            <img src="../../../resources/icons/remixicon/svg/Design/edit-line.svg" alt="" />
+            创作中心
+          </button>
+          <button class="icon-btn" type="button" aria-label="通知">
+            <img src="../../../resources/icons/remixicon/svg/Media/notification-3-line.svg" alt="" />
+          </button>
+          <img class="avatar" src="../_assets/figma/other-profile-avatar-source.png" alt="用户头像" />
+        </div>
+      </div>
+    </header>
+
+    <main class="topic-square-layout" data-topic-square-layout>
+      <section class="main-panel" data-main-panel>
+        <header class="square-header" data-square-header>
+          <div class="header-row">
+            <div>
+              <div class="eyebrow">
+                <img data-icon src="../../../resources/icons/remixicon/svg/Finance/price-tag-3-line.svg" alt="" />
+                全部话题列表
+              </div>
+              <h1 class="square-title">话题广场</h1>
+              <p class="square-desc">按 AI 做事场景聚合全部话题，先帮助用户找到稳定入口，再点进单个话题查看聚合内容。</p>
+            </div>
+            <div class="square-summary" data-square-summary>
+              <div class="summary-num" data-summary-count>42</div>
+              <div class="summary-label">已开放话题</div>
+            </div>
+          </div>
+        </header>
+
+        <div class="tabs-card" data-tabs-card>
+          <div class="tabs" data-tabs></div>
+          <div class="sort-tabs" data-sort-tabs></div>
+        </div>
+
+        <div class="topic-grid" data-topic-grid></div>
+      </section>
+
+      <aside class="right-rail" data-right-rail>
+        <section class="rail-card" data-right-module="topic-hot">
+          <div class="rail-head">
+            <div class="rail-title">今日热议</div>
+            <div class="rail-more">更多</div>
+          </div>
+          <div class="rail-list" data-hot-list></div>
+        </section>
+
+        <section class="rail-card" data-right-module="topic-new">
+          <div class="rail-head">
+            <div class="rail-title">新增长话题</div>
+            <div class="rail-more">全部</div>
+          </div>
+          <div class="rail-list" data-new-list></div>
+        </section>
+
+        <section class="rail-card ad-card" data-right-module="ad-banner">
+          <div class="ad-title">API 灰度话题共创</div>
+          <div class="ad-sub">围绕模型接入、调用排错和成本优化征集真实案例。</div>
+        </section>
+      </aside>
+    </main>
+  </div>
+
+  <script>
+    const iconBase = "../../../resources/icons/remixicon/svg/";
+    const icons = {
+      topic: iconBase + "Finance/price-tag-3-line.svg",
+      fire: iconBase + "Weather/fire-line.svg",
+      trend: iconBase + "Business/line-chart-line.svg",
+      new: iconBase + "Weather/sparkling-2-line.svg",
+      follow: iconBase + "User & Faces/user-follow-line.svg",
+      time: iconBase + "System/time-line.svg",
+      warning: iconBase + "System/alert-line.svg",
+      refresh: iconBase + "System/refresh-line.svg",
+      apps: iconBase + "System/apps-2-line.svg"
+    };
+
+    const categories = ["全部话题", "AI Coding", "模型与 API", "AIGC", "工作流", "Skill/MCP", "教程案例"];
+    const sortTabs = ["热度", "最新活跃"];
+
+    const topics = [
+      { name: "#Vibe Coding", category: "AI Coding", desc: "围绕 AI 辅助编码、任务拆解、仓库协作和验收边界的实践沉淀。", content: "326", today: "18", followers: "2.1k", badge: "hot", badgeText: "高活跃", tags: ["代码生成", "任务拆解", "验收"], heat: 98, fresh: 82, followed: true },
+      { name: "#Agent", category: "工作流", desc: "聚合 Agent 架构、工具调用、自动化任务和人机协作边界。", content: "241", today: "12", followers: "1.8k", badge: "hot", badgeText: "高活跃", tags: ["自动化", "工具调用", "RAG"], heat: 94, fresh: 76 },
+      { name: "#RAG 应用", category: "模型与 API", desc: "知识库、向量检索、企业问答和检索增强生成落地经验。", content: "198", today: "9", followers: "1.6k", badge: "new", badgeText: "持续增长", tags: ["知识库", "检索", "企业问答"], heat: 88, fresh: 91 },
+      { name: "#模型接入", category: "模型与 API", desc: "模型平台选择、API 接入方式、上下文限制、成本估算和失败重试。", content: "176", today: "15", followers: "1.5k", badge: "hot", badgeText: "高活跃", tags: ["API", "成本", "限流"], heat: 90, fresh: 88 },
+      { name: "#ComfyUI", category: "AIGC", desc: "图像工作流、节点组合、参数复用和作品过程记录。", content: "154", today: "7", followers: "1.3k", badge: "quiet", badgeText: "作品向", tags: ["图像生成", "节点", "参数"], heat: 82, fresh: 70 },
+      { name: "#Prompt 工程", category: "AIGC", desc: "Prompt 结构、变量模板、参数对比和复用边界。", content: "149", today: "10", followers: "1.2k", badge: "new", badgeText: "持续增长", tags: ["提示词", "模板", "参数"], heat: 79, fresh: 87 },
+      { name: "#工作流自动化", category: "工作流", desc: "把重复任务拆成可复用流程，沉淀工具链、输入输出和限制。", content: "138", today: "8", followers: "1.1k", badge: "hot", badgeText: "高活跃", tags: ["流程", "自动化", "提效"], heat: 84, fresh: 74 },
+      { name: "#GitHub MCP", category: "Skill/MCP", desc: "MCP Server、权限边界、仓库操作和工具连接实践。", content: "112", today: "6", followers: "982", badge: "new", badgeText: "增长中", tags: ["MCP", "GitHub", "权限"], heat: 72, fresh: 83 },
+      { name: "#代码审查", category: "AI Coding", desc: "AI 辅助 review、风险识别、测试补齐和变更解释。", content: "96", today: "4", followers: "814", badge: "quiet", badgeText: "稳定", tags: ["Review", "测试", "质量"], heat: 68, fresh: 62, followed: true },
+      { name: "#教程案例", category: "教程案例", desc: "把可复现的 AI 工具使用路径写成步骤、限制和验收样例。", content: "88", today: "5", followers: "706", badge: "quiet", badgeText: "案例向", tags: ["教程", "复现", "说明"], heat: 64, fresh: 66 },
+      { name: "#API 排错", category: "模型与 API", desc: "请求失败、鉴权、限流、日志、重试和可观测性经验。", content: "82", today: "9", followers: "681", badge: "new", badgeText: "持续增长", tags: ["排错", "限流", "日志"], heat: 74, fresh: 89 },
+      { name: "#Skill 发布", category: "Skill/MCP", desc: "Skill 文件、License、话题、图标和审核状态的发布经验。", content: "64", today: "3", followers: "512", badge: "quiet", badgeText: "稳定", tags: ["Skill", "发布", "规范"], heat: 56, fresh: 58 }
+    ];
+
+    const stateMap = {
+      default: { category: "全部话题", sort: "热度", count: "42", items: topics },
+      "ai-coding": { category: "AI Coding", sort: "热度", count: "8", items: topics.filter((item) => item.category === "AI Coding") },
+      "model-api": { category: "模型与 API", sort: "热度", count: "10", items: topics.filter((item) => item.category === "模型与 API") },
+      aigc: { category: "AIGC", sort: "热度", count: "7", items: topics.filter((item) => item.category === "AIGC") },
+      workflow: { category: "工作流", sort: "热度", count: "6", items: topics.filter((item) => item.category === "工作流") },
+      "skill-mcp": { category: "Skill/MCP", sort: "热度", count: "5", items: topics.filter((item) => item.category === "Skill/MCP") },
+      tutorial: { category: "教程案例", sort: "热度", count: "4", items: topics.filter((item) => item.category === "教程案例") },
+      newest: { category: "全部话题", sort: "最新活跃", count: "42", items: [...topics].sort((a, b) => b.fresh - a.fresh) },
+      followed: { category: "全部话题", sort: "热度", count: "2", items: topics.filter((item) => item.followed), followedOnly: true },
+      empty: { category: "教程案例", sort: "最新活跃", count: "0", items: [], empty: true },
+      loading: { category: "全部话题", sort: "热度", count: "42", loading: true },
+      failed: { category: "全部话题", sort: "热度", count: "42", failed: true }
+    };
+
+    const hotItems = [
+      ["#Vibe Coding", "今日 18 条"],
+      ["#模型接入", "今日 15 条"],
+      ["#Agent", "今日 12 条"],
+      ["#Prompt 工程", "今日 10 条"]
+    ];
+
+    const newItems = [
+      ["#API 排错", "排查经验增长中"],
+      ["#GitHub MCP", "工具连接增长中"],
+      ["#RAG 应用", "企业问答增长中"]
+    ];
+
+    function getState() {
+      return new URLSearchParams(window.location.search).get("state") || "default";
+    }
+
+    function currentConfig() {
+      return stateMap[getState()] || stateMap.default;
+    }
+
+    function badgeClass(item) {
+      if (item.followed) return "followed";
+      return item.badge || "quiet";
+    }
+
+    function renderTabs(config) {
+      document.querySelector("[data-tabs]").innerHTML = categories.map((category) => (
+        `<div class="tab ${category === config.category ? "active" : ""}" data-tab>${category}</div>`
+      )).join("");
+      document.querySelector("[data-sort-tabs]").innerHTML = sortTabs.map((sort) => (
+        `<div class="sort-tab ${sort === config.sort ? "active" : ""}" data-sort-tab="${sort}">
+          <img data-icon src="${sort === "热度" ? icons.fire : icons.time}" alt="" />${sort}
+        </div>`
+      )).join("");
+    }
+
+    function renderTopicCard(item) {
+      return `
+        <article class="topic-card ${item.badge === "hot" ? "is-hot" : ""}" data-topic-square-card data-topic-category="${item.category}">
+          <div>
+            <div class="topic-top">
+              <div>
+                <div class="topic-name"><img data-icon src="${icons.topic}" alt="" />${item.name}</div>
+                <p class="topic-desc">${item.desc}</p>
+              </div>
+              <span class="topic-badge ${badgeClass(item)}">${item.followed ? "已关注" : item.badgeText}</span>
+            </div>
+            <div class="topic-chips">
+              ${item.tags.map((tag) => `<span class="chip">${tag}</span>`).join("")}
+            </div>
+          </div>
+          <div class="topic-footer">
+            <div class="topic-stat"><strong>${item.content}</strong><span>内容</span></div>
+            <div class="topic-stat"><strong>${item.today}</strong><span>今日新增</span></div>
+            <div class="topic-stat"><strong>${item.followers}</strong><span>关注</span></div>
+          </div>
+        </article>
+      `;
+    }
+
+    function renderGrid(config) {
+      const grid = document.querySelector("[data-topic-grid]");
+      if (config.loading) {
+        grid.innerHTML = Array.from({ length: 8 }, () => `
+          <div class="skeleton-card" data-skeleton-card>
+            <div class="skeleton-block skeleton-line short"></div>
+            <div class="skeleton-block skeleton-line long"></div>
+            <div class="skeleton-block skeleton-line mid"></div>
+            <div class="topic-footer">
+              <div class="skeleton-block skeleton-line"></div>
+              <div class="skeleton-block skeleton-line"></div>
+              <div class="skeleton-block skeleton-line"></div>
+            </div>
+          </div>
+        `).join("");
+        return;
+      }
+
+      if (config.failed) {
+        grid.innerHTML = `
+          <div class="state-card" data-failed>
+            <div class="state-icon"><img data-icon src="${icons.warning}" alt="" /></div>
+            <h2 class="state-title">话题列表加载失败</h2>
+            <p class="state-desc">当前话题广场没有加载完成，可以稍后重试，或先从右侧热议话题进入聚合页。</p>
+            <div class="state-actions"><button class="state-action">重试</button><button class="state-action">查看今日热议</button></div>
+          </div>
+        `;
+        return;
+      }
+
+      if (config.empty) {
+        grid.innerHTML = `
+          <div class="state-card" data-empty>
+            <div class="state-icon"><img data-icon src="${icons.topic}" alt="" /></div>
+            <h2 class="state-title">这个分类暂时没有开放话题</h2>
+            <p class="state-desc">可以先回到全部话题，或从右侧今日热议继续浏览已有话题。</p>
+            <div class="state-actions"><button class="state-action">全部话题</button><button class="state-action">今日热议</button></div>
+          </div>
+        `;
+        return;
+      }
+
+      grid.innerHTML = config.items.map(renderTopicCard).join("");
+    }
+
+    function renderRail() {
+      document.querySelector("[data-hot-list]").innerHTML = hotItems.map(([name, meta]) => `
+        <div class="rail-item" data-topic-rail>
+          <span class="rail-item-main"><img data-icon src="${icons.fire}" alt="" /><span>${name}</span></span>
+          <span class="rail-sub">${meta}</span>
+        </div>
+      `).join("");
+
+      document.querySelector("[data-new-list]").innerHTML = newItems.map(([name, meta]) => `
+        <div class="rail-item" data-topic-rail>
+          <span class="rail-item-main"><img data-icon src="${icons.new}" alt="" /><span>${name}</span></span>
+          <span class="rail-sub">${meta}</span>
+        </div>
+      `).join("");
+    }
+
+    function render() {
+      const config = currentConfig();
+      document.querySelector("[data-summary-count]").textContent = config.count;
+      renderTabs(config);
+      renderGrid(config);
+      renderRail();
+    }
+
+    render();
+  </script>
+  <script src="../_shared/c-end-prototype-interactions.js"></script>
+</body>
+</html>

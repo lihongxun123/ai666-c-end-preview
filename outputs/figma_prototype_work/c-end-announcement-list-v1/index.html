@@ -1,0 +1,641 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>多元拾光 C端社区公告页原型 V0.1</title>
+  <link rel="icon" type="image/svg+xml" href="../_assets/brand/duoyuan-shiguang-favicon.svg" />
+  <style>
+    :root {
+      --bg: #f6f8fb;
+      --panel: #ffffff;
+      --panel-soft: #f9fbff;
+      --line: #e6edf5;
+      --line-strong: #d9e2ee;
+      --text: #151b26;
+      --muted: #667085;
+      --weak: #98a2b3;
+      --brand: #16b8a6;
+      --brand-deep: #0f9384;
+      --brand-soft: rgba(22, 184, 166, 0.10);
+      --blue: #2563eb;
+      --shadow: 0 22px 60px rgba(22, 32, 54, 0.10);
+    }
+
+    * { box-sizing: border-box; }
+    html,
+    body {
+      width: 1920px;
+      min-height: 1080px;
+      margin: 0;
+      overflow-x: hidden;
+      overflow-y: auto;
+      background:
+        linear-gradient(90deg, rgba(37, 99, 235, 0.020) 1px, transparent 1px) 0 0 / 32px 32px,
+        linear-gradient(0deg, rgba(22, 184, 166, 0.018) 1px, transparent 1px) 0 0 / 32px 32px,
+        var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+      letter-spacing: 0;
+    }
+
+    button { border: 0; font: inherit; cursor: default; }
+    .page { width: 1920px; min-height: 1080px; position: relative; padding-bottom: 56px; }
+    .topbar {
+      height: 72px;
+      background: rgba(255, 255, 255, 0.92);
+      border-bottom: 1px solid rgba(219, 227, 239, 0.92);
+      backdrop-filter: blur(16px);
+    }
+
+    .nav-shell {
+      width: 1440px;
+      height: 72px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 30px;
+    }
+
+    .brand {
+      width: 184px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .brand-mark {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #2563eb, #16b8a6);
+      position: relative;
+      box-shadow: 0 10px 22px rgba(22, 184, 166, 0.20);
+    }
+
+    .brand-mark::after {
+      content: "";
+      position: absolute;
+      left: 8px;
+      top: 8px;
+      width: 16px;
+      height: 16px;
+      border: 3px solid rgba(255, 255, 255, 0.94);
+      border-left: 0;
+      border-bottom: 0;
+      transform: rotate(45deg);
+      border-radius: 2px;
+    }
+
+    .brand-name { font-size: 28px; line-height: 34px; font-weight: 820; color: #111827; }
+    .brand-sub { margin-left: 2px; color: var(--muted); font-size: 13px; line-height: 18px; font-weight: 650; white-space: nowrap; }
+    .nav { display: flex; align-items: center; gap: 26px; height: 72px; flex-shrink: 0; }
+    .nav-item {
+      height: 72px;
+      display: flex;
+      align-items: center;
+      color: #273244;
+      font-size: 16px;
+      line-height: 22px;
+      font-weight: 740;
+      position: relative;
+      white-space: nowrap;
+    }
+    .nav-item.active { color: var(--brand-deep); }
+    .nav-item.active::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 3px;
+      border-radius: 3px 3px 0 0;
+      background: var(--brand);
+    }
+
+    .top-search {
+      margin-left: auto;
+      width: 460px;
+      height: 40px;
+      border: 1px solid var(--line-strong);
+      border-radius: 8px;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 14px;
+      color: #46566c;
+      font-size: 14px;
+      line-height: 20px;
+      font-weight: 560;
+      box-shadow: 0 10px 28px rgba(22, 32, 54, 0.04);
+    }
+
+    .top-search .search-value { color: #182233; font-weight: 650; }
+    .creator-button {
+      height: 40px;
+      padding: 0 18px;
+      border: 1px solid rgba(22, 184, 166, 0.52);
+      border-radius: 8px;
+      background: #ecfdf9;
+      color: var(--brand-deep);
+      font-size: 14px;
+      line-height: 20px;
+      font-weight: 760;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+    }
+
+    .avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      object-fit: cover;
+      flex-shrink: 0;
+      border: 1px solid var(--line);
+    }
+
+    .icon-img { width: 18px; height: 18px; flex-shrink: 0; opacity: 0.74; }
+
+    .announcement-layout {
+      width: 1440px;
+      min-height: 932px;
+      margin: 24px auto 0;
+      display: block;
+    }
+
+    .panel {
+      width: 1440px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.94);
+      box-shadow: 0 14px 38px rgba(22, 32, 54, 0.07);
+      overflow: hidden;
+    }
+
+    .list-panel { min-height: 820px; }
+    .list-head {
+      padding: 28px 32px 22px;
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(248,251,255,0.94));
+    }
+
+    .title-row {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .page-title {
+      margin: 0;
+      color: #111827;
+      font-size: 34px;
+      line-height: 42px;
+      font-weight: 860;
+    }
+
+    .summary-pill {
+      height: 34px;
+      padding: 0 12px;
+      border-radius: 17px;
+      background: var(--brand-soft);
+      color: var(--brand-deep);
+      display: inline-flex;
+      align-items: center;
+      font-size: 13px;
+      line-height: 18px;
+      font-weight: 760;
+      white-space: nowrap;
+    }
+
+    .head-meta {
+      margin-top: 12px;
+      color: var(--weak);
+      font-size: 13px;
+      line-height: 18px;
+      font-weight: 650;
+    }
+
+    .announcement-list { display: grid; }
+    .announcement-item {
+      min-height: 132px;
+      padding: 22px 32px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 148px auto;
+      gap: 24px;
+      align-items: center;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255,255,255,0.76);
+    }
+    .announcement-item:last-child { border-bottom: 0; }
+    .announcement-main { min-width: 0; }
+    .notice-title {
+      margin: 0;
+      color: #111827;
+      font-size: 21px;
+      line-height: 30px;
+      font-weight: 820;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .notice-desc {
+      margin: 8px 0 0;
+      color: #55657a;
+      font-size: 15px;
+      line-height: 24px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .notice-thumb {
+      width: 148px;
+      height: 88px;
+      border-radius: 8px;
+      object-fit: cover;
+      border: 1px solid var(--line);
+      background: #edf2f7;
+    }
+    .notice-date {
+      width: 92px;
+      color: #7a8799;
+      font-size: 13px;
+      line-height: 18px;
+      text-align: right;
+      font-weight: 700;
+    }
+
+    .detail-panel {
+      padding: 46px 96px 72px;
+      min-height: 880px;
+    }
+    .detail-meta {
+      color: #7a8799;
+      font-size: 14px;
+      line-height: 22px;
+      font-weight: 650;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .detail-meta::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--brand);
+      box-shadow: 0 0 0 5px var(--brand-soft);
+    }
+    .detail-title {
+      margin: 0;
+      max-width: 860px;
+      color: #111827;
+      font-size: 36px;
+      line-height: 46px;
+      font-weight: 860;
+    }
+    .markdown-body {
+      margin-top: 32px;
+      max-width: 900px;
+      color: #273244;
+      font-size: 17px;
+      line-height: 30px;
+    }
+    .markdown-body p { margin: 0 0 18px; }
+    .markdown-body h2 {
+      margin: 34px 0 14px;
+      color: #121926;
+      font-size: 25px;
+      line-height: 34px;
+      font-weight: 830;
+    }
+    .markdown-body ul {
+      margin: 0 0 20px;
+      padding-left: 22px;
+      display: grid;
+      gap: 10px;
+    }
+    .markdown-body li { padding-left: 4px; }
+    .markdown-body figure {
+      margin: 26px 0 30px;
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+      background: #f8fafc;
+    }
+    .markdown-body figure img {
+      width: 100%;
+      height: 330px;
+      display: block;
+      object-fit: cover;
+    }
+    .markdown-body figcaption {
+      padding: 12px 16px;
+      color: #667085;
+      font-size: 13px;
+      line-height: 20px;
+      border-top: 1px solid var(--line);
+    }
+    .markdown-body blockquote {
+      margin: 26px 0;
+      padding: 16px 18px;
+      border-left: 4px solid var(--brand);
+      border-radius: 0 8px 8px 0;
+      background: var(--brand-soft);
+      color: #225c55;
+      font-weight: 680;
+    }
+    .markdown-body code {
+      padding: 2px 6px;
+      border-radius: 5px;
+      background: #eef4ff;
+      color: #315b9f;
+      font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+      font-size: 14px;
+    }
+
+    .state-card {
+      min-height: 600px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 40px;
+      color: var(--muted);
+    }
+    .state-card h2 {
+      margin: 12px 0 8px;
+      color: #172033;
+      font-size: 22px;
+      line-height: 30px;
+    }
+    .state-card p { margin: 0; font-size: 14px; line-height: 22px; }
+    .state-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      display: inline-grid;
+      place-items: center;
+      background: var(--brand-soft);
+    }
+    .state-icon img { width: 24px; height: 24px; }
+    .skeleton-list { padding: 24px 32px; display: grid; gap: 14px; }
+    .skeleton {
+      height: 112px;
+      border-radius: 8px;
+      background: linear-gradient(90deg, #eef3f8, #f8fafc, #eef3f8);
+      background-size: 240% 100%;
+    }
+
+    /* Brand lockup override: pure SVG mark, frontend-rendered wordmark. */
+    .brand .brand-mark {
+      width: 62px !important;
+      height: 42px !important;
+      object-fit: contain !important;
+      border-radius: 0 !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      color: transparent !important;
+      flex: 0 0 auto !important;
+    }
+
+    .brand .brand-mark::before,
+    .brand .brand-mark::after {
+      content: none !important;
+      display: none !important;
+    }
+
+    .brand .brand-name {
+      font-size: 24px !important;
+      line-height: 28px !important;
+      font-weight: 900 !important;
+      letter-spacing: 0 !important;
+      transform: skewX(-8deg) scaleX(1.04) !important;
+      transform-origin: left center !important;
+      text-shadow: 1px 0 0 currentColor !important;
+      white-space: nowrap !important;
+    }
+
+    .brand .brand-sub {
+      margin-top: 2px !important;
+      font-size: 11px !important;
+      line-height: 14px !important;
+      font-weight: 680 !important;
+      letter-spacing: 0 !important;
+      color: #4f4f4f !important;
+      white-space: nowrap !important;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="page" data-page="announcement-list">
+    <header class="topbar" data-topbar>
+      <div class="nav-shell" data-nav-shell>
+        <div class="brand">
+          <img class="brand-mark" src="../_assets/brand/duoyuan-shiguang-logo-mark.svg?v=20260616-nav2" alt="" aria-hidden="true" />
+          <div>
+            <div class="brand-name">多元拾光</div>
+            <div class="brand-sub">AI原生实践者社区</div>
+          </div>
+        </div>
+        <nav class="nav" aria-label="主导航">
+          <div class="nav-item active">首页</div>
+          <div class="nav-item">闪念</div>
+          <div class="nav-item">AIGC</div>
+          <div class="nav-item">模型服务</div>
+          <div class="nav-item">AI+</div>
+        </nav>
+        <div class="top-search" data-top-search>
+          <img class="icon-img" data-icon src="../../../resources/icons/remixicon/svg/System/search-line.svg" alt="" />
+          <span>搜索</span>
+          <span class="search-value" data-top-query>Vibe Coding</span>
+        </div>
+        <button class="creator-button" data-creator-button>
+          <img class="icon-img" data-icon src="../../../resources/icons/remixicon/svg/Design/edit-box-line.svg" alt="" />
+          创作中心
+        </button>
+        <img class="icon-img" data-icon src="../../../resources/icons/remixicon/svg/Media/notification-line.svg" alt="" />
+        <img class="avatar" src="../_assets/figma/detail-author-jianbing-avatar-source.png" alt="" />
+      </div>
+    </header>
+
+    <main class="announcement-layout" data-announcement-layout>
+      <section class="panel list-panel" data-main-panel>
+        <div id="announcement-root"></div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const state = new URLSearchParams(location.search).get("state") || "default";
+    const icon = (name) => `../../../resources/icons/remixicon/svg/${name}`;
+    const root = document.getElementById("announcement-root");
+    const image = (name) => `../_assets/figma/${name}`;
+    const notices = [
+      {
+        title: "社区隐私保护与敏感信息处理说明",
+        desc: "说明公告、内容和评论中涉及手机号、API 凭证、卡密等敏感信息的展示与处理边界。",
+        date: "06-14",
+        thumb: "article-detail-portrait-source.png"
+      },
+      {
+        title: "多元拾光 社区内容规范更新说明",
+        desc: "补充 AI 资源发布、评论互动、转载标注和违规处理的社区说明。",
+        date: "06-12",
+        thumb: "cover-03-balanced.png"
+      },
+      {
+        title: "创作服务平台发布指引",
+        desc: "说明文章、闪念、AIGC 作品、工作流、Skill 与 MCP 的发布入口和基础字段。",
+        date: "06-10",
+        thumb: "cover-04-square.png"
+      },
+      {
+        title: "模型服务内容投稿指引",
+        desc: "面向模型 API、接入教程、排错经验和成本优化内容的投稿说明。",
+        date: "06-08",
+        thumb: "cover-08-wide.png"
+      },
+      {
+        title: "AI+ 资源内容格式说明",
+        desc: "工作流、Skill、MCP 和教程案例统一按可复用资源标准展示。",
+        date: "06-06",
+        thumb: "featured-cover-03-system-intro.png"
+      },
+      {
+        title: "右侧运营入口调整",
+        desc: "公告、活动和推荐入口统一收束到各消费页的运营承接区。",
+        date: "06-04",
+        thumb: "cover-07-compact.png"
+      }
+    ];
+
+    function renderList() {
+      root.innerHTML = `
+        <div class="list-head" data-list-head>
+          <div class="title-row">
+            <h1 class="page-title" data-page-title>社区公告</h1>
+          </div>
+        </div>
+        <div class="announcement-list" data-announcement-list>
+          ${notices.map((item) => `
+            <article class="announcement-item" data-announcement-item data-state-target="detail">
+              <div class="announcement-main">
+                <h2 class="notice-title">${item.title}</h2>
+                <p class="notice-desc">${item.desc}</p>
+              </div>
+              <img class="notice-thumb" src="${image(item.thumb)}" alt="" />
+              <div class="notice-date" data-announcement-date>${item.date}</div>
+            </article>
+          `).join("")}
+        </div>
+      `;
+
+      root.querySelectorAll("[data-state-target]").forEach((node) => {
+        node.addEventListener("click", () => {
+          location.href = `${location.pathname}?state=detail`;
+        });
+      });
+    }
+
+    function renderDetail() {
+      root.innerHTML = `
+        <article class="detail-panel" data-announcement-detail>
+          <div class="detail-meta">2026-06-14 发布</div>
+          <h1 class="detail-title" data-detail-title>社区隐私保护与敏感信息处理说明</h1>
+          <div class="markdown-body" data-markdown-body>
+            <p>为了降低公开内容里的隐私泄露风险，多元拾光 会把公告、内容、评论和附件中的敏感信息按展示边界处理。公告正文仍采用 Markdown 图文混排，便于同时说明规则、示例和处理结果。</p>
+
+            <figure>
+              <img src="${image("article-detail-portrait-source.png")}" alt="" />
+              <figcaption>示意：公开内容只展示可读说明，不展示完整个人信息或凭证。</figcaption>
+            </figure>
+
+            <h2>哪些内容会被隐藏</h2>
+            <p>当内容中出现手机号、邮箱、卡密、兑换码、API 凭证、会话凭证、订单号或支付流水时，公开页面只保留脱敏占位，不复述完整字段。</p>
+            <ul>
+              <li>手机号、邮箱等联系方式展示为 <code>[PHONE]</code>、<code>[EMAIL]</code>。</li>
+              <li>API 凭证、会话凭证和兑换码展示为 <code>[TOKEN]</code>、<code>[CARD_CODE]</code>。</li>
+              <li>订单、支付和账户相关内容只保留必要说明，不展示完整流水。</li>
+            </ul>
+
+            <h2>用户应该怎么处理</h2>
+            <p>发布教程、排错记录、模型调用经验或工作流复盘时，请先确认截图和文本中没有完整凭证。需要说明问题时，用占位符替代原始字段，并保留必要上下文。</p>
+            <blockquote>公开页面只服务阅读和理解，不承载完整凭证、个人身份信息或支付信息。</blockquote>
+
+            <h2>后续处理范围</h2>
+            <p>如果发现已经发布的内容包含完整敏感字段，平台会优先进行脱敏、限制展示或要求作者修改。恶意曝光他人信息的内容将按社区规范处理。</p>
+          </div>
+        </article>
+      `;
+    }
+
+    function renderEmpty() {
+      root.innerHTML = `
+        <div class="list-head" data-list-head>
+          <div class="title-row">
+            <h1 class="page-title" data-page-title>社区公告</h1>
+          </div>
+        </div>
+        <section class="state-card" data-empty>
+          <div>
+            <div class="state-icon"><img data-icon src="${icon("Document/file-list-3-line.svg")}" alt="" /></div>
+            <h2>暂时没有公告</h2>
+            <p>当前没有可展示的社区公告。</p>
+          </div>
+        </section>
+      `;
+    }
+
+    function renderLoading() {
+      root.innerHTML = `
+        <div class="list-head" data-list-head>
+          <div class="title-row">
+            <h1 class="page-title" data-page-title>社区公告</h1>
+          </div>
+        </div>
+        <div class="skeleton-list" data-loading>
+          ${Array.from({ length: 5 }).map(() => `<div class="skeleton" data-skeleton-card></div>`).join("")}
+        </div>
+      `;
+    }
+
+    function renderFailed() {
+      root.innerHTML = `
+        <div class="list-head" data-list-head>
+          <div class="title-row">
+            <h1 class="page-title" data-page-title>社区公告</h1>
+          </div>
+        </div>
+        <section class="state-card" data-failed>
+          <div>
+            <div class="state-icon"><img data-icon src="${icon("System/error-warning-line.svg")}" alt="" /></div>
+            <h2>公告加载失败</h2>
+            <p>可以重试，或先返回继续浏览其他内容。</p>
+          </div>
+        </section>
+      `;
+    }
+
+    if (state === "detail") {
+      renderDetail();
+    } else if (state === "empty") {
+      renderEmpty();
+    } else if (state === "loading") {
+      renderLoading();
+    } else if (state === "failed") {
+      renderFailed();
+    } else {
+      renderList();
+    }
+  </script>
+  <script src="../_shared/c-end-prototype-interactions.js"></script>
+</body>
+</html>

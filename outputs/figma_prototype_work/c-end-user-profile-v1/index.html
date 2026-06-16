@@ -1,0 +1,1640 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>多元拾光 C端用户主页与关系原型 V1</title>
+  <link rel="icon" type="image/svg+xml" href="../_assets/brand/duoyuan-shiguang-favicon.svg" />
+  <style>
+    :root {
+      --bg: #f6f8fb;
+      --panel: #ffffff;
+      --panel-soft: #f9fbff;
+      --line: #e6edf5;
+      --line-strong: #d9e2ee;
+      --text: #151b26;
+      --muted: #667085;
+      --weak: #98a2b3;
+      --brand: #16b8a6;
+      --brand-deep: #0f9384;
+      --brand-soft: rgba(22, 184, 166, 0.10);
+      --blue: #2563eb;
+      --blue-soft: rgba(37, 99, 235, 0.10);
+      --orange: #f97316;
+      --orange-soft: rgba(249, 115, 22, 0.12);
+      --red: #ef4444;
+      --red-soft: rgba(239, 68, 68, 0.10);
+      --shadow: 0 18px 48px rgba(22, 32, 54, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 1920px;
+      min-height: 1080px;
+      margin: 0;
+      overflow-x: hidden;
+      overflow-y: auto;
+      background:
+        radial-gradient(circle at 18% 0%, rgba(22, 184, 166, 0.08), transparent 28%),
+        radial-gradient(circle at 82% 10%, rgba(37, 99, 235, 0.06), transparent 30%),
+        linear-gradient(90deg, rgba(37, 99, 235, 0.020) 1px, transparent 1px) 0 0 / 32px 32px,
+        linear-gradient(0deg, rgba(22, 184, 166, 0.018) 1px, transparent 1px) 0 0 / 32px 32px,
+        var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+      letter-spacing: 0;
+    }
+
+    button,
+    input,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      border: 0;
+      cursor: default;
+    }
+
+    .page {
+      width: 1920px;
+      min-height: 1080px;
+      position: relative;
+    }
+
+    .topbar {
+      height: 72px;
+      background: rgba(255, 255, 255, 0.88);
+      border-bottom: 1px solid rgba(219, 227, 239, 0.86);
+      backdrop-filter: blur(16px);
+    }
+
+    .nav-shell {
+      width: 1440px;
+      height: 72px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 220px 438px 430px 280px;
+      gap: 24px;
+      align-items: center;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .brand-mark {
+      width: 36px;
+      height: 36px;
+      border-radius: 9px;
+      position: relative;
+      background: linear-gradient(135deg, #16b8a6 0%, #2563eb 100%);
+      box-shadow: 0 10px 24px rgba(22, 184, 166, 0.18);
+    }
+
+    .brand-mark::before,
+    .brand-mark::after {
+      content: "";
+      position: absolute;
+      background: #fff;
+      border-radius: 2px;
+      transform-origin: center;
+    }
+
+    .brand-mark::before {
+      width: 19px;
+      height: 5px;
+      left: 9px;
+      top: 17px;
+      transform: rotate(-58deg);
+    }
+
+    .brand-mark::after {
+      width: 20px;
+      height: 5px;
+      left: 15px;
+      top: 17px;
+      transform: rotate(58deg);
+    }
+
+    .brand-name {
+      display: block;
+      font-size: 25px;
+      line-height: 30px;
+      font-weight: 800;
+      color: #121826;
+    }
+
+    .brand-sub {
+      display: block;
+      margin-top: 1px;
+      font-size: 12px;
+      line-height: 16px;
+      color: var(--weak);
+      white-space: nowrap;
+    }
+
+    .primary-nav {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      justify-content: flex-start;
+    }
+
+    .nav-item {
+      height: 72px;
+      padding: 0 14px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      font-size: 15px;
+      line-height: 20px;
+      font-weight: 650;
+      color: #344054;
+      white-space: nowrap;
+    }
+
+    .nav-item.active {
+      color: #0f766e;
+    }
+
+    .nav-item.active::after {
+      content: "";
+      position: absolute;
+      left: 14px;
+      right: 14px;
+      bottom: 0;
+      height: 3px;
+      border-radius: 3px 3px 0 0;
+      background: linear-gradient(90deg, #16b8a6, #2563eb);
+    }
+
+    .top-search {
+      width: 430px;
+      height: 42px;
+      border: 1px solid var(--line-strong);
+      border-radius: 8px;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 14px;
+      color: #46566c;
+      font-size: 14px;
+      line-height: 20px;
+      font-weight: 560;
+      box-shadow: 0 8px 24px rgba(22, 32, 54, 0.04);
+    }
+
+    .top-search img,
+    .icon-img,
+    [data-icon] {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+    }
+
+    .top-search input {
+      width: 100%;
+      border: 0;
+      outline: 0;
+      background: transparent;
+      color: var(--text);
+      font-size: 14px;
+      line-height: 20px;
+    }
+
+    .top-search input::placeholder {
+      color: var(--weak);
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 14px;
+    }
+
+    .creator-btn {
+      height: 40px;
+      min-width: 116px;
+      padding: 0 16px;
+      border-radius: 8px;
+      background: #101828;
+      color: #fff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 650;
+      box-shadow: 0 12px 26px rgba(16, 24, 40, 0.18);
+    }
+
+    .creator-btn img {
+      width: 16px;
+      height: 16px;
+      filter: invert(1);
+    }
+
+    .icon-btn {
+      width: 40px;
+      height: 40px;
+      border: 1px solid #e7ecf3;
+      border-radius: 20px;
+      background: #fff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .icon-btn img {
+      width: 18px;
+      height: 18px;
+    }
+
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border: 2px solid #fff;
+      border-radius: 999px;
+      object-fit: cover;
+      box-shadow: 0 8px 18px rgba(16, 24, 40, 0.10);
+    }
+
+    .profile-shell {
+      width: 1380px;
+      margin: 28px auto 88px;
+    }
+
+    .profile-card {
+      width: 1380px;
+      min-height: 177px;
+      border: 1px solid rgba(22, 184, 166, 0.18);
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.92);
+      box-shadow: var(--shadow);
+      display: grid;
+      grid-template-columns: 132px minmax(0, 1fr) 352px;
+      gap: 24px;
+      padding: 28px 32px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .profile-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(110deg, rgba(22, 184, 166, 0.10), transparent 36%, rgba(37, 99, 235, 0.06));
+      pointer-events: none;
+    }
+
+    .profile-avatar-wrap,
+    .profile-main,
+    .profile-side {
+      position: relative;
+      z-index: 1;
+    }
+
+    .profile-avatar-large {
+      width: 120px;
+      height: 120px;
+      border-radius: 999px;
+      object-fit: cover;
+      border: 4px solid #fff;
+      box-shadow: 0 16px 32px rgba(22, 32, 54, 0.14);
+    }
+
+    .profile-name-row {
+      min-height: 34px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .profile-name {
+      font-size: 26px;
+      line-height: 34px;
+      font-weight: 780;
+      color: #101828;
+      letter-spacing: 0;
+    }
+
+    .badge {
+      height: 24px;
+      padding: 0 9px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: var(--brand-soft);
+      color: var(--brand-deep);
+      font-size: 12px;
+      line-height: 18px;
+      font-weight: 700;
+      border: 1px solid rgba(22, 184, 166, 0.20);
+      white-space: nowrap;
+    }
+
+    .profile-id {
+      margin-top: 4px;
+      color: var(--weak);
+      font-size: 13px;
+      line-height: 18px;
+    }
+
+    .profile-bio {
+      margin: 12px 0 0;
+      max-width: 682px;
+      min-height: 40px;
+      color: #344054;
+      font-size: 14px;
+      line-height: 20px;
+    }
+
+    .profile-meta {
+      margin-top: 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .pill {
+      height: 26px;
+      padding: 0 10px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.72);
+      color: var(--muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      line-height: 18px;
+      font-weight: 650;
+    }
+
+    .pill img {
+      width: 14px;
+      height: 14px;
+      opacity: 0.72;
+    }
+
+    .profile-side {
+      align-self: stretch;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .stat-row {
+      height: 72px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      align-items: center;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.62);
+      border: 1px solid rgba(230, 237, 245, 0.90);
+    }
+
+    .stat {
+      min-width: 0;
+      text-align: center;
+      position: relative;
+    }
+
+    .stat + .stat::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 14px;
+      bottom: 14px;
+      width: 1px;
+      background: rgba(22, 184, 166, 0.20);
+    }
+
+    .stat strong {
+      display: block;
+      color: #101828;
+      font-size: 24px;
+      line-height: 30px;
+      font-weight: 780;
+      font-family: "Montserrat", Arial, sans-serif;
+    }
+
+    .stat span {
+      display: block;
+      margin-top: 2px;
+      color: var(--weak);
+      font-size: 12px;
+      line-height: 16px;
+      font-weight: 650;
+    }
+
+    .action-row {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      height: 40px;
+      border-radius: 999px;
+      padding: 0 16px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 14px;
+      line-height: 20px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .btn img {
+      width: 17px;
+      height: 17px;
+      flex: 0 0 auto;
+    }
+
+    .btn-primary {
+      background: #101828;
+      color: #fff;
+      box-shadow: 0 12px 26px rgba(16, 24, 40, 0.16);
+    }
+
+    .btn-primary img {
+      filter: invert(1);
+    }
+
+    .btn-soft {
+      background: var(--brand-soft);
+      color: var(--brand-deep);
+      border: 1px solid rgba(22, 184, 166, 0.22);
+    }
+
+    .btn-plain {
+      background: rgba(255, 255, 255, 0.76);
+      color: #344054;
+      border: 1px solid var(--line);
+    }
+
+    .btn-danger {
+      background: var(--red-soft);
+      color: #b42318;
+      border: 1px solid rgba(239, 68, 68, 0.18);
+    }
+
+    .quick-panel {
+      margin-top: 22px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    .quick-card {
+      min-height: 92px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.86);
+      padding: 16px;
+      display: grid;
+      grid-template-columns: 42px minmax(0, 1fr) 18px;
+      gap: 12px;
+      align-items: center;
+      box-shadow: 0 10px 28px rgba(22, 32, 54, 0.04);
+    }
+
+    .quick-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--brand-soft);
+      border: 1px solid rgba(22, 184, 166, 0.18);
+    }
+
+    .quick-icon img {
+      width: 20px;
+      height: 20px;
+    }
+
+    .quick-card strong {
+      display: block;
+      color: #101828;
+      font-size: 15px;
+      line-height: 22px;
+      font-weight: 750;
+    }
+
+    .quick-card span {
+      display: block;
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 18px;
+    }
+
+    .quick-arrow {
+      width: 18px;
+      height: 18px;
+      opacity: 0.46;
+    }
+
+    .section-head {
+      margin-top: 26px;
+      height: 54px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+    }
+
+    .section-title h2 {
+      margin: 0;
+      color: #101828;
+      font-size: 20px;
+      line-height: 28px;
+      font-weight: 780;
+    }
+
+    .section-title span {
+      color: var(--weak);
+      font-size: 13px;
+      line-height: 18px;
+    }
+
+    .profile-tabs {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .profile-tab {
+      height: 36px;
+      padding: 0 14px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 20px;
+      font-weight: 700;
+    }
+
+    .profile-tab.active {
+      color: var(--brand-deep);
+      background: var(--brand-soft);
+      border-color: rgba(22, 184, 166, 0.18);
+    }
+
+    .content-grid {
+      width: 1380px;
+      display: grid;
+      grid-template-columns: repeat(5, 260px);
+      gap: 20px;
+      align-items: start;
+    }
+
+    .content-card {
+      min-height: 302px;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      background: #fff;
+      overflow: hidden;
+      box-shadow: 0 12px 32px rgba(22, 32, 54, 0.06);
+    }
+
+    .cover {
+      width: 260px;
+      height: 160px;
+      display: block;
+      object-fit: cover;
+      background: #eef3f8;
+    }
+
+    .card-body {
+      padding: 13px 14px 14px;
+    }
+
+    .card-type {
+      height: 22px;
+      display: inline-flex;
+      align-items: center;
+      padding: 0 8px;
+      border-radius: 999px;
+      background: var(--blue-soft);
+      color: #1d4ed8;
+      font-size: 12px;
+      line-height: 18px;
+      font-weight: 700;
+    }
+
+    .card-title {
+      margin: 9px 0 0;
+      color: #101828;
+      font-size: 15px;
+      line-height: 21px;
+      font-weight: 750;
+      min-height: 42px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .card-meta,
+    .card-stats {
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--weak);
+      font-size: 12px;
+      line-height: 18px;
+      font-weight: 620;
+      min-width: 0;
+    }
+
+    .card-meta img,
+    .card-stats img {
+      width: 14px;
+      height: 14px;
+      opacity: 0.62;
+    }
+
+    .card-stats {
+      justify-content: space-between;
+      color: var(--muted);
+    }
+
+    .state-panel,
+    .relation-panel {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.88);
+      box-shadow: var(--shadow);
+    }
+
+    .state-panel {
+      min-height: 260px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 40px;
+    }
+
+    .state-panel img {
+      width: 52px;
+      height: 52px;
+      opacity: 0.72;
+      margin-bottom: 16px;
+    }
+
+    .state-panel h3 {
+      margin: 0;
+      color: #101828;
+      font-size: 20px;
+      line-height: 28px;
+    }
+
+    .state-panel p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 22px;
+    }
+
+    .relation-panel {
+      padding: 8px 0;
+    }
+
+    .relation-row {
+      min-height: 88px;
+      display: grid;
+      grid-template-columns: 56px minmax(0, 1fr) 120px;
+      gap: 14px;
+      align-items: center;
+      padding: 14px 18px;
+      border-bottom: 1px solid rgba(230, 237, 245, 0.86);
+    }
+
+    .relation-row:last-child {
+      border-bottom: 0;
+    }
+
+    .relation-avatar {
+      width: 52px;
+      height: 52px;
+      border-radius: 999px;
+      object-fit: cover;
+      border: 2px solid #fff;
+      box-shadow: 0 8px 18px rgba(16, 24, 40, 0.08);
+    }
+
+    .relation-name {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .relation-name strong {
+      color: #101828;
+      font-size: 15px;
+      line-height: 22px;
+      font-weight: 750;
+    }
+
+    .relation-desc {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 19px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .relation-action {
+      justify-self: end;
+      height: 34px;
+      min-width: 88px;
+      border-radius: 999px;
+      padding: 0 13px;
+      background: rgba(255, 255, 255, 0.74);
+      border: 1px solid var(--line);
+      color: #344054;
+      font-size: 13px;
+      line-height: 18px;
+      font-weight: 700;
+    }
+
+    .relation-action.followed {
+      background: var(--brand-soft);
+      border-color: rgba(22, 184, 166, 0.20);
+      color: var(--brand-deep);
+    }
+
+    .modal-layer {
+      position: fixed;
+      inset: 0;
+      z-index: 1500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(15, 23, 42, 0.30);
+      backdrop-filter: blur(8px);
+    }
+
+    .profile-modal {
+      width: 760px;
+      max-height: 820px;
+      border-radius: 18px;
+      border: 1px solid rgba(230, 237, 245, 0.94);
+      background: rgba(255, 255, 255, 0.98);
+      box-shadow: 0 28px 80px rgba(15, 23, 42, 0.26);
+      overflow: hidden;
+    }
+
+    .modal-head {
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .modal-head h2 {
+      margin: 0;
+      color: #101828;
+      font-size: 19px;
+      line-height: 26px;
+      font-weight: 780;
+    }
+
+    .modal-close {
+      width: 36px;
+      height: 36px;
+      border-radius: 999px;
+      background: #f4f7fb;
+      color: var(--muted);
+      font-size: 22px;
+      line-height: 36px;
+    }
+
+    .modal-body {
+      padding: 24px;
+    }
+
+    .edit-grid {
+      display: grid;
+      grid-template-columns: 128px minmax(0, 1fr);
+      gap: 22px;
+      align-items: start;
+    }
+
+    .edit-avatar {
+      width: 108px;
+      height: 108px;
+      border-radius: 999px;
+      object-fit: cover;
+      border: 4px solid #fff;
+      box-shadow: 0 12px 28px rgba(16, 24, 40, 0.14);
+    }
+
+    .avatar-action {
+      margin-top: 12px;
+      height: 34px;
+      border-radius: 999px;
+      padding: 0 12px;
+      background: var(--brand-soft);
+      color: var(--brand-deep);
+      border: 1px solid rgba(22, 184, 166, 0.20);
+      font-size: 13px;
+      line-height: 18px;
+      font-weight: 700;
+    }
+
+    .field {
+      margin-bottom: 16px;
+    }
+
+    .field label {
+      display: block;
+      margin-bottom: 8px;
+      color: #344054;
+      font-size: 13px;
+      line-height: 18px;
+      font-weight: 720;
+    }
+
+    .field input,
+    .field textarea {
+      width: 100%;
+      border: 1px solid var(--line-strong);
+      border-radius: 10px;
+      background: #fff;
+      color: var(--text);
+      outline: 0;
+      font-size: 14px;
+      line-height: 20px;
+    }
+
+    .field input {
+      height: 42px;
+      padding: 0 12px;
+    }
+
+    .field textarea {
+      min-height: 86px;
+      resize: none;
+      padding: 10px 12px;
+    }
+
+    .binding-list {
+      margin-top: 18px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      overflow: hidden;
+    }
+
+    .binding-row {
+      min-height: 66px;
+      display: grid;
+      grid-template-columns: 38px minmax(0, 1fr) 124px;
+      gap: 12px;
+      align-items: center;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(249, 251, 255, 0.74);
+    }
+
+    .binding-row:last-child {
+      border-bottom: 0;
+    }
+
+    .binding-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 13px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #fff;
+      border: 1px solid var(--line);
+    }
+
+    .binding-icon img {
+      width: 20px;
+      height: 20px;
+    }
+
+    .binding-title {
+      color: #101828;
+      font-size: 14px;
+      line-height: 20px;
+      font-weight: 750;
+    }
+
+    .binding-desc {
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 18px;
+    }
+
+    .binding-action {
+      justify-self: end;
+      height: 34px;
+      border-radius: 999px;
+      padding: 0 13px;
+      border: 1px solid rgba(22, 184, 166, 0.20);
+      background: var(--brand-soft);
+      color: var(--brand-deep);
+      font-size: 13px;
+      line-height: 18px;
+      font-weight: 700;
+    }
+
+    .bind-panel {
+      display: grid;
+      grid-template-columns: 1fr 228px;
+      gap: 22px;
+      align-items: stretch;
+    }
+
+    .bind-form {
+      padding: 20px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--panel-soft);
+    }
+
+    .verify-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 124px;
+      gap: 10px;
+    }
+
+    .code-sent {
+      margin-top: 10px;
+      min-height: 34px;
+      border-radius: 10px;
+      background: var(--brand-soft);
+      color: var(--brand-deep);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 10px;
+      font-size: 13px;
+      line-height: 18px;
+      font-weight: 700;
+    }
+
+    .code-sent img {
+      width: 16px;
+      height: 16px;
+    }
+
+    .qr-card {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .qr-mark {
+      width: 116px;
+      height: 116px;
+      border-radius: 18px;
+      border: 1px solid rgba(22, 184, 166, 0.22);
+      background: var(--brand-soft);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .qr-mark img {
+      width: 56px;
+      height: 56px;
+      opacity: 0.82;
+    }
+
+    .qr-card strong {
+      display: block;
+      margin-top: 14px;
+      color: #101828;
+      font-size: 14px;
+      line-height: 20px;
+    }
+
+    .qr-card span {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 18px;
+    }
+
+    .modal-actions {
+      height: 72px;
+      padding: 0 24px;
+      border-top: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+      background: #fff;
+    }
+
+    .toast-note {
+      min-height: 42px;
+      margin-top: 14px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fff;
+      color: var(--muted);
+      padding: 10px 12px;
+      font-size: 13px;
+      line-height: 20px;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* Brand lockup override: pure SVG mark, frontend-rendered wordmark. */
+    .brand .brand-mark {
+      width: 62px !important;
+      height: 42px !important;
+      object-fit: contain !important;
+      border-radius: 0 !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      color: transparent !important;
+      flex: 0 0 auto !important;
+    }
+
+    .brand .brand-mark::before,
+    .brand .brand-mark::after {
+      content: none !important;
+      display: none !important;
+    }
+
+    .brand .brand-name {
+      font-size: 24px !important;
+      line-height: 28px !important;
+      font-weight: 900 !important;
+      letter-spacing: 0 !important;
+      transform: skewX(-8deg) scaleX(1.04) !important;
+      transform-origin: left center !important;
+      text-shadow: 1px 0 0 currentColor !important;
+      white-space: nowrap !important;
+    }
+
+    .brand .brand-sub {
+      margin-top: 2px !important;
+      font-size: 11px !important;
+      line-height: 14px !important;
+      font-weight: 680 !important;
+      letter-spacing: 0 !important;
+      color: #4f4f4f !important;
+      white-space: nowrap !important;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="page" data-page>
+    <header class="topbar" data-topbar>
+      <div class="nav-shell" data-nav-shell>
+        <div class="brand" aria-label="多元拾光">
+          <img class="brand-mark" src="../_assets/brand/duoyuan-shiguang-logo-mark.svg?v=20260616-nav2" alt="" aria-hidden="true" />
+          <div>
+            <span class="brand-name">多元拾光</span>
+            <span class="brand-sub">AI原生实践者社区</span>
+          </div>
+        </div>
+        <nav class="primary-nav" aria-label="一级导航" data-primary-nav>
+          <span class="nav-item">首页</span>
+          <span class="nav-item">闪念</span>
+          <span class="nav-item">AIGC</span>
+          <span class="nav-item">模型服务</span>
+          <span class="nav-item">AI+</span>
+        </nav>
+        <label class="top-search" data-top-search>
+          <img src="../../../resources/icons/remixicon/svg/System/search-line.svg" alt="" />
+          <input type="text" placeholder="搜索内容、话题、模型服务、工作流" />
+        </label>
+        <div class="top-actions">
+          <button class="creator-btn" type="button" data-creator-button>
+            <img src="../../../resources/icons/remixicon/svg/Design/edit-line.svg" alt="" />
+            创作中心
+          </button>
+          <button class="icon-btn" type="button" aria-label="通知">
+            <img src="../../../resources/icons/remixicon/svg/Media/notification-3-line.svg" alt="" />
+          </button>
+          <img class="avatar" src="../_assets/figma/other-profile-avatar-source.png" alt="用户头像" data-my-profile-entry />
+        </div>
+      </div>
+    </header>
+
+    <main class="profile-shell" data-profile-shell>
+      <section id="profile-root" data-profile-root></section>
+      <section id="profile-modal-root"></section>
+    </main>
+  </div>
+
+  <script>
+    const iconRoot = "../../../resources/icons/remixicon/svg/";
+    const figmaAsset = (name) => `../_assets/figma/${name}`;
+    const icon = (name) => `${iconRoot}${name}`;
+
+    const contentItems = [
+      {
+        type: "文章",
+        title: "把 MCP Server 接进日常工作流前，需要先确认的 7 个边界",
+        cover: "other-profile-cover-01.png",
+        time: "今天 10:24",
+        stats: ["2.8k", "126", "316"]
+      },
+      {
+        type: "模型服务",
+        title: "Claude 与 Gemini 做代码审查时，哪些场景更适合拆成双模型",
+        cover: "other-profile-cover-02.png",
+        time: "昨天 21:06",
+        stats: ["1.9k", "88", "244"]
+      },
+      {
+        type: "AIGC",
+        title: "漫剧分镜生成模板：从角色设定到连续镜头的最小闭环",
+        cover: "other-profile-cover-03.png",
+        time: "06-15 18:30",
+        stats: ["3.2k", "142", "408"]
+      },
+      {
+        type: "AI+资源",
+        title: "适合一人公司的内容复盘 Skill：输入日报，输出下周任务",
+        cover: "other-profile-cover-04.png",
+        time: "06-14 16:12",
+        stats: ["1.4k", "64", "201"]
+      },
+      {
+        type: "闪念",
+        title: "不要把 API 灰度入口做成权益商城，先验证真实调用需求",
+        cover: "other-profile-cover-05.png",
+        time: "06-14 09:18",
+        stats: ["982", "43", "119"]
+      }
+    ];
+
+    const relationItems = [
+      ["Model API Notes", "持续整理模型调用、限流和成本经验", "已关注"],
+      ["Vibe Coding Lab", "分享 AI 编程工作流和实战案例", "已关注"],
+      ["AIGC 漫剧研究员", "关注分镜、角色设定和视频生成模板", "回关"],
+      ["MCP Server Daily", "MCP 工具连接、部署和排错记录", "已关注"],
+      ["AI 产品实战", "一人公司产品验证和运营复盘", "已关注"]
+    ];
+
+    const profileBase = {
+      name: "煎饼",
+      id: "多元拾光 ID 10086",
+      badge: "认证作者",
+      avatar: figmaAsset("other-profile-avatar-source.png"),
+      bio: "长期记录 AI 工具、模型服务、MCP 和一人公司产品验证经验。更关注可落地路径，而不是工具清单堆叠。",
+      meta: ["模型/API", "MCP", "工作流", "6 月加入"],
+      stats: [["38", "内容"], ["2.4万", "阅读"], ["1,286", "粉丝"]]
+    };
+
+    const otherProfile = {
+      ...profileBase,
+      name: "Vibe 工程手记",
+      id: "多元拾光 ID 20666",
+      badge: "优质作者",
+      bio: "分享 AI 编程、Agent 编排和模型调用中的真实工程问题。内容偏向经验复盘和可复制模板。",
+      meta: ["AI Coding", "Agent", "API 排错", "活跃作者"],
+      stats: [["64", "内容"], ["5.7万", "阅读"], ["3,428", "粉丝"]]
+    };
+
+    function currentState() {
+      return new URLSearchParams(window.location.search).get("state") || "default";
+    }
+
+    function goState(state) {
+      const url = new URL(window.location.href);
+      url.searchParams.set("state", state);
+      window.location.href = url.toString();
+    }
+
+    function isMyProfile(state) {
+      return ["default", "incomplete", "edit", "phone", "wechat", "following", "fans", "no-content"].includes(state);
+    }
+
+    function statMarkup(stats) {
+      return stats.map(([value, label]) => `
+        <div class="stat" data-profile-stat>
+          <strong>${value}</strong>
+          <span>${label}</span>
+        </div>
+      `).join("");
+    }
+
+    function metaMarkup(items) {
+      return items.map((item) => `
+        <span class="pill">
+          <img src="${icon("Editor/hashtag.svg")}" alt="" data-icon />
+          ${item}
+        </span>
+      `).join("");
+    }
+
+    function profileActions(state) {
+      if (isMyProfile(state)) {
+        return `
+          <button class="btn btn-soft" type="button" data-state-link="edit">
+            <img src="${icon("Design/edit-line.svg")}" alt="" data-icon />
+            编辑资料
+          </button>
+          <button class="btn btn-plain" type="button" data-state-link="following">
+            <img src="${icon("User & Faces/user-follow-line.svg")}" alt="" data-icon />
+            关注 / 粉丝
+          </button>
+        `;
+      }
+
+      if (state === "followed") {
+        return `
+          <button class="btn btn-soft" type="button" data-state-link="other">
+            <img src="${icon("System/checkbox-circle-line.svg")}" alt="" data-icon />
+            已关注
+          </button>
+          <button class="btn btn-plain" type="button" data-state-link="fans">粉丝列表</button>
+        `;
+      }
+
+      return `
+        <button class="btn btn-primary" type="button" data-state-link="followed">
+          <img src="${icon("User & Faces/user-follow-line.svg")}" alt="" data-icon />
+          关注作者
+        </button>
+        <button class="btn btn-plain" type="button" data-state-link="fans">粉丝列表</button>
+      `;
+    }
+
+    function profileHeader(profile, state) {
+      const tip = state === "incomplete"
+        ? `<span class="badge">资料待完善</span>`
+        : `<span class="badge">${profile.badge}</span>`;
+
+      return `
+        <section class="profile-card" data-profile-card>
+          <div class="profile-avatar-wrap">
+            <img class="profile-avatar-large" src="${profile.avatar}" alt="${profile.name}头像" />
+          </div>
+          <div class="profile-main">
+            <div class="profile-name-row">
+              <strong class="profile-name">${profile.name}</strong>
+              ${tip}
+            </div>
+            <div class="profile-id">${profile.id}</div>
+            <p class="profile-bio">${state === "incomplete" ? "补齐头像、昵称和简介后，其他用户更容易判断你发布内容的可信度。" : profile.bio}</p>
+            <div class="profile-meta">${metaMarkup(profile.meta)}</div>
+          </div>
+          <div class="profile-side">
+            <div class="stat-row">${statMarkup(profile.stats)}</div>
+            <div class="action-row" data-profile-actions>${profileActions(state)}</div>
+          </div>
+        </section>
+      `;
+    }
+
+    function quickPanel(state) {
+      if (!isMyProfile(state)) return "";
+      return `
+        <section class="quick-panel" data-profile-quick-panel>
+          <button class="quick-card" type="button" data-state-link="edit">
+            <span class="quick-icon"><img src="${icon("Design/edit-line.svg")}" alt="" data-icon /></span>
+            <span><strong>资料编辑</strong><span>头像、昵称、简介和账号绑定</span></span>
+            <img class="quick-arrow" src="${icon("Arrows/arrow-right-s-line.svg")}" alt="" data-icon />
+          </button>
+          <button class="quick-card" type="button" data-favorites-entry>
+            <span class="quick-icon"><img src="${icon("Business/bookmark-line.svg")}" alt="" data-icon /></span>
+            <span><strong>收藏夹</strong><span>按内容类型和标签回看收藏</span></span>
+            <img class="quick-arrow" src="${icon("Arrows/arrow-right-s-line.svg")}" alt="" data-icon />
+          </button>
+          <button class="quick-card" type="button" data-state-link="following">
+            <span class="quick-icon"><img src="${icon("User & Faces/user-follow-line.svg")}" alt="" data-icon /></span>
+            <span><strong>关注粉丝</strong><span>回查关注作者和粉丝列表</span></span>
+            <img class="quick-arrow" src="${icon("Arrows/arrow-right-s-line.svg")}" alt="" data-icon />
+          </button>
+          <button class="quick-card" type="button" data-workspace-entry>
+            <span class="quick-icon"><img src="${icon("Document/file-list-3-line.svg")}" alt="" data-icon /></span>
+            <span><strong>作者工作台</strong><span>草稿、已发布、审核中和未通过</span></span>
+            <img class="quick-arrow" src="${icon("Arrows/arrow-right-s-line.svg")}" alt="" data-icon />
+          </button>
+        </section>
+      `;
+    }
+
+    function sectionTitle(state) {
+      if (state === "following") return ["关注列表", "我关注的作者"];
+      if (state === "fans") return ["粉丝列表", "关注我的用户"];
+      if (state === "no-content") return ["发布内容", "暂无公开内容"];
+      if (state === "other" || state === "followed") return ["作者内容", "最近发布的内容"];
+      return ["我的内容", "最近发布和沉淀的内容"];
+    }
+
+    function sectionHead(state) {
+      const [title, desc] = sectionTitle(state);
+      const tab = state === "following" ? "关注" : state === "fans" ? "粉丝" : "内容";
+      return `
+        <div class="section-head">
+          <div class="section-title">
+            <h2>${title}</h2>
+            <span>${desc}</span>
+          </div>
+          <div class="profile-tabs" data-profile-tabs>
+            <button class="profile-tab ${tab === "内容" ? "active" : ""}" type="button" data-state-link="${isMyProfile(state) ? "default" : "other"}">内容</button>
+            <button class="profile-tab ${tab === "关注" ? "active" : ""}" type="button" data-state-link="following">关注</button>
+            <button class="profile-tab ${tab === "粉丝" ? "active" : ""}" type="button" data-state-link="fans">粉丝</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function contentGrid() {
+      return `
+        <div class="content-grid" data-content-grid>
+          ${contentItems.map((item) => `
+            <article class="content-card" data-profile-content-card>
+              <img class="cover" src="${figmaAsset(item.cover)}" alt="" />
+              <div class="card-body">
+                <span class="card-type">${item.type}</span>
+                <h3 class="card-title">${item.title}</h3>
+                <div class="card-meta">
+                  <img src="${icon("System/time-line.svg")}" alt="" data-icon />
+                  <span>${item.time}</span>
+                </div>
+                <div class="card-stats">
+                  <span><img src="${icon("System/eye-line.svg")}" alt="" data-icon />${item.stats[0]}</span>
+                  <span><img src="${icon("Communication/chat-3-line.svg")}" alt="" data-icon />${item.stats[1]}</span>
+                  <span><img src="${icon("Business/bookmark-line.svg")}" alt="" data-icon />${item.stats[2]}</span>
+                </div>
+              </div>
+            </article>
+          `).join("")}
+        </div>
+      `;
+    }
+
+    function relationList(state) {
+      const list = state === "fans"
+        ? relationItems.map(([name, desc], index) => [name, desc, index === 2 ? "回关" : "查看"])
+        : relationItems;
+      return `
+        <div class="relation-panel" data-relation-panel>
+          ${list.map(([name, desc, action], index) => `
+            <div class="relation-row" data-relation-row>
+              <img class="relation-avatar" src="${index % 2 === 0 ? figmaAsset("other-profile-avatar-source.png") : figmaAsset("detail-comment-devon-avatar-source.png")}" alt="" />
+              <div>
+                <div class="relation-name">
+                  <strong>${name}</strong>
+                  ${index < 2 ? `<span class="badge">作者</span>` : ""}
+                </div>
+                <div class="relation-desc">${desc}</div>
+              </div>
+              <button class="relation-action ${action === "已关注" ? "followed" : ""}" type="button">${action}</button>
+            </div>
+          `).join("")}
+        </div>
+      `;
+    }
+
+    function emptyState() {
+      return `
+        <div class="state-panel" data-empty-profile>
+          <div>
+            <img src="${icon("Document/file-list-3-line.svg")}" alt="" data-icon />
+            <h3>还没有公开内容</h3>
+            <p>先从闪念或文章开始，发布后会在主页形成可回看的内容列表。</p>
+          </div>
+        </div>
+      `;
+    }
+
+    function mainBody(state) {
+      if (state === "following" || state === "fans") return relationList(state);
+      if (state === "no-content") return emptyState();
+      return contentGrid();
+    }
+
+    function editModal() {
+      return `
+        <div class="modal-layer" data-profile-modal="edit">
+          <div class="profile-modal">
+            <div class="modal-head">
+              <h2>编辑资料</h2>
+              <button class="modal-close" type="button" data-state-link="default" aria-label="关闭">×</button>
+            </div>
+            <div class="modal-body">
+              <div class="edit-grid">
+                <div>
+                  <img class="edit-avatar" src="${figmaAsset("other-profile-avatar-source.png")}" alt="头像预览" />
+                  <button class="avatar-action" type="button">更换头像</button>
+                </div>
+                <div>
+                  <div class="field">
+                    <label for="nickname">昵称</label>
+                    <input id="nickname" type="text" value="煎饼" />
+                  </div>
+                  <div class="field">
+                    <label for="bio">简介</label>
+                    <textarea id="bio">长期记录 AI 工具、模型服务、MCP 和一人公司产品验证经验。</textarea>
+                  </div>
+                  <div class="binding-list" data-binding-list>
+                    <div class="binding-row">
+                      <span class="binding-icon"><img src="${icon("Device/smartphone-line.svg")}" alt="" data-icon /></span>
+                      <div>
+                        <div class="binding-title">手机号</div>
+                        <div class="binding-desc">已绑定 138****2666，可解绑后重新绑定</div>
+                      </div>
+                      <button class="binding-action" type="button" data-state-link="phone">管理</button>
+                    </div>
+                    <div class="binding-row">
+                      <span class="binding-icon"><img src="${icon("Logos/wechat-line.svg")}" alt="" data-icon /></span>
+                      <div>
+                        <div class="binding-title">微信</div>
+                        <div class="binding-desc">未绑定，扫码后用于账号找回和登录确认</div>
+                      </div>
+                      <button class="binding-action" type="button" data-state-link="wechat">绑定</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="toast-note">保存后，主页会更新头像、昵称和简介。绑定信息只展示脱敏状态。</div>
+            </div>
+            <div class="modal-actions">
+              <button class="btn btn-plain" type="button" data-state-link="default">取消</button>
+              <button class="btn btn-primary" type="button" data-state-link="default">保存</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function phoneModal() {
+      return `
+        <div class="modal-layer" data-profile-modal="phone">
+          <div class="profile-modal">
+            <div class="modal-head">
+              <h2>手机号绑定</h2>
+              <button class="modal-close" type="button" data-state-link="edit" aria-label="关闭">×</button>
+            </div>
+            <div class="modal-body">
+              <div class="bind-panel">
+                <div class="bind-form">
+                  <div class="field">
+                    <label for="phone">手机号</label>
+                    <input id="phone" type="text" value="138****2666" />
+                  </div>
+                  <div class="field">
+                    <label for="code">验证码</label>
+                    <div class="verify-row">
+                      <input id="code" type="text" value="628519" />
+                      <button class="btn btn-soft" type="button">发送验证码</button>
+                    </div>
+                  </div>
+                  <div class="code-sent">
+                    <img src="${icon("System/checkbox-circle-line.svg")}" alt="" data-icon />
+                    验证码已发送，请在 5 分钟内完成确认
+                  </div>
+                  <div class="toast-note">解绑前会再次确认，避免误操作影响后续登录确认。</div>
+                </div>
+                <div class="qr-card">
+                  <span class="qr-mark"><img src="${icon("Device/smartphone-line.svg")}" alt="" data-icon /></span>
+                  <strong>短信验证码</strong>
+                  <span>用于绑定或解绑确认</span>
+                </div>
+              </div>
+            </div>
+            <div class="modal-actions">
+              <button class="btn btn-danger" type="button" data-state-link="edit">解绑</button>
+              <button class="btn btn-primary" type="button" data-state-link="edit">确认绑定</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function wechatModal() {
+      return `
+        <div class="modal-layer" data-profile-modal="wechat">
+          <div class="profile-modal">
+            <div class="modal-head">
+              <h2>微信扫码绑定</h2>
+              <button class="modal-close" type="button" data-state-link="edit" aria-label="关闭">×</button>
+            </div>
+            <div class="modal-body">
+              <div class="bind-panel">
+                <div class="bind-form">
+                  <div class="field">
+                    <label>绑定状态</label>
+                    <input type="text" value="扫码中" readonly />
+                  </div>
+                  <div class="code-sent">
+                    <img src="${icon("System/time-line.svg")}" alt="" data-icon />
+                    请使用微信扫码完成绑定
+                  </div>
+                  <div class="toast-note">绑定成功后，资料页会展示微信昵称和头像。</div>
+                </div>
+                <div class="qr-card" data-wechat-qr>
+                  <span class="qr-mark"><img src="${icon("Device/qr-scan-line.svg")}" alt="" data-icon /></span>
+                  <strong>微信扫码</strong>
+                  <span>扫码后返回本页确认状态</span>
+                </div>
+              </div>
+            </div>
+            <div class="modal-actions">
+              <button class="btn btn-danger" type="button" data-state-link="edit">解绑</button>
+              <button class="btn btn-primary" type="button" data-state-link="edit">完成绑定</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function render() {
+      const state = currentState();
+      const profile = isMyProfile(state) ? profileBase : otherProfile;
+      const root = document.querySelector("#profile-root");
+      const modal = document.querySelector("#profile-modal-root");
+      root.innerHTML = `
+        ${profileHeader(profile, state)}
+        ${quickPanel(state)}
+        ${sectionHead(state)}
+        ${mainBody(state)}
+      `;
+      modal.innerHTML = state === "edit" ? editModal() : state === "phone" ? phoneModal() : state === "wechat" ? wechatModal() : "";
+      bindStateLinks();
+    }
+
+    function bindStateLinks() {
+      document.querySelectorAll("[data-state-link]").forEach((node) => {
+        node.addEventListener("click", (event) => {
+          event.preventDefault();
+          goState(node.getAttribute("data-state-link"));
+        });
+      });
+
+      document.querySelectorAll("[data-workspace-entry]").forEach((node) => {
+        node.addEventListener("click", (event) => {
+          event.preventDefault();
+          const target = new URL("../c-end-creation-platform-v2/index.html?state=management", window.location.href);
+          window.location.href = target.toString();
+        });
+      });
+
+      document.querySelectorAll("[data-favorites-entry]").forEach((node) => {
+        node.addEventListener("click", (event) => {
+          event.preventDefault();
+          const target = new URL("../c-end-favorites-v1/index.html", window.location.href);
+          window.location.href = target.toString();
+        });
+      });
+    }
+
+    render();
+  </script>
+  <script src="../_shared/c-end-prototype-interactions.js"></script>
+</body>
+</html>

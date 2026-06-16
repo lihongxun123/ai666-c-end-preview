@@ -1,0 +1,1576 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>多元拾光 C端 AIGC 体验中心 V0.2</title>
+  <link rel="icon" type="image/svg+xml" href="../_assets/brand/duoyuan-shiguang-favicon.svg" />
+  <style>
+    :root {
+      --bg: #ffffff;
+      --panel: #ffffff;
+      --panel-soft: #fafafa;
+      --line: #f1f1f1;
+      --line-strong: #e8e8e8;
+      --text: #242424;
+      --muted: #4f4f4f;
+      --weak: #8a8a8a;
+      --brand: #242424;
+      --brand-deep: #242424;
+      --brand-soft: rgba(36, 36, 36, 0.06);
+      --blue: #242424;
+      --blue-soft: rgba(36, 36, 36, 0.05);
+      --purple: #4f4f4f;
+      --purple-soft: rgba(36, 36, 36, 0.05);
+      --orange: #6b6b6b;
+      --orange-soft: rgba(36, 36, 36, 0.07);
+      --green: #4f4f4f;
+      --green-soft: rgba(36, 36, 36, 0.05);
+      --red: #6b6b6b;
+      --red-soft: rgba(36, 36, 36, 0.07);
+      --shadow: none;
+    }
+
+    * { box-sizing: border-box; }
+
+    html,
+    body {
+      width: 100%;
+      min-width: 1280px;
+      min-height: 1080px;
+      margin: 0;
+      overflow-x: hidden;
+      overflow-y: auto;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+      letter-spacing: 0;
+    }
+
+    button,
+    input,
+    textarea,
+    select {
+      font: inherit;
+      appearance: none;
+    }
+
+    button {
+      border: 0;
+      cursor: default;
+      background: transparent;
+    }
+
+    .page {
+      width: 100%;
+      min-width: 1280px;
+      min-height: 1080px;
+      padding-bottom: 72px;
+    }
+
+    .topbar {
+      height: 72px;
+      border-bottom: 1px solid #f2f2f2;
+      background: #fff;
+      backdrop-filter: none;
+    }
+
+    .nav-shell {
+      width: min(1440px, calc(100vw - 48px));
+      height: 72px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 220px minmax(360px, 438px) minmax(280px, 430px) 280px;
+      gap: 24px;
+      align-items: center;
+    }
+
+    .brand {
+      width: 220px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-mark {
+      width: 36px;
+      height: 36px;
+      border-radius: 9px;
+      background: #242424;
+      position: relative;
+      flex: 0 0 auto;
+      box-shadow: none;
+    }
+
+    .brand-mark::before,
+    .brand-mark::after {
+      content: "";
+      position: absolute;
+      width: 19px;
+      height: 5px;
+      left: 9px;
+      top: 17px;
+      border-radius: 2px;
+      background: #fff;
+      transform: rotate(-58deg);
+      transform-origin: center;
+    }
+
+    .brand-mark::after {
+      left: 15px;
+      transform: rotate(58deg);
+    }
+
+    .brand-name {
+      display: block;
+      font-size: 25px;
+      line-height: 30px;
+      font-weight: 800;
+      color: #242424;
+    }
+
+    .brand-sub {
+      display: block;
+      margin-top: 1px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 16px;
+      white-space: nowrap;
+    }
+
+    .primary-nav {
+      width: 100%;
+      height: 72px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-item {
+      height: 72px;
+      padding: 0 14px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      color: #5f5f5f;
+      font-size: 15px;
+      line-height: 20px;
+      font-weight: 650;
+      white-space: nowrap;
+    }
+
+    .nav-item.active {
+      color: var(--brand-deep);
+    }
+
+    .nav-item.active::after {
+      content: "";
+      position: absolute;
+      left: 14px;
+      right: 14px;
+      bottom: 0;
+      height: 1px;
+      border-radius: 0;
+      background: #242424;
+    }
+
+    .top-search {
+      width: 100%;
+      height: 42px;
+      border: 1px solid var(--line-strong);
+      border-radius: 999px;
+      background: #fafafa;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 14px;
+      box-shadow: none;
+    }
+
+    .top-search img,
+    .icon {
+      width: 18px;
+      height: 18px;
+      flex: 0 0 auto;
+    }
+
+    .top-search input {
+      width: 100%;
+      border: 0;
+      outline: 0;
+      background: transparent;
+      color: var(--text);
+      font-size: 14px;
+      line-height: 20px;
+    }
+
+    .top-actions {
+      width: 280px;
+      height: 40px;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .shop-button {
+      height: 40px;
+      padding: 0 14px;
+      border-radius: 4px;
+      background: #242424;
+      color: #fff;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      line-height: 20px;
+      font-weight: 650;
+      box-shadow: none;
+    }
+
+    .shop-button img { filter: invert(1); }
+
+    .icon-button {
+      width: 40px;
+      height: 40px;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: #fff;
+      display: grid;
+      place-items: center;
+      padding: 0;
+    }
+
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 999px;
+      border: 1px solid var(--line-strong);
+      background: #f7f7f7;
+      color: #242424;
+      display: grid;
+      place-items: center;
+      font-size: 13px;
+      line-height: 18px;
+      font-weight: 800;
+      flex: 0 0 auto;
+    }
+
+    .layout {
+      width: 1240px;
+      min-height: 972px;
+      margin: 24px auto 0;
+      display: grid;
+      grid-template-columns: 820px 340px;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .main-panel,
+    .right-rail { min-width: 0; }
+
+    .tabs-card {
+      height: 58px;
+      padding: 0 20px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .tabs {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .tab {
+      height: 58px;
+      padding: 0;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 20px;
+      font-weight: 760;
+      position: relative;
+    }
+
+    .tab.active {
+      color: var(--brand-deep);
+    }
+
+    .tab.active::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 1px;
+      border-radius: 0;
+      background: var(--brand);
+    }
+
+    .mode-chips {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 16px;
+      font-weight: 720;
+    }
+
+    .chip {
+      height: 30px;
+      padding: 0 10px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--panel-soft);
+      color: #5f5f5f;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+
+    .chip.active {
+      color: var(--brand-deep);
+      background: var(--brand-soft);
+      border-color: #d8d8d8;
+    }
+
+    .workbench {
+      margin-top: 16px;
+      padding: 20px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: var(--shadow);
+    }
+
+    .workbench-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--brand-deep);
+      font-size: 13px;
+      line-height: 18px;
+      font-weight: 760;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin: 0;
+    }
+
+    h1 {
+      margin-top: 6px;
+      color: #242424;
+      font-size: 26px;
+      line-height: 32px;
+      font-weight: 860;
+    }
+
+    .workbench-desc {
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 22px;
+      max-width: 512px;
+    }
+
+    .status-pills {
+      display: flex;
+      gap: 8px;
+      flex: 0 0 auto;
+    }
+
+    .status-pill {
+      width: 96px;
+      height: 58px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel-soft);
+      padding: 8px 10px;
+    }
+
+    .status-pill strong {
+      display: block;
+      color: #242424;
+      font-size: 17px;
+      line-height: 22px;
+      font-weight: 840;
+    }
+
+    .status-pill span {
+      display: block;
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 16px;
+      white-space: nowrap;
+    }
+
+    .goal-grid {
+      margin-top: 16px;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+    }
+
+    .goal-card {
+      min-height: 88px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel-soft);
+      color: var(--text);
+      text-align: left;
+      display: grid;
+      gap: 8px;
+    }
+
+    .goal-card.active {
+      border-color: #d8d8d8;
+      background: var(--brand-soft);
+      box-shadow: inset 3px 0 0 #242424;
+    }
+
+    .goal-card strong {
+      color: #242424;
+      font-size: 14px;
+      line-height: 20px;
+      font-weight: 820;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .goal-card span {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 18px;
+    }
+
+    .form-grid {
+      margin-top: 18px;
+      display: grid;
+      grid-template-columns: 1fr 244px;
+      gap: 16px;
+      align-items: stretch;
+    }
+
+    .input-panel,
+    .cost-panel {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 16px;
+    }
+
+    .panel-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .panel-title strong {
+      color: #242424;
+      font-size: 15px;
+      line-height: 20px;
+      font-weight: 830;
+    }
+
+    .panel-title span {
+      color: var(--weak);
+      font-size: 12px;
+      line-height: 16px;
+      white-space: nowrap;
+    }
+
+    .textarea {
+      min-height: 114px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel-soft);
+      padding: 12px;
+      color: #4f4f4f;
+      font-size: 13px;
+      line-height: 22px;
+    }
+
+    .field-row {
+      margin-top: 12px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .field {
+      min-height: 58px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel-soft);
+      padding: 9px 10px;
+    }
+
+    .field label {
+      display: block;
+      color: var(--weak);
+      font-size: 12px;
+      line-height: 16px;
+      margin-bottom: 4px;
+    }
+
+    .field strong {
+      display: block;
+      color: #242424;
+      font-size: 13px;
+      line-height: 18px;
+      font-weight: 760;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .cost-panel {
+      display: grid;
+      gap: 12px;
+      align-content: start;
+    }
+
+    .cost-main {
+      padding: 14px;
+      border-radius: 8px;
+      background: linear-gradient(90deg, rgba(36, 36, 36, 0.10), rgba(36, 36, 36, 0.04), rgba(36, 36, 36, 0));
+      border: 1px solid #e8e8e8;
+      box-shadow: inset 4px 0 0 #242424;
+    }
+
+    .cost-main span {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 16px;
+    }
+
+    .cost-main strong {
+      display: block;
+      margin-top: 4px;
+      color: #242424;
+      font-size: 22px;
+      line-height: 28px;
+      font-weight: 860;
+    }
+
+    .notice {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 19px;
+    }
+
+    .action-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .solid-button,
+    .ghost-button,
+    .link-button {
+      height: 38px;
+      border-radius: 4px;
+      padding: 0 14px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      font-size: 13px;
+      line-height: 18px;
+      font-weight: 780;
+      white-space: nowrap;
+    }
+
+    .solid-button {
+      color: #fff;
+      background: #242424;
+      box-shadow: none;
+    }
+
+    .solid-button img { filter: invert(1); }
+
+    .ghost-button {
+      color: var(--brand-deep);
+      background: var(--brand-soft);
+    }
+
+    .link-button {
+      color: #4f4f4f;
+      border: 1px solid var(--line);
+      background: #fff;
+    }
+
+    .section {
+      margin-top: 16px;
+    }
+
+    .section-head {
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .section-head h2 {
+      color: #242424;
+      font-size: 16px;
+      line-height: 22px;
+      font-weight: 840;
+    }
+
+    .section-head span {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 16px;
+    }
+
+    .template-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .template-card,
+    .result-card,
+    .state-panel {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: none;
+    }
+
+    .template-card {
+      min-height: 154px;
+      padding: 14px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .template-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .template-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      background: #f4f4f4;
+    }
+
+    .template-icon img {
+      width: 18px;
+      height: 18px;
+    }
+
+    .tag {
+      height: 22px;
+      padding: 0 8px;
+      border-radius: 0 4px 4px 0;
+      background: linear-gradient(90deg, rgba(36, 36, 36, 0.10), rgba(36, 36, 36, 0.04), rgba(36, 36, 36, 0));
+      color: #4f4f4f;
+      display: inline-flex;
+      align-items: center;
+      font-size: 11px;
+      line-height: 16px;
+      font-weight: 760;
+      white-space: nowrap;
+    }
+
+    .tag.green {
+      color: #242424;
+      background: linear-gradient(90deg, rgba(36, 36, 36, 0.12), rgba(36, 36, 36, 0.045), rgba(36, 36, 36, 0));
+    }
+
+    .tag.orange {
+      color: #4f4f4f;
+      background: linear-gradient(90deg, rgba(36, 36, 36, 0.10), rgba(36, 36, 36, 0.04), rgba(36, 36, 36, 0));
+    }
+
+    .tag.purple {
+      color: #4f4f4f;
+      background: linear-gradient(90deg, rgba(36, 36, 36, 0.10), rgba(36, 36, 36, 0.04), rgba(36, 36, 36, 0));
+    }
+
+    .template-card h3,
+    .result-card h3,
+    .state-panel h2 {
+      color: #242424;
+      font-size: 15px;
+      line-height: 21px;
+      font-weight: 840;
+    }
+
+    .template-card p,
+    .result-card p,
+    .state-panel p {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 19px;
+    }
+
+    .template-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      color: var(--weak);
+      font-size: 12px;
+      line-height: 16px;
+      margin-top: auto;
+    }
+
+    .result-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .result-card {
+      padding: 14px;
+      min-height: 182px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .result-preview {
+      min-height: 76px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: var(--panel-soft);
+      padding: 12px;
+      display: grid;
+      gap: 7px;
+    }
+
+    .preview-line {
+      height: 8px;
+      border-radius: 999px;
+      background: #e8e8e8;
+    }
+
+    .preview-line.short { width: 62%; }
+    .preview-line.mid { width: 78%; }
+    .preview-line.long { width: 92%; }
+
+    .state-panel {
+      margin-top: 16px;
+      padding: 20px;
+    }
+
+    .two-column {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .list-row {
+      min-height: 52px;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel-soft);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .list-row strong {
+      color: #242424;
+      font-size: 13px;
+      line-height: 18px;
+      font-weight: 790;
+    }
+
+    .list-row span {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 17px;
+    }
+
+    .shot-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .shot-card {
+      min-height: 116px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel-soft);
+      padding: 12px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .shot-card strong {
+      color: #242424;
+      font-size: 13px;
+      line-height: 18px;
+      font-weight: 820;
+    }
+
+    .shot-card span {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 18px;
+    }
+
+    .right-rail {
+      display: grid;
+      gap: 14px;
+    }
+
+    .rail-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: var(--shadow);
+      padding: 16px;
+    }
+
+    .rail-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .rail-head strong {
+      color: #242424;
+      font-size: 15px;
+      line-height: 20px;
+      font-weight: 840;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .rail-head span {
+      color: var(--weak);
+      font-size: 12px;
+      line-height: 16px;
+      white-space: nowrap;
+    }
+
+    .point-block {
+      height: 82px;
+      padding: 14px;
+      border-radius: 8px;
+      border: 1px solid #e8e8e8;
+      background: var(--brand-soft);
+    }
+
+    .point-block span {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 16px;
+    }
+
+    .point-block strong {
+      display: block;
+      margin-top: 4px;
+      color: #242424;
+      font-size: 24px;
+      line-height: 30px;
+      font-weight: 870;
+    }
+
+    .rail-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .rail-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      align-items: center;
+      min-height: 34px;
+      color: #4f4f4f;
+      font-size: 13px;
+      line-height: 18px;
+    }
+
+    .rail-row span:first-child {
+      min-width: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .rail-row span:last-child {
+      color: var(--weak);
+      font-size: 12px;
+      line-height: 16px;
+      white-space: nowrap;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 34px;
+      z-index: 20;
+      transform: translateX(-50%);
+      min-width: 260px;
+      max-width: 520px;
+      padding: 11px 16px;
+      border-radius: 999px;
+      background: rgba(23, 32, 51, 0.92);
+      color: #fff;
+      box-shadow: 0 18px 42px rgba(15, 23, 42, 0.22);
+      font-size: 13px;
+      line-height: 18px;
+      text-align: center;
+      display: none;
+    }
+
+    .toast.visible { display: block; }
+
+    /* Brand lockup override: pure SVG mark, frontend-rendered wordmark. */
+    .brand .brand-mark {
+      width: 62px !important;
+      height: 42px !important;
+      object-fit: contain !important;
+      border-radius: 0 !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      color: transparent !important;
+      flex: 0 0 auto !important;
+    }
+
+    .brand .brand-mark::before,
+    .brand .brand-mark::after {
+      content: none !important;
+      display: none !important;
+    }
+
+    .brand .brand-name {
+      font-size: 24px !important;
+      line-height: 28px !important;
+      font-weight: 900 !important;
+      letter-spacing: 0 !important;
+      transform: skewX(-8deg) scaleX(1.04) !important;
+      transform-origin: left center !important;
+      text-shadow: 1px 0 0 currentColor !important;
+      white-space: nowrap !important;
+    }
+
+    .brand .brand-sub {
+      margin-top: 2px !important;
+      font-size: 11px !important;
+      line-height: 14px !important;
+      font-weight: 680 !important;
+      letter-spacing: 0 !important;
+      color: #4f4f4f !important;
+      white-space: nowrap !important;
+    }
+
+    html.prototype-channel-page.prototype-ai666-home-skin .tabs [data-tab].tab.active {
+      color: #242424 !important;
+    }
+
+    html.prototype-channel-page.prototype-ai666-home-skin .tabs [data-tab].tab.active::after {
+      height: 1px !important;
+      border-radius: 0 !important;
+      background: #242424 !important;
+      left: 0 !important;
+      right: 0 !important;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="page" data-page="aigc-experience-v2" data-state="">
+    <header class="topbar" data-topbar>
+      <div class="nav-shell" data-nav-shell>
+        <div class="brand" aria-label="多元拾光">
+          <img class="brand-mark" src="../_assets/brand/duoyuan-shiguang-logo-mark.svg?v=20260616-nav2" alt="" aria-hidden="true" />
+          <div>
+            <span class="brand-name">多元拾光</span>
+            <span class="brand-sub">AI原生实践者社区</span>
+          </div>
+        </div>
+        <nav class="primary-nav" aria-label="一级导航" data-primary-nav>
+          <span class="nav-item">首页</span>
+          <span class="nav-item">闪念</span>
+          <span class="nav-item active">AIGC</span>
+          <span class="nav-item">模型服务</span>
+          <span class="nav-item">AI+</span>
+        </nav>
+        <label class="top-search" data-top-search>
+          <img src="../../../resources/icons/remixicon/svg/System/search-line.svg" alt="" />
+          <input value="" placeholder="搜索模板、案例、Prompt" />
+        </label>
+        <div class="top-actions">
+          <button class="shop-button" type="button" data-shop-entry>
+            <img class="icon" src="../../../resources/icons/remixicon/svg/Buildings/store-line.svg" alt="" />
+            官方商城
+          </button>
+          <button class="icon-button" type="button" aria-label="通知">
+            <img class="icon" src="../../../resources/icons/remixicon/svg/Media/notification-3-line.svg" alt="" />
+          </button>
+          <div class="avatar" aria-label="用户头像">AI</div>
+        </div>
+      </div>
+    </header>
+
+    <main class="layout" data-aigc-layout>
+      <section class="main-panel" data-main-panel>
+        <div class="tabs-card" data-tabs-card>
+          <div class="tabs" data-tabs></div>
+          <div class="mode-chips">
+            <span class="chip active"><img class="icon" src="../../../resources/icons/remixicon/svg/Weather/sparkling-line.svg" alt="" /> 体验中心</span>
+          </div>
+        </div>
+
+        <section class="workbench" data-experience-workbench>
+          <div class="workbench-head">
+            <div>
+              <div class="eyebrow">
+                <img class="icon" src="../../../resources/icons/remixicon/svg/Design/magic-line.svg" alt="" />
+                AI 创作体验中心
+              </div>
+              <h1 id="state-title">按目标开始一次 AIGC 体验</h1>
+              <p class="workbench-desc" id="state-desc">选择目标模板，填写 Prompt 或素材信息，先看预计消耗，再进入方案预览和复用路径。</p>
+            </div>
+            <div class="status-pills">
+              <div class="status-pill"><strong>126</strong><span>今日可用点</span></div>
+              <div class="status-pill"><strong>5</strong><span>可做任务</span></div>
+              <div class="status-pill"><strong>5</strong><span>目标模板</span></div>
+            </div>
+          </div>
+
+          <div class="goal-grid" data-goal-grid></div>
+
+          <div class="form-grid" data-form-grid>
+            <div class="input-panel" data-input-panel>
+              <div class="panel-title">
+                <strong id="input-title">输入目标</strong>
+                <span id="input-meta">示例已填充</span>
+              </div>
+              <div class="textarea" id="prompt-box" data-prompt-box></div>
+              <div class="field-row" id="field-row" data-field-row></div>
+            </div>
+            <aside class="cost-panel" data-cost-panel>
+              <div class="panel-title">
+                <strong>预计消耗</strong>
+                <span>体验点</span>
+              </div>
+              <div class="cost-main" data-cost-estimate>
+                <span id="cost-caption">当前模板</span>
+                <strong id="cost-value">8-12 点</strong>
+              </div>
+              <p class="notice" id="cost-notice">仅展示体验点或积分口径，正式规则以后续产品评审为准。</p>
+              <div class="action-row">
+                <button class="solid-button" type="button" data-start-action>
+                  <img class="icon" src="../../../resources/icons/remixicon/svg/Media/play-mini-fill.svg" alt="" />
+                  开始体验
+                </button>
+                <button class="ghost-button" type="button" data-secondary-action>查看示例</button>
+              </div>
+            </aside>
+          </div>
+        </section>
+
+        <div id="content-root" data-content-root></div>
+      </section>
+
+      <aside class="right-rail" data-right-rail>
+        <section class="rail-card" data-right-module="experience-points">
+          <div class="rail-head">
+            <strong><img class="icon" src="../../../resources/icons/remixicon/svg/Finance/coins-line.svg" alt="" /> 我的体验点</strong>
+            <span>今日</span>
+          </div>
+          <div class="point-block" data-point-block>
+            <span>可用于 AIGC 模板体验</span>
+            <strong>126 点</strong>
+          </div>
+          <div class="rail-list" style="margin-top: 10px;">
+            <div class="rail-row"><span>预计可体验</span><span>8 次</span></div>
+            <div class="rail-row"><span>今日已使用</span><span>34 点</span></div>
+          </div>
+        </section>
+
+        <section class="rail-card" data-right-module="task-reward">
+          <div class="rail-head">
+            <strong><img class="icon" src="../../../resources/icons/remixicon/svg/Document/task-line.svg" alt="" /> 今日任务</strong>
+            <span>返还</span>
+          </div>
+          <div class="rail-list" data-task-list>
+            <div class="rail-row"><span>完成一次体验</span><span>+8 点</span></div>
+            <div class="rail-row"><span>反馈一次结果</span><span>+5 点</span></div>
+            <div class="rail-row"><span>发布一个案例</span><span>+12 点</span></div>
+            <div class="rail-row"><span>收藏一个模板</span><span>+3 点</span></div>
+          </div>
+        </section>
+
+        <section class="rail-card" data-right-module="featured-templates">
+          <div class="rail-head">
+            <strong><img class="icon" src="../../../resources/icons/remixicon/svg/Design/layout-grid-line.svg" alt="" /> 精选模板</strong>
+            <span>可体验</span>
+          </div>
+          <div class="rail-list">
+            <div class="rail-row"><span>漫剧分镜方案</span><span>漫剧</span></div>
+            <div class="rail-row"><span>商品主图生成</span><span>图像</span></div>
+            <div class="rail-row"><span>活动海报结构</span><span>海报</span></div>
+            <div class="rail-row"><span>图生视频预览</span><span>视频</span></div>
+          </div>
+        </section>
+
+        <section class="rail-card" data-right-module="case-reuse">
+          <div class="rail-head">
+            <strong><img class="icon" src="../../../resources/icons/remixicon/svg/Document/file-list-3-line.svg" alt="" /> 案例复用</strong>
+            <span>结果</span>
+          </div>
+          <div class="rail-list">
+            <div class="rail-row"><span>漫剧起题方案</span><span>9 格</span></div>
+            <div class="rail-row"><span>商品图 Prompt</span><span>4:5</span></div>
+            <div class="rail-row"><span>海报卖点结构</span><span>3 段</span></div>
+            <div class="rail-row"><span>视频分镜示例</span><span>12 秒</span></div>
+          </div>
+        </section>
+      </aside>
+    </main>
+    <div class="toast" data-toast></div>
+  </div>
+
+  <script>
+    const icon = (name) => `../../../resources/icons/remixicon/svg/${name}`;
+    const page = document.querySelector("[data-page]");
+    const params = new URLSearchParams(location.search);
+    let currentState = params.get("state") || "default";
+
+    const tabs = [
+      ["default", "推荐"],
+      ["image", "图像"],
+      ["video", "视频"],
+      ["comic", "漫剧"],
+      ["success", "案例"]
+    ];
+
+    const goals = [
+      { key: "image", title: "商品图", desc: "主图、氛围图、海报", icon: "Media/image-add-line.svg" },
+      { key: "image", title: "活动海报", desc: "标题、卖点、视觉方向", icon: "Design/layout-grid-line.svg" },
+      { key: "edit", title: "图像编辑", desc: "换背景、局部调整", icon: "Media/image-edit-line.svg" },
+      { key: "video", title: "视频创作", desc: "分镜、封面、预览", icon: "Media/movie-ai-line.svg" },
+      { key: "comic", title: "漫剧生成", desc: "题材、人设、分镜 Prompt", icon: "Media/movie-2-ai-line.svg" }
+    ];
+
+    const stateConfig = {
+      default: {
+        tab: "default",
+        title: "按目标开始一次 AIGC 体验",
+        desc: "选择目标模板，填写 Prompt 或素材信息，先看预计消耗，再进入方案预览和复用路径。",
+        activeGoal: "comic",
+        inputTitle: "输入目标",
+        inputMeta: "示例已填充",
+        prompt: "我想为一个都市逆袭题材做 9 格漫剧分镜，主角是新人设计师，开头需要强冲突，结尾保留反转。",
+        fields: [["目标", "漫剧生成"], ["风格", "国漫悬疑"], ["分镜", "9 格"]],
+        cost: "12-18 点",
+        costCaption: "推荐模板",
+        notice: "仅展示体验点或积分口径，正式规则以后续产品评审为准。",
+        action: "开始体验"
+      },
+      image: {
+        tab: "image",
+        title: "图像生成",
+        desc: "适合商品图、活动海报和内容封面，首屏只保留 Prompt、风格、尺寸和预计消耗。",
+        activeGoal: "image",
+        inputTitle: "图像 Prompt",
+        inputMeta: "文生图模板",
+        prompt: "科技感 AI 工具发布海报，主体为半透明硬件装置，背景干净，蓝绿辅助光，适合社区首页 Banner。",
+        fields: [["尺寸", "16:9"], ["风格", "商业海报"], ["质量", "标准"]],
+        cost: "8-12 点",
+        costCaption: "图像模板",
+        notice: "高级参数默认收起，专业用户可继续调整尺寸、seed 和负向提示词。",
+        action: "开始体验"
+      },
+      edit: {
+        tab: "image",
+        title: "图像编辑",
+        desc: "适合换背景、局部重绘和商品素材二次加工，当前只表达素材选择和编辑目标。",
+        activeGoal: "edit",
+        inputTitle: "编辑目标",
+        inputMeta: "图像编辑模板",
+        prompt: "保留商品主体，把背景替换成浅灰摄影棚，增强边缘高光，画面更适合电商详情页首图。",
+        fields: [["素材", "已选择 1 张"], ["编辑", "换背景"], ["输出", "4:5"]],
+        cost: "10-16 点",
+        costCaption: "编辑模板",
+        notice: "素材选择仅表示前台体验路径，不代表文件已完成上传或处理。",
+        action: "开始体验"
+      },
+      video: {
+        tab: "video",
+        title: "视频创作",
+        desc: "适合把静态图或故事脚本转为短预览，V0.2 先展示分镜方案和示例预览。",
+        activeGoal: "video",
+        inputTitle: "视频目标",
+        inputMeta: "视频模板",
+        prompt: "把新品海报转成 12 秒短片，前三秒展示产品，随后出现功能卖点，结尾保留社区活动口播字幕。",
+        fields: [["时长", "12 秒"], ["结构", "3 段"], ["状态", "预览"]],
+        cost: "18-28 点",
+        costCaption: "视频模板",
+        notice: "视频能力先以示例和方案预览表达，完成规则以后续评审为准。",
+        action: "查看示例"
+      },
+      comic: {
+        tab: "comic",
+        title: "漫剧生成",
+        desc: "把题材、人设、目标人群和风格转成故事梗概、角色设定、分镜脚本和每格画面 Prompt。",
+        activeGoal: "comic",
+        inputTitle: "漫剧题材",
+        inputMeta: "重点业务模板",
+        prompt: "都市逆袭：新人设计师被客户临时换稿，发现竞争对手偷用自己的旧方案，最后用需求记录和现场演示完成反转。",
+        fields: [["目标人群", "短剧/故事号"], ["风格", "国漫悬疑"], ["分镜", "9 格"]],
+        cost: "16-24 点",
+        costCaption: "漫剧模板",
+        notice: "输出为方案和 Prompt，不承诺批量成片或版权结论。",
+        action: "生成方案"
+      },
+      success: {
+        tab: "success",
+        title: "方案预览",
+        desc: "结果态承接复制 Prompt、保存方案、发布案例和反馈结果。",
+        activeGoal: "comic",
+        inputTitle: "结果摘要",
+        inputMeta: "可复用",
+        prompt: "《被替换的第 9 稿》：主角复盘客户需求，在竞稿现场指出对方方案漏洞，并反转拿回项目。",
+        fields: [["输出", "故事 + 角色 + 分镜"], ["Prompt", "9 条"], ["返还", "可做任务"]],
+        cost: "已完成",
+        costCaption: "体验结果",
+        notice: "继续反馈或发布案例可进入任务返还路径。",
+        action: "复制 Prompt"
+      },
+      insufficient: {
+        tab: "default",
+        title: "点数不足",
+        desc: "当体验点不足时，优先给任务返还和示例查看，不在 V0.2 直接做购买链路。",
+        activeGoal: "comic",
+        inputTitle: "当前模板",
+        inputMeta: "需要更多点数",
+        prompt: "漫剧分镜方案预计需要 16-24 点，当前今日可用点不足以完成一次体验。",
+        fields: [["当前可用", "6 点"], ["预计需要", "16-24 点"], ["建议", "完成任务"]],
+        cost: "点数不足",
+        costCaption: "当前状态",
+        notice: "V0.2 只展示任务返还和示例路径，购买与补偿规则以后续评审为准。",
+        action: "去做任务"
+      },
+      reward: {
+        tab: "default",
+        title: "任务返还",
+        desc: "任务只绑定有效行为：体验、反馈、发布案例和收藏模板，先验证用户是否愿意继续活跃。",
+        activeGoal: "comic",
+        inputTitle: "可完成任务",
+        inputMeta: "今日",
+        prompt: "完成一次 AIGC 体验后，反馈结果或发布案例可获得体验点返还，用于继续体验模板。",
+        fields: [["任务", "4 个"], ["预计返还", "最多 28 点"], ["状态", "可完成"]],
+        cost: "返还任务",
+        costCaption: "今日任务",
+        notice: "这里只表达预计返还，返还规则以后续评审为准。",
+        action: "查看任务"
+      }
+    };
+
+    function normalizedState() {
+      if (!stateConfig[currentState]) currentState = "default";
+      return currentState;
+    }
+
+    function navigateState(next) {
+      currentState = next;
+      const url = new URL(location.href);
+      url.searchParams.set("state", next);
+      history.replaceState(null, "", url);
+      render();
+    }
+
+    function showToast(message) {
+      const toast = document.querySelector("[data-toast]");
+      toast.textContent = message;
+      toast.classList.add("visible");
+      clearTimeout(showToast.timer);
+      showToast.timer = setTimeout(() => toast.classList.remove("visible"), 1800);
+    }
+
+    function renderTabs(config) {
+      document.querySelector("[data-tabs]").innerHTML = tabs.map(([key, label]) => (
+        `<button class="tab ${config.tab === key ? "active" : ""}" type="button" data-tab="${key}">${label}</button>`
+      )).join("");
+    }
+
+    function renderGoals(config) {
+      document.querySelector("[data-goal-grid]").innerHTML = goals.map((goal) => (
+        `<button class="goal-card ${config.activeGoal === goal.key || (goal.title === "漫剧生成" && config.activeGoal === "comic") ? "active" : ""}" type="button" data-goal="${goal.key === "edit" ? "edit" : goal.key}">
+          <strong><img class="icon" src="${icon(goal.icon)}" alt="" />${goal.title}</strong>
+          <span>${goal.desc}</span>
+        </button>`
+      )).join("");
+    }
+
+    function renderWorkbench(config) {
+      document.getElementById("state-title").textContent = config.title;
+      document.getElementById("state-desc").textContent = config.desc;
+      document.getElementById("input-title").textContent = config.inputTitle;
+      document.getElementById("input-meta").textContent = config.inputMeta;
+      document.getElementById("prompt-box").textContent = config.prompt;
+      document.getElementById("field-row").innerHTML = config.fields.map(([label, value]) => (
+        `<div class="field"><label>${label}</label><strong>${value}</strong></div>`
+      )).join("");
+      document.getElementById("cost-caption").textContent = config.costCaption;
+      document.getElementById("cost-value").textContent = config.cost;
+      document.getElementById("cost-notice").textContent = config.notice;
+      document.querySelector("[data-start-action]").lastChild.textContent = ` ${config.action}`;
+    }
+
+    function templateCard(item) {
+      return `
+        <article class="template-card" data-template-card>
+          <div class="template-top">
+            <div class="template-icon"><img src="${icon(item.icon)}" alt="" /></div>
+            <span class="tag ${item.tagClass || ""}">${item.tag}</span>
+          </div>
+          <h3>${item.title}</h3>
+          <p>${item.desc}</p>
+          <div class="template-meta"><span>${item.meta}</span><span>${item.cost}</span></div>
+        </article>
+      `;
+    }
+
+    function renderDefault() {
+      const templates = [
+        { title: "漫剧分镜方案", desc: "题材、人设、9 格分镜和每格画面 Prompt。", meta: "重点模板", cost: "16-24 点", tag: "漫剧", tagClass: "purple", icon: "Media/movie-2-ai-line.svg" },
+        { title: "商品主图生成", desc: "商品主体、卖点、背景和平台尺寸一次收敛。", meta: "官方模板", cost: "8-12 点", tag: "图像", tagClass: "green", icon: "Media/image-add-line.svg" },
+        { title: "图生视频预览", desc: "把海报或角色图拆成短片结构和镜头提示。", meta: "视频模板", cost: "18-28 点", tag: "视频", tagClass: "orange", icon: "Media/movie-ai-line.svg" }
+      ];
+      return `
+        <section class="section" data-template-section>
+          <div class="section-head"><h2>热门目标模板</h2><span>按创作目标选择</span></div>
+          <div class="template-grid">${templates.map(templateCard).join("")}</div>
+        </section>
+        <section class="section" data-case-section>
+          <div class="section-head"><h2>精选案例</h2><span>看结果，再复用</span></div>
+          <div class="result-grid">
+            <article class="result-card"><h3>活动海报 Prompt</h3><p>标题、主体、光线和材质结构可复用。</p><div class="result-preview"><i class="preview-line long"></i><i class="preview-line mid"></i><i class="preview-line short"></i></div></article>
+            <article class="result-card"><h3>漫剧起题方案</h3><p>冲突、角色关系和 9 格节奏已拆好。</p><div class="result-preview"><i class="preview-line mid"></i><i class="preview-line long"></i><i class="preview-line short"></i></div></article>
+          </div>
+        </section>
+      `;
+    }
+
+    function renderImageLike(type) {
+      const isEdit = type === "edit";
+      return `
+        <section class="state-panel" data-state-panel="${type}">
+          <div class="section-head"><h2>${isEdit ? "图像编辑模板" : "图像生成模板"}</h2><span>Prompt / 风格 / 尺寸</span></div>
+          <div class="two-column">
+            <div class="list">
+              <div class="list-row"><div><strong>${isEdit ? "素材选择" : "Prompt 辅助"}</strong><br><span>${isEdit ? "参考图、主体图和编辑目标" : "正向提示词、负向提示词和风格变量"}</span></div><span>可展开</span></div>
+              <div class="list-row"><div><strong>模板变量</strong><br><span>主体、背景、场景、平台和画面比例</span></div><span>3 组</span></div>
+              <div class="list-row"><div><strong>高级参数</strong><br><span>尺寸、seed、质量偏好默认收起</span></div><span>专业入口</span></div>
+            </div>
+            <div class="result-card">
+              <h3>${isEdit ? "编辑结果预览" : "图像结果预览"}</h3>
+              <p>结果区展示方案结构和可复制 Prompt，不承接文件处理。</p>
+              <div class="result-preview"><i class="preview-line long"></i><i class="preview-line mid"></i><i class="preview-line short"></i></div>
+            </div>
+          </div>
+        </section>
+      `;
+    }
+
+    function renderVideo() {
+      return `
+        <section class="state-panel" data-state-panel="video">
+          <div class="section-head"><h2>视频创作模板</h2><span>分镜 / 封面 / 短预览</span></div>
+          <div class="two-column">
+            <div class="list">
+              <div class="list-row"><div><strong>短片结构</strong><br><span>开场、卖点、结尾三段式</span></div><span>12 秒</span></div>
+              <div class="list-row"><div><strong>分镜提示</strong><br><span>镜头、画面、字幕和节奏</span></div><span>5 条</span></div>
+              <div class="list-row"><div><strong>示例路径</strong><br><span>先查看短预览结构和提示词</span></div><span>可查看</span></div>
+            </div>
+            <div class="result-card">
+              <h3>示例预览</h3>
+              <p>当前展示结构样例和 Prompt 方案，完成规则以后续评审为准。</p>
+              <div class="result-preview"><i class="preview-line short"></i><i class="preview-line long"></i><i class="preview-line mid"></i></div>
+            </div>
+          </div>
+        </section>
+      `;
+    }
+
+    function renderComic() {
+      return `
+        <section class="state-panel" data-state-panel="comic" data-comic-drama-state>
+          <div class="section-head"><h2>漫剧生成</h2><span>题材 / 人设 / 分镜 / Prompt</span></div>
+          <div class="two-column">
+            <div class="list">
+              <div class="list-row" data-comic-field="storyTheme"><div><strong>题材</strong><br><span>都市逆袭，设计师竞稿反转</span></div><span>必填</span></div>
+              <div class="list-row" data-comic-field="characterSheet"><div><strong>角色设定</strong><br><span>主角、竞争者、关键客户</span></div><span>3 人</span></div>
+              <div class="list-row" data-comic-field="episodeLength"><div><strong>分镜数量</strong><br><span>6 / 9 / 12 格可选</span></div><span>9 格</span></div>
+              <div class="list-row" data-comic-field="costEstimate"><div><strong>预计消耗</strong><br><span>使用体验点或积分口径</span></div><span>16-24 点</span></div>
+            </div>
+            <div class="result-card" data-comic-field="promptList">
+              <h3>输出结构</h3>
+              <p>故事梗概、角色卡、分镜脚本、每格画面 Prompt 和封面 Prompt。</p>
+              <div class="result-preview"><i class="preview-line long"></i><i class="preview-line long"></i><i class="preview-line mid"></i><i class="preview-line short"></i></div>
+            </div>
+          </div>
+          <div class="section" data-comic-field="shotList">
+            <div class="section-head"><h2>分镜预览</h2><span>9 格中的 3 格示例</span></div>
+            <div class="shot-grid">
+              <div class="shot-card"><strong>01 强冲突</strong><span>会议室内客户临时换稿，主角发现旧方案被盗用。</span></div>
+              <div class="shot-card"><strong>05 反证</strong><span>主角调出需求记录和现场演示过程，指出对方逻辑漏洞。</span></div>
+              <div class="shot-card"><strong>09 反转</strong><span>客户认可主角方案，竞争者露出破绽，留下下一集悬念。</span></div>
+            </div>
+          </div>
+        </section>
+      `;
+    }
+
+    function renderSuccess() {
+      return `
+        <section class="state-panel" data-state-panel="success">
+          <div class="section-head"><h2>方案已生成</h2><span>复制 / 保存 / 发布案例</span></div>
+          <div class="two-column">
+            <div class="result-card" data-result-card>
+              <h3>《被替换的第 9 稿》</h3>
+              <p>都市逆袭漫剧方案，已包含故事梗概、角色设定和 9 格分镜 Prompt。</p>
+              <div class="action-row"><button class="solid-button" type="button"><img class="icon" src="${icon("System/checkbox-multiple-line.svg")}" alt="" />复制 Prompt</button><button class="ghost-button" type="button">保存方案</button></div>
+            </div>
+            <div class="result-card">
+              <h3>继续转化</h3>
+              <p>反馈结果可做任务返还，发布案例可沉淀为社区内容，收藏模板方便下次复用。</p>
+              <div class="action-row"><button class="link-button" type="button">发布案例</button><button class="link-button" type="button">反馈结果</button><button class="link-button" type="button">收藏模板</button></div>
+            </div>
+          </div>
+        </section>
+      `;
+    }
+
+    function renderInsufficient() {
+      return `
+        <section class="state-panel" data-state-panel="insufficient">
+          <div class="section-head"><h2>点数不足</h2><span>任务返还优先</span></div>
+          <div class="two-column">
+            <div class="list">
+              <div class="list-row"><div><strong>完成一次反馈</strong><br><span>对结果质量做一次反馈</span></div><span>+5 点</span></div>
+              <div class="list-row"><div><strong>发布一个案例</strong><br><span>把方案整理成社区案例</span></div><span>+12 点</span></div>
+              <div class="list-row"><div><strong>收藏一个模板</strong><br><span>建立复用路径</span></div><span>+3 点</span></div>
+            </div>
+            <div class="result-card">
+              <h3>先补充点数</h3>
+              <p>如果还想继续体验，优先完成反馈、发布案例或收藏模板任务。</p>
+              <div class="action-row"><button class="solid-button" type="button">查看任务</button><button class="ghost-button" type="button">查看示例</button></div>
+            </div>
+          </div>
+        </section>
+      `;
+    }
+
+    function renderReward() {
+      return `
+        <section class="state-panel" data-state-panel="reward">
+          <div class="section-head"><h2>任务返还</h2><span>有效行为</span></div>
+          <div class="list">
+            <div class="list-row"><div><strong>完成一次 AIGC 体验</strong><br><span>已完成，等待用户查看结果</span></div><span>+8 点</span></div>
+            <div class="list-row"><div><strong>反馈一次结果</strong><br><span>提交满意度和问题类型</span></div><span>+5 点</span></div>
+            <div class="list-row"><div><strong>发布一个案例</strong><br><span>进入内容发布流程</span></div><span>+12 点</span></div>
+            <div class="list-row"><div><strong>收藏一个模板</strong><br><span>下次可从最近使用进入</span></div><span>+3 点</span></div>
+          </div>
+        </section>
+      `;
+    }
+
+    function renderContent() {
+      const state = normalizedState();
+      if (state === "image") return renderImageLike("image");
+      if (state === "edit") return renderImageLike("edit");
+      if (state === "video") return renderVideo();
+      if (state === "comic") return renderComic();
+      if (state === "success") return renderSuccess();
+      if (state === "insufficient") return renderInsufficient();
+      if (state === "reward") return renderReward();
+      return renderDefault();
+    }
+
+    function render() {
+      const state = normalizedState();
+      const config = stateConfig[state];
+      page.setAttribute("data-state", state);
+      renderTabs(config);
+      renderGoals(config);
+      renderWorkbench(config);
+      document.getElementById("content-root").innerHTML = renderContent();
+      bindLocalActions();
+    }
+
+    function bindLocalActions() {
+      document.querySelectorAll("[data-tab]").forEach((tab) => {
+        tab.onclick = () => navigateState(tab.getAttribute("data-tab"));
+      });
+      document.querySelectorAll("[data-goal]").forEach((goal) => {
+        goal.onclick = () => navigateState(goal.getAttribute("data-goal"));
+      });
+      document.querySelector("[data-start-action]").onclick = () => {
+        if (currentState === "insufficient") navigateState("reward");
+        else navigateState("success");
+      };
+      document.querySelector("[data-secondary-action]").onclick = () => showToast("示例用于静态原型走查");
+    }
+
+    document.addEventListener("click", (event) => {
+      if (event.target.closest("button")) return;
+      if (event.target.closest("[data-template-card]")) {
+        const title = event.target.closest("[data-template-card]").querySelector("h3")?.textContent || "";
+        if (title.includes("漫剧")) navigateState("comic");
+        else if (title.includes("商品")) navigateState("image");
+        else navigateState("video");
+      }
+    });
+
+    render();
+  </script>
+  <script src="../_shared/c-end-prototype-interactions.js"></script>
+</body>
+</html>

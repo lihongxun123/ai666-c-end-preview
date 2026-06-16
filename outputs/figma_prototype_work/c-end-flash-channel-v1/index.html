@@ -1,0 +1,2287 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>多元拾光 C端闪念频道多状态原型 V1</title>
+  <link rel="icon" type="image/svg+xml" href="../_assets/brand/duoyuan-shiguang-favicon.svg" />
+  <style>
+    :root {
+      --bg: #f6f8fb;
+      --panel: #ffffff;
+      --panel-soft: #f9fbff;
+      --line: #e6edf5;
+      --line-strong: #d9e2ee;
+      --text: #151b26;
+      --muted: #667085;
+      --weak: #98a2b3;
+      --brand: #16b8a6;
+      --brand-deep: #0f9384;
+      --brand-soft: rgba(22, 184, 166, 0.10);
+      --blue: #2563eb;
+      --blue-soft: rgba(37, 99, 235, 0.10);
+      --purple: #7c3aed;
+      --purple-soft: rgba(124, 58, 237, 0.10);
+      --orange: #f97316;
+      --orange-soft: rgba(249, 115, 22, 0.12);
+      --green: #22c55e;
+      --green-soft: rgba(34, 197, 94, 0.12);
+      --red: #ef4444;
+      --red-soft: rgba(239, 68, 68, 0.10);
+      --shadow: 0 22px 60px rgba(22, 32, 54, 0.10);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 1920px;
+      min-height: 1080px;
+      margin: 0;
+      overflow-x: hidden;
+      overflow-y: auto;
+      background:
+        radial-gradient(circle at 22% -10%, rgba(22, 184, 166, 0.09), transparent 30%),
+        radial-gradient(circle at 78% 8%, rgba(37, 99, 235, 0.06), transparent 32%),
+        linear-gradient(90deg, rgba(37, 99, 235, 0.018) 1px, transparent 1px) 0 0 / 32px 32px,
+        linear-gradient(0deg, rgba(22, 184, 166, 0.018) 1px, transparent 1px) 0 0 / 32px 32px,
+        var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+      letter-spacing: 0;
+    }
+
+    button,
+    input,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      border: 0;
+      cursor: default;
+      appearance: none;
+    }
+
+    .page {
+      width: 1920px;
+      min-height: 1080px;
+      position: relative;
+    }
+
+    .topbar {
+      height: 72px;
+      background: rgba(255, 255, 255, 0.92);
+      border-bottom: 1px solid rgba(219, 227, 239, 0.92);
+      backdrop-filter: blur(16px);
+    }
+
+    .nav-shell {
+      width: 1440px;
+      height: 72px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 30px;
+    }
+
+    .brand {
+      width: 184px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .brand-mark {
+      width: 32px;
+      height: 32px;
+      border-radius: 9px;
+      background: linear-gradient(135deg, #2563eb, #16b8a6);
+      box-shadow: 0 10px 22px rgba(22, 184, 166, 0.20);
+    }
+
+    .brand-name {
+      font-size: 28px;
+      line-height: 34px;
+      font-weight: 820;
+      color: #111827;
+    }
+
+    .brand-sub {
+      margin-left: 2px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 18px;
+      font-weight: 650;
+      white-space: nowrap;
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      gap: 26px;
+      height: 72px;
+      flex-shrink: 0;
+    }
+
+    .nav-item {
+      height: 72px;
+      display: flex;
+      align-items: center;
+      color: #273244;
+      font-size: 16px;
+      line-height: 22px;
+      font-weight: 740;
+      position: relative;
+      white-space: nowrap;
+    }
+
+    .nav-item.active {
+      color: var(--brand-deep);
+    }
+
+    .nav-item.active::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 3px;
+      border-radius: 3px 3px 0 0;
+      background: linear-gradient(90deg, var(--brand), var(--blue));
+    }
+
+    .top-search {
+      margin-left: auto;
+      width: 460px;
+      height: 42px;
+      border: 1px solid var(--line-strong);
+      border-radius: 8px;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 14px;
+      box-shadow: 0 8px 24px rgba(22, 32, 54, 0.04);
+    }
+
+    .top-search img {
+      width: 18px;
+      height: 18px;
+      opacity: 0.62;
+      flex-shrink: 0;
+    }
+
+    .top-search input {
+      width: 100%;
+      border: 0;
+      outline: 0;
+      background: transparent;
+      font-size: 14px;
+      line-height: 20px;
+      color: var(--text);
+    }
+
+    .top-actions {
+      width: 260px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 14px;
+      flex-shrink: 0;
+    }
+
+    .creator-button {
+      height: 40px;
+      padding: 0 18px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #2563eb, #16b8a6);
+      color: #fff;
+      font-size: 14px;
+      line-height: 20px;
+      font-weight: 760;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 12px 24px rgba(37, 99, 235, 0.18);
+    }
+
+    .creator-button img,
+    .icon-button img,
+    .action img,
+    .tool img,
+    .small-link img {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+    }
+
+    .icon-button {
+      width: 40px;
+      height: 40px;
+      border-radius: 20px;
+      border: 1px solid var(--line);
+      background: #fff;
+      display: grid;
+      place-items: center;
+    }
+
+    .avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      box-shadow: 0 8px 18px rgba(17, 24, 39, 0.12);
+      flex-shrink: 0;
+    }
+
+    .layout {
+      width: 1240px;
+      min-height: 972px;
+      margin: 24px auto 0;
+      display: grid;
+      grid-template-columns: 820px 340px;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .main-panel,
+    .right-rail {
+      min-width: 0;
+    }
+
+    .channel-head {
+      height: 96px;
+      padding: 20px 24px;
+      background: rgba(255, 255, 255, 0.78);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--brand-deep);
+      font-size: 13px;
+      line-height: 18px;
+      font-weight: 760;
+    }
+
+    .eyebrow img {
+      width: 18px;
+      height: 18px;
+    }
+
+    h1 {
+      margin: 6px 0 0;
+      font-size: 28px;
+      line-height: 34px;
+      color: #111827;
+      font-weight: 840;
+    }
+
+    .head-desc {
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 20px;
+    }
+
+    .signal-card {
+      width: 194px;
+      padding: 14px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, rgba(22, 184, 166, 0.12), rgba(37, 99, 235, 0.08));
+      border: 1px solid rgba(22, 184, 166, 0.18);
+    }
+
+    .signal-card strong {
+      display: block;
+      font-size: 20px;
+      line-height: 24px;
+      color: var(--brand-deep);
+    }
+
+    .signal-card span {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 16px;
+    }
+
+    .composer,
+    .feed-card,
+    .state-card,
+    .rail-card {
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.88);
+      box-shadow: 0 16px 36px rgba(22, 32, 54, 0.07);
+    }
+
+    .timeline-copy {
+      display: grid;
+      gap: 3px;
+    }
+
+    .timeline-copy strong {
+      font-size: 16px;
+      line-height: 22px;
+      color: #111827;
+    }
+
+    .timeline-copy span {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 18px;
+    }
+
+    .tabs {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+    }
+
+    .tab {
+      height: 64px;
+      display: flex;
+      align-items: center;
+      position: relative;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 20px;
+      font-weight: 760;
+      background: transparent;
+      padding: 0;
+    }
+
+    .tab.active {
+      color: var(--brand-deep);
+    }
+
+    .tab.active::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 3px;
+      border-radius: 3px 3px 0 0;
+      background: var(--brand);
+    }
+
+    .composer {
+      margin-top: 16px;
+      border-radius: 12px;
+      padding: 16px 18px;
+    }
+
+    .composer-top {
+      display: grid;
+      grid-template-columns: 42px 1fr 104px;
+      gap: 12px;
+      align-items: start;
+    }
+
+    .composer-field {
+      min-height: 42px;
+      border-radius: 10px;
+      border: 1px solid var(--line-strong);
+      background: var(--panel-soft);
+      color: var(--weak);
+      font-size: 14px;
+      line-height: 20px;
+      display: flex;
+      align-items: center;
+      padding: 0 14px;
+    }
+
+    .composer.expanded .composer-field {
+      min-height: 116px;
+      align-items: flex-start;
+      padding-top: 12px;
+      color: #273244;
+    }
+
+    .send-button {
+      height: 40px;
+      border-radius: 8px;
+      background: #111827;
+      color: #fff;
+      font-size: 14px;
+      line-height: 20px;
+      font-weight: 760;
+    }
+
+    .composer-tools {
+      margin: 12px 0 0 54px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .tool {
+      height: 30px;
+      padding: 0 10px;
+      border-radius: 15px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      line-height: 16px;
+      font-weight: 650;
+    }
+
+    .tool.primary {
+      background: var(--brand-soft);
+      color: var(--brand-deep);
+      border-color: rgba(22, 184, 166, 0.18);
+    }
+
+    .feed-list {
+      margin-top: 0;
+      display: grid;
+      gap: 12px;
+    }
+
+    .feed-card {
+      border-radius: 12px;
+      padding: 18px 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .feed-card.highlight::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: #242424;
+    }
+
+    .author-line {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .author-meta {
+      min-width: 0;
+    }
+
+    .name-line {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      line-height: 20px;
+      color: #242424;
+      font-weight: 760;
+    }
+
+    .badge {
+      height: 20px;
+      padding: 0 7px;
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      font-size: 11px;
+      line-height: 16px;
+      font-weight: 760;
+    }
+
+    .badge.official {
+      color: #242424;
+      background: linear-gradient(90deg, rgba(36, 36, 36, 0.10), rgba(36, 36, 36, 0.02));
+    }
+
+    .badge.featured {
+      color: #242424;
+      background: linear-gradient(90deg, rgba(36, 36, 36, 0.10), rgba(36, 36, 36, 0.02));
+    }
+
+    .time-line {
+      margin-top: 2px;
+      color: var(--weak);
+      font-size: 12px;
+      line-height: 16px;
+    }
+
+    .body-text {
+      margin: 12px 0 0 52px;
+      color: #4f4f4f;
+      font-size: 15px;
+      line-height: 24px;
+    }
+
+    .body-text strong {
+      color: #242424;
+    }
+
+    .topic-row {
+      margin: 12px 0 0 52px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .topic-tag {
+      height: 24px;
+      padding: 0 8px;
+      border-radius: 6px;
+      background: var(--panel-soft);
+      border: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 18px;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .code-block {
+      margin: 14px 0 0 52px;
+      border-radius: 10px;
+      background: #242424;
+      overflow: hidden;
+      border: 1px solid #242424;
+    }
+
+    .code-head {
+      height: 34px;
+      padding: 0 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: #bdbdbd;
+      font-size: 12px;
+      line-height: 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    pre {
+      margin: 0;
+      padding: 12px;
+      color: #eeeeee;
+      font-size: 12px;
+      line-height: 18px;
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      white-space: pre-wrap;
+    }
+
+    .media-grid {
+      margin: 14px 0 0 52px;
+      display: grid;
+      grid-template-columns: repeat(3, 112px);
+      gap: 8px;
+    }
+
+    .media-thumb {
+      width: 112px;
+      height: 78px;
+      border-radius: 8px;
+      object-fit: cover;
+      border: 1px solid var(--line);
+      background: var(--panel-soft);
+    }
+
+    .video-thumb {
+      margin: 14px 0 0 52px;
+      width: 268px;
+      height: 150px;
+      border-radius: 10px;
+      overflow: hidden;
+      position: relative;
+      border: 1px solid var(--line);
+      background: #242424;
+    }
+
+    .video-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.88;
+    }
+
+    .play-mark {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.92);
+      display: grid;
+      place-items: center;
+    }
+
+    .play-mark img {
+      width: 20px;
+      height: 20px;
+    }
+
+    .video-meta {
+      position: absolute;
+      left: 10px;
+      bottom: 10px;
+      height: 24px;
+      padding: 0 9px;
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      background: rgba(17, 24, 39, 0.72);
+      color: #ffffff;
+      font-size: 12px;
+      line-height: 16px;
+      font-weight: 760;
+    }
+
+    .actions {
+      margin: 14px 0 0 52px;
+      padding-top: 12px;
+      border-top: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .action {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 18px;
+      background: transparent;
+      padding: 3px 0;
+    }
+
+    .action img {
+      width: 16px;
+      height: 16px;
+      opacity: 0.78;
+    }
+
+    .action.liked {
+      color: #242424;
+      border: 1px solid #e2e2e2;
+      border-radius: 999px;
+      background: #f6f6f6;
+      padding: 3px 9px;
+      font-weight: 760;
+      position: relative;
+    }
+
+    .action.liked::after {
+      content: none;
+    }
+
+    .state-card {
+      min-height: 520px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      padding: 40px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .state-card h2 {
+      margin: 14px 0 8px;
+      color: #111827;
+      font-size: 22px;
+      line-height: 28px;
+    }
+
+    .state-card p {
+      margin: 0;
+      font-size: 14px;
+      line-height: 22px;
+      max-width: 420px;
+    }
+
+    .empty-actions {
+      margin-top: 20px;
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+    }
+
+    .ghost-button,
+    .solid-button {
+      height: 36px;
+      padding: 0 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      line-height: 18px;
+      font-weight: 760;
+    }
+
+    .solid-button {
+      color: #fff;
+      background: var(--brand-deep);
+    }
+
+    .ghost-button {
+      color: var(--brand-deep);
+      background: var(--brand-soft);
+    }
+
+    .skeleton-list {
+      width: 100%;
+      display: grid;
+      gap: 14px;
+    }
+
+    .skeleton {
+      height: 126px;
+      border-radius: 12px;
+      background: linear-gradient(90deg, #eef3f8, #f8fafc, #eef3f8);
+      background-size: 240% 100%;
+    }
+
+    .comments-panel {
+      margin-top: 16px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid var(--line);
+      box-shadow: 0 16px 36px rgba(22, 32, 54, 0.08);
+      padding: 18px;
+    }
+
+    .feed-card .comments-panel {
+      box-shadow: none;
+      background: var(--panel-soft);
+      margin-top: 14px;
+      padding: 14px;
+    }
+
+    .comments-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .comments-head strong {
+      font-size: 15px;
+      line-height: 20px;
+    }
+
+    .comment-item {
+      display: block;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .comment-item:last-child {
+      border-bottom: 0;
+    }
+
+    .comment-item .avatar {
+      width: 34px;
+      height: 34px;
+    }
+
+    .comment-author-card {
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .comment-author-main {
+      min-width: 0;
+    }
+
+    .comment-name,
+    .comment-author-name {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      line-height: 18px;
+      font-weight: 760;
+    }
+
+    .comment-author-name span:first-child {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .comment-author-meta {
+      margin-top: 2px;
+      color: var(--weak);
+      font-size: 12px;
+      line-height: 16px;
+    }
+
+    .comment-text {
+      margin: 8px 0 0 44px;
+      color: #4f4f4f;
+      font-size: 13px;
+      line-height: 20px;
+    }
+
+    .comment-actions {
+      margin: 9px 0 0 44px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .comment-action {
+      height: 28px;
+      padding: 0 9px;
+      border: 1px solid transparent;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: transparent;
+      color: var(--weak);
+      font-size: 12px;
+      line-height: 16px;
+      font-weight: 700;
+    }
+
+    .comment-action img {
+      width: 14px;
+      height: 14px;
+      opacity: 0.78;
+    }
+
+    .comment-action.is-liked {
+      border-color: #e2e2e2;
+      background: #f6f6f6;
+      color: #242424;
+    }
+
+    .comment-replies {
+      margin: 10px 0 0 44px;
+      padding: 10px 12px;
+      display: grid;
+      gap: 10px;
+      border-radius: 8px;
+      background: rgba(248, 250, 252, 0.92);
+      border: 1px solid rgba(226, 232, 240, 0.86);
+    }
+
+    .comment-reply {
+      min-width: 0;
+      display: grid;
+      gap: 6px;
+    }
+
+    .reply-line {
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #4f4f4f;
+      font-size: 12px;
+      line-height: 16px;
+    }
+
+    .reply-author {
+      color: #242424;
+      font-weight: 760;
+    }
+
+    .reply-target {
+      color: var(--weak);
+      font-weight: 680;
+    }
+
+    .reply-text {
+      margin: 0;
+      color: #4f4f4f;
+      font-size: 13px;
+      line-height: 20px;
+    }
+
+    .reply-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .comment-input {
+      margin-top: 12px;
+      height: 40px;
+      border-radius: 8px;
+      border: 1px solid var(--line-strong);
+      background: var(--panel-soft);
+      color: var(--weak);
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      font-size: 13px;
+      line-height: 18px;
+    }
+
+    .comment-more {
+      width: 100%;
+      margin-top: 4px;
+      height: 38px;
+      border-radius: 8px;
+      background: rgba(22, 184, 166, 0.08);
+      color: var(--brand-deep);
+      font-size: 13px;
+      line-height: 18px;
+      font-weight: 780;
+    }
+
+    .modal-layer {
+      position: fixed;
+      inset: 0;
+      z-index: 20;
+      display: grid;
+      place-items: center;
+      background: rgba(15, 23, 42, 0.32);
+      backdrop-filter: blur(6px);
+    }
+
+    .modal-card {
+      border-radius: 12px;
+      border: 1px solid rgba(226, 232, 240, 0.94);
+      background: rgba(255, 255, 255, 0.98);
+      box-shadow: 0 28px 80px rgba(15, 23, 42, 0.22);
+      overflow: hidden;
+    }
+
+    .compose-modal {
+      width: 620px;
+    }
+
+    .all-comments-modal {
+      width: 640px;
+      max-height: 760px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .modal-head {
+      height: 58px;
+      padding: 0 20px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .modal-head strong {
+      font-size: 17px;
+      line-height: 24px;
+      color: #111827;
+    }
+
+    .modal-close {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--panel-soft);
+      color: var(--muted);
+      font-size: 20px;
+      line-height: 24px;
+    }
+
+    .compose-body {
+      padding: 18px 20px 20px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .compose-editor-shell {
+      border-radius: 10px;
+      border: 1px solid var(--line-strong);
+      background: var(--panel-soft);
+      overflow: hidden;
+      display: grid;
+      grid-template-rows: 154px 44px;
+    }
+
+    .compose-editor-bar {
+      min-width: 0;
+      height: 44px;
+      padding: 6px 10px;
+      border-top: 1px solid rgba(209, 217, 228, 0.92);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(255, 255, 255, 0.62);
+    }
+
+    .compose-editor-tools {
+      min-width: 0;
+      display: flex;
+      align-items: center;
+    }
+
+    .compose-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      padding: 0;
+      border-top: 0;
+      border-right: 0;
+      border-bottom: 0;
+      border-left: 0;
+      border-radius: 0;
+      background: transparent;
+    }
+
+    .md-tool {
+      height: 30px;
+      width: 30px;
+      padding: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 7px;
+      border: 1px solid rgba(209, 217, 228, 0.9);
+      background: rgba(255, 255, 255, 0.96);
+      color: #344054;
+      font-size: 12px;
+      line-height: 18px;
+      font-weight: 720;
+      transition: border-color 0.16s ease, color 0.16s ease, background 0.16s ease;
+    }
+
+    .md-tool img {
+      width: 15px;
+      height: 15px;
+      flex-shrink: 0;
+      opacity: 0.82;
+    }
+
+    .md-tool:hover,
+    .md-tool:focus-visible {
+      border-color: rgba(22, 184, 166, 0.36);
+      background: rgba(22, 184, 166, 0.08);
+      color: var(--brand-deep);
+    }
+
+    .md-tool.primary {
+      border-color: rgba(22, 184, 166, 0.34);
+      background: rgba(22, 184, 166, 0.10);
+      color: var(--brand-deep);
+    }
+
+    .compose-body textarea {
+      width: 100%;
+      height: 154px;
+      resize: none;
+      border-radius: 0;
+      border: 0;
+      background: transparent;
+      padding: 12px 14px;
+      color: #273244;
+      font: inherit;
+      font-size: 14px;
+      line-height: 22px;
+      outline: none;
+    }
+
+    .compose-meta-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .markdown-hint {
+      color: var(--weak);
+      font-size: 12px;
+      line-height: 18px;
+    }
+
+    .compose-counter {
+      margin-left: auto;
+      flex-shrink: 0;
+      color: var(--weak);
+      font-size: 12px;
+      line-height: 18px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    .all-comments-body {
+      flex: 1;
+      min-height: 0;
+      padding: 2px 20px 18px;
+      overflow-y: auto;
+    }
+
+    .all-comments-composer {
+      flex-shrink: 0;
+      padding: 14px 20px 16px;
+      border-top: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.98);
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: end;
+    }
+
+    .all-comments-composer textarea {
+      width: 100%;
+      height: 44px;
+      min-height: 44px;
+      resize: none;
+      border-radius: 8px;
+      border: 1px solid var(--line-strong);
+      background: var(--panel-soft);
+      padding: 10px 12px;
+      color: #273244;
+      font: inherit;
+      font-size: 13px;
+      line-height: 20px;
+      outline: none;
+    }
+
+    .right-rail {
+      display: grid;
+      gap: 14px;
+    }
+
+    .rail-card {
+      border-radius: 12px;
+      padding: 18px;
+    }
+
+    .rail-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .rail-head strong,
+    .rail-title {
+      font-size: 16px;
+      line-height: 22px;
+      color: #111827;
+      font-weight: 820;
+    }
+
+    .small-link,
+    .rail-more {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 16px;
+    }
+
+    .quick-compose {
+      background: transparent;
+      border: 0;
+      box-shadow: none;
+    }
+
+    .quick-compose.compact {
+      padding: 0;
+      display: flex;
+    }
+
+    .quick-compose.compact .solid-button {
+      width: 100%;
+      height: 42px;
+      font-size: 14px;
+    }
+
+    .quick-compose p {
+      margin: 8px 0 14px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 20px;
+    }
+
+    .hot-list,
+    .topic-list,
+    .activity-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .rank-row,
+    .topic-row-rail,
+    .activity-row {
+      width: 100%;
+      appearance: none;
+      border: 0;
+      padding: 0;
+      background: transparent;
+      display: grid;
+      grid-template-columns: 22px 1fr auto;
+      gap: 8px;
+      align-items: center;
+      min-width: 0;
+      color: #344054;
+      font-size: 13px;
+      line-height: 18px;
+      font: inherit;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .rank-row:hover .row-title,
+    .activity-row:hover .row-title {
+      color: #111827;
+    }
+
+    .topic-row-rail {
+      grid-template-columns: 1fr auto;
+    }
+
+    .topic-pill {
+      min-width: 0;
+      height: 32px;
+      padding: 0 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      color: #475467;
+      font-size: 12px;
+      line-height: 18px;
+      text-decoration: none;
+    }
+
+    .topic-name {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-weight: 650;
+    }
+
+    .topic-count {
+      color: #98a2b3;
+      font-weight: 720;
+      flex-shrink: 0;
+    }
+
+    .activity-row {
+      grid-template-columns: 1fr auto;
+    }
+
+    .state-strip {
+      margin-bottom: 14px;
+      padding: 12px 0 14px;
+      border-bottom: 1px solid #e2e2e2;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .state-strip strong {
+      color: #242424;
+      font-size: 16px;
+      line-height: 22px;
+      font-weight: 820;
+    }
+
+    .state-strip span {
+      color: #8a8a8a;
+      font-size: 12px;
+      line-height: 18px;
+    }
+
+    .hot-score {
+      margin-left: 4px;
+      color: #6b6b6b;
+      font-size: 12px;
+      line-height: 18px;
+      font-weight: 680;
+    }
+
+    .feed-card.hot-focus {
+      box-shadow: inset 3px 0 0 #242424;
+      background: #fafafa;
+    }
+
+    .rank {
+      color: #242424;
+      font-weight: 820;
+    }
+
+    .row-title {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .row-meta {
+      color: var(--weak);
+      font-size: 12px;
+      line-height: 16px;
+    }
+
+    .ad-card {
+      min-height: 150px;
+      padding: 0;
+      background: var(--panel);
+      color: #fff;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .ad-card::after {
+      content: none;
+    }
+
+    .ad-carousel {
+      position: relative;
+      height: 150px;
+      overflow: hidden;
+    }
+
+    .ad-slide {
+      position: absolute;
+      inset: 0;
+      display: block;
+      color: #fff;
+      text-decoration: none;
+      opacity: 0;
+    }
+
+    .ad-slide:first-child {
+      opacity: 1;
+      z-index: 1;
+    }
+
+    .ad-slide:nth-child(2) {
+      z-index: 2;
+      animation: adFade 8s infinite 4s;
+    }
+
+    .ad-slide img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      filter: saturate(0.82) contrast(0.92) brightness(0.74);
+    }
+
+    .ad-copy {
+      position: absolute;
+      left: 16px;
+      right: 16px;
+      bottom: 14px;
+      display: grid;
+      gap: 4px;
+      z-index: 1;
+    }
+
+    .ad-label {
+      display: inline-flex;
+      width: fit-content;
+      height: 20px;
+      padding: 0 7px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.16);
+      align-items: center;
+      font-size: 11px;
+      line-height: 16px;
+      font-weight: 760;
+    }
+
+    .ad-card strong {
+      display: block;
+      margin-top: 0;
+      font-size: 16px;
+      line-height: 22px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .ad-card p {
+      margin: 0;
+      color: rgba(255, 255, 255, 0.78);
+      font-size: 12px;
+      line-height: 18px;
+      width: 230px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .ad-dots {
+      position: absolute;
+      right: 14px;
+      bottom: 14px;
+      display: flex;
+      gap: 5px;
+      z-index: 2;
+    }
+
+    .ad-dot {
+      width: 14px;
+      height: 3px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.42);
+    }
+
+    .ad-dot:first-child {
+      background: #fff;
+    }
+
+    @keyframes adFade {
+      0%, 44% { opacity: 1; }
+      50%, 94% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+
+    .compose-topic-row {
+      min-height: 28px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #6b6b6b;
+      font-size: 12px;
+      line-height: 18px;
+    }
+
+    .compose-topic-chip {
+      height: 24px;
+      padding: 0 9px;
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid #d8d8d8;
+      border-radius: 999px;
+      color: #242424;
+      background: #fff;
+      font-weight: 680;
+    }
+
+    .topic-picker-panel {
+      margin-top: 8px;
+      display: none;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .topic-picker-panel.is-open {
+      display: flex;
+    }
+
+    .topic-option {
+      height: 26px;
+      padding: 0 9px;
+      border: 1px solid #e2e2e2;
+      border-radius: 999px;
+      background: #fff;
+      color: #4f4f4f;
+      font-size: 12px;
+      line-height: 18px;
+      font-weight: 650;
+      cursor: pointer;
+    }
+
+    /* Brand lockup override: pure SVG mark, frontend-rendered wordmark. */
+    .brand .brand-mark {
+      width: 62px !important;
+      height: 42px !important;
+      object-fit: contain !important;
+      border-radius: 0 !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      color: transparent !important;
+      flex: 0 0 auto !important;
+    }
+
+    .brand .brand-mark::before,
+    .brand .brand-mark::after {
+      content: none !important;
+      display: none !important;
+    }
+
+    .brand .brand-name {
+      font-size: 24px !important;
+      line-height: 28px !important;
+      font-weight: 900 !important;
+      letter-spacing: 0 !important;
+      transform: skewX(-8deg) scaleX(1.04) !important;
+      transform-origin: left center !important;
+      text-shadow: 1px 0 0 currentColor !important;
+      white-space: nowrap !important;
+    }
+
+    .brand .brand-sub {
+      margin-top: 2px !important;
+      font-size: 11px !important;
+      line-height: 14px !important;
+      font-weight: 680 !important;
+      letter-spacing: 0 !important;
+      color: #4f4f4f !important;
+      white-space: nowrap !important;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="page" data-page>
+    <header class="topbar" data-topbar>
+      <div class="nav-shell" data-nav-shell>
+        <div class="brand">
+          <img class="brand-mark" src="../_assets/brand/duoyuan-shiguang-logo-mark.svg?v=20260616-nav2" alt="" aria-hidden="true" />
+          <div>
+            <span class="brand-name">多元拾光</span>
+            <span class="brand-sub">AI原生实践者社区</span>
+          </div>
+        </div>
+        <nav class="nav" data-primary-nav>
+          <div class="nav-item">首页</div>
+          <div class="nav-item active">闪念</div>
+          <div class="nav-item">AIGC</div>
+          <div class="nav-item">模型服务</div>
+          <div class="nav-item">AI+</div>
+        </nav>
+        <div class="top-search" data-top-search>
+          <img data-icon src="../../../resources/icons/remixicon/svg/System/search-line.svg" alt="" />
+          <input value="" placeholder="搜索闪念、话题、模型服务、AI+资源" />
+        </div>
+        <div class="top-actions">
+          <button class="creator-button" data-creator-button>
+            <img data-icon src="../../../resources/icons/remixicon/svg/System/add-line.svg" alt="" />
+            创作中心
+          </button>
+          <button class="icon-button" aria-label="通知">
+            <img data-icon src="../../../resources/icons/remixicon/svg/Media/notification-3-line.svg" alt="" />
+          </button>
+          <img class="avatar" src="../_assets/figma/detail-author-jianbing-avatar-source.png" alt="" />
+        </div>
+      </div>
+    </header>
+
+    <main class="layout" data-flash-layout>
+      <section class="main-panel" data-main-panel>
+        <div class="channel-head" data-channel-head>
+          <div>
+            <div class="eyebrow">
+              <img data-icon src="../../../resources/icons/remixicon/svg/Weather/flashlight-line.svg" alt="" />
+              AI 技术轻内容
+            </div>
+            <h1>闪念</h1>
+            <div class="head-desc">短经验、代码片段、工具发现和技术讨论，先轻量表达，再沉淀为正式内容。</div>
+          </div>
+          <div class="signal-card">
+            <strong>今日 128 条</strong>
+            <span>运营推荐 24 条，热门话题 9 个</span>
+          </div>
+        </div>
+
+        <div id="content-root"></div>
+      </section>
+
+      <aside class="right-rail" data-right-rail>
+        <div class="quick-compose compact" data-right-module="compose">
+          <button class="solid-button" data-flash-compose-action>发闪念</button>
+        </div>
+
+        <div class="rail-card" data-right-module="hot-flash">
+          <div class="rail-head">
+            <strong>热门闪念</strong>
+            <button type="button" class="small-link" data-hot-more>更多</button>
+          </div>
+          <div class="hot-list" id="hot-list"></div>
+        </div>
+
+        <div class="rail-card" data-right-module="topics">
+          <div class="rail-head">
+            <div class="rail-title">推荐话题</div>
+            <button type="button" class="rail-more" data-topic-more>更多</button>
+          </div>
+          <div class="topic-list" id="topic-list"></div>
+        </div>
+
+        <div class="rail-card" data-right-module="topic-participation">
+          <div class="rail-head">
+            <strong>参与话题</strong>
+            <button type="button" class="small-link" data-participation-more>更多</button>
+          </div>
+          <div class="activity-list">
+            <button type="button" class="activity-row" data-participation-topic data-topic="AI Coding 一周实践">
+              <span class="row-title"># AI Coding 一周实践</span>
+              <span class="row-meta">128 条</span>
+            </button>
+            <button type="button" class="activity-row" data-participation-topic data-topic="API 排错短记录">
+              <span class="row-title"># API 排错短记录</span>
+              <span class="row-meta">96 条</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="rail-card ad-card" data-right-module="ad-banner">
+          <div class="ad-carousel" data-ad-banner>
+            <a class="ad-slide" data-ad-slide data-ad-link href="../c-end-model-service-channel-v1/index.html?state=provider">
+              <img src="../_assets/figma/cover-08-wide.png" alt="模型服务试用合作位" />
+              <span class="ad-copy">
+                <span class="ad-label">广告</span>
+                <strong>模型服务试用合作位</strong>
+                <p>用于承接模型厂商、工具合作或活动曝光。</p>
+              </span>
+            </a>
+            <a class="ad-slide" data-ad-slide data-ad-link href="../c-end-aigc-experience-center-v2/index.html?state=video">
+              <img src="../_assets/figma/create-video-cover-source.png" alt="AIGC 视频体验活动" />
+              <span class="ad-copy">
+                <span class="ad-label">广告</span>
+                <strong>AIGC 视频体验活动</strong>
+                <p>站内活动 Banner，后续可配置跳转类型。</p>
+              </span>
+            </a>
+            <div class="ad-dots" aria-hidden="true">
+              <span class="ad-dot" data-ad-dot></span>
+              <span class="ad-dot" data-ad-dot></span>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </main>
+    <div id="modal-root"></div>
+  </div>
+
+  <script>
+    const urlParams = new URLSearchParams(location.search);
+    const requestedState = urlParams.get("state") || "default";
+    const requestedFocusId = urlParams.get("focus") || "";
+    const requestedTopic = urlParams.get("topic") || "";
+    const allowedStates = new Set(["default", "hot", "compose", "code", "media", "comments", "comments-all"]);
+    const state = allowedStates.has(requestedState) ? requestedState : "default";
+
+    const icon = (name) => `../../../resources/icons/remixicon/svg/${name}`;
+    const asset = (name) => `../_assets/figma/${name}`;
+
+    const avatars = [
+      asset("detail-author-jianbing-avatar-source.png"),
+      asset("detail-comment-devon-avatar-source.png"),
+      asset("detail-comment-xiaobai-avatar-source.png"),
+      asset("other-profile-avatar-source.png")
+    ];
+
+    const baseItems = [
+      {
+        id: "f001",
+        author: "北方的郎",
+        avatar: avatars[0],
+        badge: "精选",
+        time: "18 分钟前",
+        topics: ["Vibe Coding", "AI Coding"],
+        text: "Cursor 最近这版在多文件改动上稳定了不少，适合把小模块先拆成可验证单元，再交给 AI 改。我的经验是先写验收清单，比直接让它重构更稳。",
+        read: "1.2k",
+        comments: 28,
+        likes: 96,
+        shares: 12,
+        liked: true
+      },
+      {
+        id: "f002",
+        author: "API 小林",
+        avatar: avatars[1],
+        badge: "官方",
+        time: "32 分钟前",
+        topics: ["API 排错", "成本优化"],
+        text: "429 不一定是余额问题。先看是不是短时间并发太高，再看模型限流窗口，最后才判断是否需要切换模型或降级策略。",
+        code: "if (status === 429) {\n  await backoff(retryCount);\n  return requestWithFallback(modelPool);\n}",
+        read: "980",
+        comments: 19,
+        likes: 72,
+        shares: 8
+      },
+      {
+        id: "f003",
+        author: "DataMind 团队",
+        avatar: avatars[2],
+        badge: "精选",
+        time: "1 小时前",
+        topics: ["RAG", "知识库"],
+        text: "今天把客服知识库的召回链路拆成 3 段后，问题定位快很多：先看命中范围，再看排序，再看回答模板。闪念里先记一版，后面整理成工作流。",
+        read: "1.8k",
+        comments: 34,
+        likes: 118,
+        shares: 21
+      },
+      {
+        id: "f004",
+        author: "FlowCraft",
+        avatar: avatars[3],
+        time: "2 小时前",
+        topics: ["工作流自动化", "测试调试"],
+        text: "接口文档转测试用例这件事，最难的不是生成，而是把边界条件和失败回包列全。先让模型列检查点，再让人复核，会比直接生成脚本靠谱。",
+        images: [asset("create-article-thumb-01.png"), asset("create-article-thumb-02.png"), asset("create-article-thumb-03.png")],
+        read: "760",
+        comments: 16,
+        likes: 55,
+        shares: 6
+      },
+      {
+        id: "f005",
+        author: "PromptPlayer",
+        avatar: avatars[1],
+        time: "3 小时前",
+        topics: ["AIGC", "提示词工程"],
+        text: "同一个视频提示词，把镜头运动单独写成一段后，结果稳定很多。图像提示词可以宽松一些，视频更像在写小分镜。",
+        video: asset("create-video-cover-source.png"),
+        mediaLabel: "短视频 · 50M 内",
+        read: "2.4k",
+        comments: 41,
+        likes: 146,
+        shares: 24
+      },
+      {
+        id: "f006",
+        author: "MCP Note",
+        avatar: avatars[2],
+        time: "4 小时前",
+        topics: ["MCP", "安全边界"],
+        text: "接 MCP 时不要只看 Tools 数量，更要看读写边界。能读文件和能写文件是两回事，给团队用之前要先把授权说明写清楚。",
+        read: "690",
+        comments: 13,
+        likes: 64,
+        shares: 9
+      }
+    ];
+
+    const stateItems = {
+      default: baseItems,
+      hot: [baseItems[4], baseItems[2], baseItems[0], baseItems[1], baseItems[5], baseItems[3]].map((item, index) => ({
+        ...item,
+        hotScore: [312, 247, 213, 158, 126, 118][index]
+      })),
+      compose: baseItems,
+      code: [baseItems[1], baseItems[0], baseItems[5], baseItems[2]],
+      media: [baseItems[4], baseItems[3], baseItems[0], baseItems[2]],
+      comments: [baseItems[0], baseItems[1], baseItems[2]],
+      "comments-all": [baseItems[0], baseItems[1], baseItems[2]]
+    };
+
+    const commentItems = [
+      {
+        name: "AI 开发者小林",
+        time: "刚刚",
+        text: "我也感觉先写验收更稳，尤其是跨文件改动，不然很难判断 AI 是否真的完成。",
+        likes: 12,
+        avatar: avatars[1],
+        replies: [
+          { name: "北方的郎", time: "刚刚", text: "对，这条后面我会补一版最小验收清单。", likes: 3, avatar: avatars[0], replyTo: "AI 开发者小林" },
+          { name: "Code Pilot", time: "刚刚", text: "回复作者这条很有用，目录边界也可以一起写进去。", likes: 2, avatar: avatars[3], replyTo: "北方的郎" }
+        ]
+      },
+      {
+        name: "PromptPlayer",
+        time: "8 分钟前",
+        text: "这个可以整理成一条 Vibe Coding 实战文章，适合放到 AI+ 里继续沉淀。",
+        likes: 8,
+        avatar: avatars[2],
+        replies: [
+          { name: "内容运营小周", time: "6 分钟前", text: "可以先从评论里挑两个案例，做成一篇短经验。", likes: 2, avatar: avatars[1], replyTo: "PromptPlayer" }
+        ]
+      },
+      { name: "模型服务阿祺", time: "12 分钟前", text: "多文件改动最好先限定目录，不然一次扩散太大，复核成本会被抬高。", likes: 7, avatar: avatars[3] },
+      { name: "NorthCoder", time: "18 分钟前", text: "我会先让 AI 生成检查点，再逐条确认，最后再给它改代码。", likes: 6, avatar: avatars[0] },
+      { name: "RAG 小记", time: "26 分钟前", text: "这条经验适合拆成三个小案例：新增字段、改状态、补校验。", likes: 5, avatar: avatars[2] },
+      { name: "一人公司实践", time: "33 分钟前", text: "轻量记录很有用，后面做复盘时能直接找到当时的判断依据。", likes: 5, avatar: avatars[1] },
+      { name: "API Debugger", time: "41 分钟前", text: "建议把失败截图也放进验收里，光看文本很容易漏布局问题。", likes: 4, avatar: avatars[3] },
+      { name: "低成本验证", time: "48 分钟前", text: "同意，先有最小验收，再决定要不要继续扩展功能。", likes: 4, avatar: avatars[0] },
+      { name: "MCP Note", time: "55 分钟前", text: "如果涉及读写边界，最好把权限说明和回滚方案一起列出来。", likes: 3, avatar: avatars[2] },
+      { name: "FlowCraft", time: "1 小时前", text: "我通常把大任务拆到 30 分钟内能验收的小步，体验会稳定很多。", likes: 3, avatar: avatars[3] },
+      { name: "内容运营小周", time: "1 小时前", text: "这类闪念可以后续聚合到专题页，形成新手也能读懂的入口。", likes: 2, avatar: avatars[1] },
+      { name: "AI PM", time: "1 小时前", text: "评论区里补充的案例也值得沉淀，不一定只看主帖。", likes: 2, avatar: avatars[0] },
+      { name: "Code Pilot", time: "2 小时前", text: "我会把测试命令写到闪念里，方便下次复用。", likes: 2, avatar: avatars[3] },
+      { name: "DataMind", time: "2 小时前", text: "如果是 RAG 链路，召回、排序、模板三个验收最好分开跑。", likes: 1, avatar: avatars[2] },
+      { name: "工具观察员", time: "3 小时前", text: "轻发布不用太重，能把当下判断写下来就够。", likes: 1, avatar: avatars[1] },
+      { name: "社区老用户", time: "3 小时前", text: "查看全部评论放弹层比跳详情顺很多。", likes: 1, avatar: avatars[0] }
+    ];
+
+    function renderComposer() {
+      const composerRoot = document.getElementById("composer-root");
+      if (composerRoot) composerRoot.innerHTML = "";
+    }
+
+    function actionIcon(type, fill = false) {
+      const map = {
+        comment: "Communication/chat-3-line.svg",
+        like: fill ? "Health & Medical/heart-3-fill.svg" : "Health & Medical/heart-3-line.svg",
+        share: "System/share-forward-line.svg"
+      };
+      return icon(map[type]);
+    }
+
+    function renderCommentItem(comment, index, all = false) {
+      const liked = index === 0 || comment.likes >= 5;
+      const replies = comment.replies?.length ? `
+        <div class="comment-replies" data-comment-replies>
+          ${comment.replies.map((reply) => `
+            <div class="comment-reply" data-comment-reply-item data-reply-to-comment="${reply.replyTo || comment.name}">
+              <div class="reply-line">
+                <span class="reply-author">${reply.name}</span>
+                <span class="reply-target">回复 @${reply.replyTo || comment.name}</span>
+                <span>${reply.time}</span>
+              </div>
+              <p class="reply-text">${reply.text}</p>
+              <div class="reply-actions">
+                <button class="comment-action comment-like ${reply.likes >= 2 ? "is-liked" : ""}" data-comment-like>
+                  <img data-icon src="${actionIcon("like", reply.likes >= 2)}" alt="" />赞 ${reply.likes}
+                </button>
+                <button class="comment-action" data-comment-reply>回复</button>
+              </div>
+            </div>
+          `).join("")}
+        </div>
+      ` : "";
+      return `
+        <div class="comment-item" ${all ? "data-all-comment-item" : "data-comment-item"}>
+          <div class="comment-author-card" data-comment-author-card>
+            <img class="avatar" src="${comment.avatar}" alt="" />
+            <div class="comment-author-main">
+              <div class="comment-author-name">
+                <span>${comment.name}</span>
+              </div>
+              <div class="comment-author-meta">${comment.time}</div>
+            </div>
+          </div>
+          <div class="comment-text">${comment.text}</div>
+          <div class="comment-actions">
+            <button class="comment-action comment-like ${liked ? "is-liked" : ""}" data-comment-like>
+              <img data-icon src="${actionIcon("like", liked)}" alt="" />赞 ${comment.likes}
+            </button>
+            <button class="comment-action" data-comment-reply>回复</button>
+          </div>
+          ${replies}
+        </div>
+      `;
+    }
+
+    function renderInlineComments(item) {
+      const visibleComments = commentItems.slice(0, 10);
+      return `
+        <section class="comments-panel" data-comments-panel data-inline-comments>
+          <div class="comments-head">
+            <strong>评论 ${item.comments}</strong>
+          </div>
+          <div class="comment-input">写下你的评论或回复...</div>
+          ${visibleComments.map((comment, index) => renderCommentItem(comment, index)).join("")}
+          <button class="comment-more" data-view-all-comments>查看全部评论</button>
+        </section>
+      `;
+    }
+
+    function renderCard(item, index, showComments = false) {
+      const isHotState = state === "hot";
+      const isFocused = isHotState && requestedFocusId && item.id === requestedFocusId;
+      const media = item.images ? `
+        <div class="media-grid" data-media>
+          ${item.images.map((src) => `<img class="media-thumb" src="${src}" alt="" />`).join("")}
+        </div>
+      ` : item.video ? `
+        <div class="video-thumb" data-video data-short-video>
+          <img src="${item.video}" alt="" />
+          <span class="play-mark"><img data-icon src="${icon("Media/play-mini-fill.svg")}" alt="" /></span>
+          <span class="video-meta" data-short-video-limit>${item.mediaLabel || "短视频 · 50M 内"}</span>
+        </div>
+      ` : "";
+
+      const code = item.code ? `
+        <div class="code-block" data-code-snippet>
+          <div class="code-head"><span>JavaScript</span><span>复制</span></div>
+          <pre>${item.code}</pre>
+        </div>
+      ` : "";
+
+      return `
+        <article class="feed-card ${index === 0 ? "highlight" : ""} ${isFocused ? "hot-focus" : ""}" data-flash-card data-flash-id="${item.id}" ${isFocused ? `data-hot-focused="true"` : ""}>
+          <div class="author-line">
+            <img class="avatar" src="${item.avatar}" alt="" />
+            <div class="author-meta">
+              <div class="name-line">
+                <span>${item.author}</span>
+                ${item.badge ? `<span class="badge ${item.badge === "官方" ? "official" : "featured"}">${item.badge}</span>` : ""}
+                ${isHotState ? `<span class="hot-score" data-hot-score>热度 ${item.hotScore || item.read}</span>` : ""}
+              </div>
+              <div class="time-line">${item.time}</div>
+            </div>
+          </div>
+          <div class="body-text">${item.text}</div>
+          ${code}
+          ${media}
+          <div class="topic-row">
+            ${item.topics.map((topic) => `<span class="topic-tag"># ${topic}</span>`).join("")}
+          </div>
+          <div class="actions">
+            <button class="action" data-comment-action aria-label="评论 ${item.comments}"><img data-icon src="${actionIcon("comment")}" alt="" />${item.comments}</button>
+            <button class="action ${item.liked ? "liked" : ""}" aria-label="点赞 ${item.likes}"><img data-icon src="${actionIcon("like", item.liked)}" alt="" />${item.likes}</button>
+            <button class="action" aria-label="分享"><img data-icon src="${actionIcon("share")}" alt="" /></button>
+          </div>
+          ${showComments ? renderInlineComments(item) : ""}
+        </article>
+      `;
+    }
+
+    function renderState() {
+      const root = document.getElementById("content-root");
+      const items = stateItems[state] || baseItems;
+      const showInlineComments = (state === "comments" || state === "comments-all");
+      const stateStrip = state === "hot" ? `
+        <div class="state-strip" data-hot-state-strip>
+          <strong data-flash-state-label>热门闪念</strong>
+          <span>按近 7 天评论、点赞、回复、分享、收藏综合热度排序</span>
+        </div>
+      ` : "";
+      root.innerHTML = `${stateStrip}<div class="feed-list" data-feed-list>${items.map((item, index) => renderCard(item, index, showInlineComments && index === 0)).join("")}</div>`;
+    }
+
+    function modalUrl(nextState) {
+      const url = new URL(location.href);
+      if (nextState) url.searchParams.set("state", nextState);
+      else url.searchParams.delete("state");
+      if (nextState !== "hot") url.searchParams.delete("focus");
+      if (nextState !== "compose") url.searchParams.delete("topic");
+      return url.href;
+    }
+
+    function hotUrl(focusId = "") {
+      const url = new URL(location.href);
+      url.searchParams.set("state", "hot");
+      if (focusId) url.searchParams.set("focus", focusId);
+      else url.searchParams.delete("focus");
+      url.searchParams.delete("topic");
+      return url.href;
+    }
+
+    function composeTopicUrl(topic) {
+      const url = new URL(location.href);
+      url.searchParams.set("state", "compose");
+      url.searchParams.set("topic", topic);
+      url.searchParams.delete("focus");
+      return url.href;
+    }
+
+    function topicSquareUrl() {
+      return "../c-end-topic-square-v1/index.html?state=default";
+    }
+
+    function renderModals() {
+      const modalRoot = document.getElementById("modal-root");
+      if (state === "compose") {
+        modalRoot.innerHTML = `
+          <div class="modal-layer" data-compose-modal>
+            <section class="modal-card compose-modal" role="dialog" aria-modal="true" aria-label="发闪念">
+              <div class="modal-head">
+                <strong>发闪念</strong>
+                <button class="modal-close" data-close-modal aria-label="关闭">×</button>
+              </div>
+              <div class="compose-body">
+                <div class="compose-editor-shell" data-compose-editor-shell>
+                  <textarea data-compose-markdown maxlength="600" placeholder="写一条短经验、代码片段或工具发现。">今天的一个小发现：</textarea>
+                  <div class="compose-topic-row" data-compose-topic-row>
+                    <span>话题</span>
+                    ${requestedTopic ? `<span class="compose-topic-chip" data-compose-selected-topic># ${requestedTopic}</span>` : `<span class="compose-topic-chip" data-compose-selected-topic hidden># Vibe Coding</span>`}
+                  </div>
+                  <div class="compose-editor-bar" data-compose-editor-bar>
+                    <div class="compose-editor-tools" data-compose-editor-tools>
+                      <div class="compose-toolbar" data-md-toolbar aria-label="编辑工具">
+                        <button type="button" class="md-tool" data-md-command="heading" title="Heading" aria-label="Heading"><img data-icon src="${icon("Editor/h-2.svg")}" alt="" /></button>
+                        <button type="button" class="md-tool" data-md-command="bold" title="Bold" aria-label="Bold"><img data-icon src="${icon("Editor/bold.svg")}" alt="" /></button>
+                        <button type="button" class="md-tool" data-md-command="italic" title="Italic" aria-label="Italic"><img data-icon src="${icon("Editor/italic.svg")}" alt="" /></button>
+                        <button type="button" class="md-tool" data-md-command="quote" title="Quote" aria-label="Quote"><img data-icon src="${icon("Editor/double-quotes-l.svg")}" alt="" /></button>
+                        <button type="button" class="md-tool" data-md-command="list" title="List" aria-label="List"><img data-icon src="${icon("Editor/list-unordered.svg")}" alt="" /></button>
+                        <button type="button" class="md-tool" data-md-command="ordered-list" title="Ordered list" aria-label="Ordered list"><img data-icon src="${icon("Editor/list-ordered.svg")}" alt="" /></button>
+                        <button type="button" class="md-tool" data-md-command="topic" data-compose-topic-picker title="Topic" aria-label="Topic"><img data-icon src="${icon("Editor/hashtag.svg")}" alt="" /></button>
+                        <button type="button" class="md-tool" data-md-command="image" data-compose-image-upload title="Image" aria-label="Image"><img data-icon src="${icon("Media/image-add-line.svg")}" alt="" /></button>
+                        <button type="button" class="md-tool" data-md-command="video" data-compose-video-upload title="Short video" aria-label="Short video"><img data-icon src="${icon("Media/video-upload-line.svg")}" alt="" /></button>
+                        <input type="file" accept="image/*" multiple hidden data-compose-image-input />
+                        <input type="file" accept="video/mp4,video/webm,video/quicktime" hidden data-compose-video-input data-video-max-size-mb="50" />
+                      </div>
+                    </div>
+                    <span class="compose-counter" data-compose-counter>0 / 600</span>
+                  </div>
+                </div>
+                <div class="topic-picker-panel" data-topic-picker-panel>
+                  ${["Vibe Coding", "AI Coding 一周实践", "API 排错短记录", "MCP Server", "RAG 应用"].map((topic) => `
+                    <button type="button" class="topic-option" data-topic-option data-topic="${topic}"># ${topic}</button>
+                  `).join("")}
+                </div>
+                <div class="modal-actions">
+                  <button class="ghost-button" data-close-modal>取消</button>
+                  <button class="solid-button">发布</button>
+                </div>
+              </div>
+            </section>
+          </div>
+        `;
+        normalizeComposeToolbar();
+        return;
+      }
+
+      if (state === "comments-all") {
+        modalRoot.innerHTML = `
+          <div class="modal-layer" data-all-comments-modal>
+            <section class="modal-card all-comments-modal" role="dialog" aria-modal="true" aria-label="全部评论">
+              <div class="modal-head">
+                <strong>全部评论</strong>
+                <button class="modal-close" data-close-modal aria-label="关闭">×</button>
+              </div>
+              <div class="all-comments-body">
+                ${commentItems.map((comment, index) => renderCommentItem(comment, index, true)).join("")}
+              </div>
+              <div class="all-comments-composer" data-all-comments-composer>
+                <textarea placeholder="写下你的评论或回复"></textarea>
+                <button class="solid-button" data-all-comments-submit>发布</button>
+              </div>
+            </section>
+          </div>
+        `;
+        return;
+      }
+
+      modalRoot.innerHTML = "";
+    }
+
+    function normalizeComposeToolbar() {
+      const toolbar = document.querySelector("[data-md-toolbar]");
+      const textarea = document.querySelector("[data-compose-markdown]");
+      const toolsSlot = document.querySelector("[data-compose-editor-tools]");
+      if (!toolbar || !textarea) return;
+      const allowedTools = {
+        heading: "Heading",
+        bold: "Bold",
+        italic: "Italic",
+        quote: "Quote",
+        list: "List",
+        "ordered-list": "Ordered list",
+        topic: "Topic",
+        image: "Image",
+        video: "Short video"
+      };
+      toolbar.querySelectorAll("[data-md-command]").forEach((button) => {
+        const command = button.getAttribute("data-md-command");
+        if (!allowedTools[command]) {
+          button.remove();
+          return;
+        }
+        button.title = allowedTools[command];
+        button.setAttribute("aria-label", allowedTools[command]);
+        [...button.childNodes].forEach((child) => {
+          if (child.nodeType === Node.TEXT_NODE) child.remove();
+        });
+      });
+      if (toolsSlot && toolbar.parentElement !== toolsSlot) toolsSlot.append(toolbar);
+      const hint = document.querySelector(".markdown-hint");
+      if (hint) hint.textContent = "";
+    }
+
+    function renderRail() {
+      const hotItems = [
+        ["f005", "视频提示词更像分镜", "热度 312"],
+        ["f003", "RAG 召回链路三段检查", "热度 247"],
+        ["f001", "Cursor 多文件改动怎么拆", "热度 213"],
+        ["f002", "429 排错先看限流窗口", "热度 158"],
+        ["f006", "MCP 权限边界怎么写", "热度 126"]
+      ];
+      document.getElementById("hot-list").innerHTML = hotItems.map(([id, title, score], index) => `
+        <button type="button" class="rank-row" data-hot-item data-hot-target="${id}">
+          <span class="rank">${index + 1}</span>
+          <span class="row-title">${title}</span>
+          <span class="row-meta">${score}</span>
+        </button>
+      `).join("");
+
+      const topics = [
+        ["Vibe Coding", "2.1k"],
+        ["Agent", "1.8k"],
+        ["RAG 应用", "1.6k"],
+        ["ComfyUI", "1.3k"],
+        ["API 排错", "982"],
+        ["MCP Server", "876"]
+      ];
+      document.getElementById("topic-list").innerHTML = topics.map(([title, count]) => `
+        <a class="topic-pill" data-topic-rail data-href="../c-end-topic-aggregate-v1/index.html?topic=${encodeURIComponent(title)}" href="../c-end-topic-aggregate-v1/index.html?topic=${encodeURIComponent(title)}">
+          <span class="topic-name"># ${title}</span>
+          <span class="topic-count">${count}</span>
+        </a>
+      `).join("");
+    }
+
+    const markdownSnippets = {
+      heading: "\n## 小标题\n",
+      bold: "**重点内容**",
+      italic: "*补充说明*",
+      quote: "\n> 关键判断\n",
+      list: "\n- 要点一\n- 要点二\n",
+      "ordered-list": "\n1. 第一步\n2. 第二步\n",
+      image: "\n![图片说明](image-url)\n",
+      video: "\n[短视频 50M 内](video-file)\n"
+    };
+
+    function updateComposeCounter() {
+      const textarea = document.querySelector("[data-compose-markdown]");
+      const counter = document.querySelector("[data-compose-counter]");
+      if (!textarea || !counter) return;
+      counter.textContent = `${textarea.value.length} / ${textarea.maxLength || 600}`;
+    }
+
+    function insertMarkdownSnippet(command) {
+      const textarea = document.querySelector("[data-compose-markdown]");
+      const snippet = markdownSnippets[command];
+      if (!textarea || !snippet) return;
+      let start = textarea.selectionStart ?? textarea.value.length;
+      let end = textarea.selectionEnd ?? textarea.value.length;
+      if (document.activeElement !== textarea && start === 0 && end === 0 && textarea.value.length) {
+        start = textarea.value.length;
+        end = textarea.value.length;
+      }
+      const nextValue = `${textarea.value.slice(0, start)}${snippet}${textarea.value.slice(end)}`;
+      textarea.value = nextValue.slice(0, textarea.maxLength || 600);
+      const nextPosition = Math.min(start + snippet.length, textarea.value.length);
+      textarea.focus();
+      textarea.setSelectionRange(nextPosition, nextPosition);
+      updateComposeCounter();
+    }
+
+    function setSelectedTopic(topic) {
+      const chip = document.querySelector("[data-compose-selected-topic]");
+      if (!chip) return;
+      chip.hidden = false;
+      chip.textContent = `# ${topic}`;
+    }
+
+    document.addEventListener("click", (event) => {
+      const hotItem = event.target.closest("[data-hot-item]");
+      if (hotItem) {
+        event.preventDefault();
+        event.stopPropagation();
+        location.href = hotUrl(hotItem.getAttribute("data-hot-target") || "");
+        return;
+      }
+
+      if (event.target.closest("[data-hot-more]")) {
+        event.preventDefault();
+        event.stopPropagation();
+        location.href = hotUrl();
+        return;
+      }
+
+      const participationTopic = event.target.closest("[data-participation-topic]");
+      if (participationTopic) {
+        event.preventDefault();
+        event.stopPropagation();
+        location.href = composeTopicUrl(participationTopic.getAttribute("data-topic") || "");
+        return;
+      }
+
+      if (event.target.closest("[data-participation-more]")) {
+        event.preventDefault();
+        event.stopPropagation();
+        location.href = topicSquareUrl();
+        return;
+      }
+
+      if (event.target.closest("[data-compose-topic-picker]")) {
+        event.preventDefault();
+        event.stopPropagation();
+        document.querySelector("[data-topic-picker-panel]")?.classList.toggle("is-open");
+        return;
+      }
+
+      const topicOption = event.target.closest("[data-topic-option]");
+      if (topicOption) {
+        event.preventDefault();
+        event.stopPropagation();
+        setSelectedTopic(topicOption.getAttribute("data-topic") || topicOption.textContent.replace(/^#\s*/, ""));
+        document.querySelector("[data-topic-picker-panel]")?.classList.remove("is-open");
+        return;
+      }
+
+      const markdownButton = event.target.closest("[data-md-command]");
+      if (markdownButton) {
+        event.preventDefault();
+        event.stopPropagation();
+        insertMarkdownSnippet(markdownButton.getAttribute("data-md-command"));
+        return;
+      }
+
+      if (event.target.closest("[data-compose-image-upload]")) {
+        event.preventDefault();
+        event.stopPropagation();
+        insertMarkdownSnippet("image");
+        return;
+      }
+
+      if (event.target.closest("[data-compose-video-upload]")) {
+        event.preventDefault();
+        event.stopPropagation();
+        insertMarkdownSnippet("video");
+        return;
+      }
+
+      if (event.target.closest("[data-comment-action]")) {
+        event.preventDefault();
+        event.stopPropagation();
+        const url = new URL(location.href);
+        url.searchParams.set("state", "comments");
+        location.href = url.href;
+      }
+
+      if (event.target.closest("[data-view-all-comments]")) {
+        event.preventDefault();
+        event.stopPropagation();
+        location.href = modalUrl("comments-all");
+      }
+
+      if (event.target.closest("[data-flash-compose-action]")) {
+        event.preventDefault();
+        event.stopPropagation();
+        location.href = modalUrl("compose");
+      }
+
+      if (event.target.closest("[data-close-modal]")) {
+        event.preventDefault();
+        event.stopPropagation();
+        location.href = state === "comments-all" ? modalUrl("comments") : modalUrl(null);
+      }
+    });
+
+    document.addEventListener("input", (event) => {
+      if (event.target.closest("[data-compose-markdown]")) updateComposeCounter();
+    });
+
+    renderComposer();
+    renderState();
+    renderModals();
+    renderRail();
+    updateComposeCounter();
+  </script>
+  <script src="../_shared/c-end-prototype-interactions.js"></script>
+</body>
+</html>

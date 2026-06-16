@@ -1,0 +1,2271 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>多元拾光 创作服务平台</title>
+  <link rel="icon" type="image/svg+xml" href="../_assets/brand/duoyuan-shiguang-favicon.svg" />
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --surface: #ffffff;
+      --surface-soft: #f8fafc;
+      --surface-strong: #edf3f7;
+      --line: #dfe7ef;
+      --line-strong: #cfd9e4;
+      --text: #16202f;
+      --muted: #607086;
+      --weak: #8b98aa;
+      --brand: #0f9f8f;
+      --brand-strong: #087c72;
+      --brand-soft: #e8faf6;
+      --blue: #2563eb;
+      --blue-soft: #e9f0ff;
+      --amber: #d97706;
+      --amber-soft: #fff6df;
+      --red: #dc2626;
+      --red-soft: #fff0f0;
+      --green: #16a34a;
+      --green-soft: #eaf8ef;
+      --ink-soft: #eef2f7;
+      --shadow: 0 18px 42px rgba(32, 48, 70, 0.08);
+      --radius: 8px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      min-width: 1280px;
+      min-height: 100%;
+      margin: 0;
+      overflow-x: hidden;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.82), rgba(245,247,251,0.88)),
+        linear-gradient(90deg, rgba(15,159,143,0.05) 1px, transparent 1px) 0 0 / 28px 28px,
+        linear-gradient(0deg, rgba(37,99,235,0.04) 1px, transparent 1px) 0 0 / 28px 28px,
+        var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+      letter-spacing: 0;
+    }
+
+    button,
+    input,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      border: 0;
+      cursor: pointer;
+    }
+
+    img[data-icon] {
+      width: 18px;
+      height: 18px;
+      display: block;
+      flex: 0 0 auto;
+    }
+
+    .page {
+      min-width: 1280px;
+      min-height: 100vh;
+    }
+
+    .topbar {
+      width: 100%;
+      height: 64px;
+      border-bottom: 1px solid rgba(207, 217, 228, 0.86);
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(14px);
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+
+    .topbar-inner {
+      height: 64px;
+      margin: 0 32px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .brand {
+      width: 208px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 0 0 auto;
+    }
+
+    .brand-mark {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #0f9f8f, #2563eb);
+      box-shadow: 0 12px 24px rgba(15, 159, 143, 0.18);
+      position: relative;
+    }
+
+    .brand-mark::after {
+      content: "";
+      position: absolute;
+      left: 9px;
+      top: 8px;
+      width: 13px;
+      height: 13px;
+      border-top: 3px solid #fff;
+      border-right: 3px solid #fff;
+      transform: rotate(45deg);
+      border-radius: 2px;
+    }
+
+    .brand-name {
+      font-size: 23px;
+      line-height: 30px;
+      font-weight: 820;
+    }
+
+    .brand-sub {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 18px;
+      font-weight: 680;
+      white-space: nowrap;
+    }
+
+    .top-spacer {
+      flex: 1 1 auto;
+    }
+
+    .top-action,
+    .icon-action {
+      height: 36px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--text);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 13px;
+      line-height: 18px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .top-action {
+      padding: 0 12px;
+    }
+
+    .icon-action {
+      width: 36px;
+      padding: 0;
+    }
+
+    .avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #1f2937, #0f9f8f);
+      color: #fff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 760;
+      font-size: 13px;
+    }
+
+    .workspace {
+      width: calc(100vw - 64px);
+      min-width: 1216px;
+      margin: 20px auto 32px;
+      display: grid;
+      grid-template-columns: 216px minmax(0, 1fr) minmax(0, 1fr);
+      gap: 20px;
+      align-items: start;
+    }
+
+    .workspace.no-right-rail {
+      grid-template-columns: 216px minmax(760px, 1fr);
+    }
+
+    .workspace.no-right-rail .main {
+      min-width: 760px;
+    }
+
+    .left-nav,
+    .right-rail,
+    .panel {
+      border: 1px solid rgba(207, 217, 228, 0.86);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.96);
+      box-shadow: var(--shadow);
+    }
+
+    .left-nav {
+      position: sticky;
+      top: 84px;
+      padding: 12px;
+      min-height: calc(100vh - 116px);
+    }
+
+    .side-heading {
+      padding: 8px 10px 12px;
+      color: var(--weak);
+      font-size: 12px;
+      line-height: 18px;
+      font-weight: 760;
+    }
+
+    .side-item {
+      width: 100%;
+      height: 40px;
+      margin-bottom: 6px;
+      border-radius: 8px;
+      background: transparent;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 10px;
+      font-size: 14px;
+      line-height: 20px;
+      font-weight: 720;
+      text-align: left;
+    }
+
+    .side-item.active {
+      background: var(--brand-soft);
+      color: var(--brand-strong);
+    }
+
+    .side-footer {
+      margin-top: 18px;
+      padding: 12px;
+      border-radius: 8px;
+      background: var(--surface-soft);
+      border: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 18px;
+    }
+
+    .main {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .panel {
+      padding: 18px;
+    }
+
+    .page-title {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin: 0;
+    }
+
+    h1 {
+      font-size: 24px;
+      line-height: 32px;
+      font-weight: 820;
+    }
+
+    h2 {
+      font-size: 18px;
+      line-height: 26px;
+      font-weight: 800;
+    }
+
+    h3 {
+      font-size: 15px;
+      line-height: 22px;
+      font-weight: 780;
+    }
+
+    .subtext {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 20px;
+      font-weight: 540;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .publish-grid {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .publish-card,
+    .mode-card,
+    .status-card,
+    .draft-item,
+    .manage-row,
+    .data-card,
+    .topic-pill,
+    .field,
+    .upload-zone {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fff;
+    }
+
+    .publish-card {
+      min-height: 126px;
+      padding: 14px;
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: border-color 0.16s ease, transform 0.16s ease, box-shadow 0.16s ease;
+    }
+
+    .publish-card:hover,
+    .mode-card:hover {
+      border-color: rgba(15, 159, 143, 0.52);
+      transform: translateY(-1px);
+      box-shadow: 0 12px 28px rgba(15, 159, 143, 0.10);
+    }
+
+    .publish-icon,
+    .mode-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      background: var(--surface-strong);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .publish-card strong {
+      font-size: 15px;
+      line-height: 20px;
+      font-weight: 800;
+    }
+
+    .publish-card span {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 18px;
+      font-weight: 560;
+    }
+
+    .type-badge {
+      height: 22px;
+      padding: 0 8px;
+      display: inline-flex;
+      align-items: center;
+      border-radius: 5px;
+      font-size: 12px;
+      line-height: 18px;
+      font-weight: 700;
+      flex: 0 0 auto;
+    }
+
+    .type-workflow {
+      color: #087f5b;
+      background: #dff8ed;
+    }
+
+    .type-skill {
+      color: #1d4ed8;
+      background: #e0ecff;
+    }
+
+    .type-mcp {
+      color: #6d28d9;
+      background: #eee7ff;
+    }
+
+    .type-case {
+      color: #c2410c;
+      background: #ffedd5;
+    }
+
+    .type-model {
+      color: #0f766e;
+      background: #d9f7f2;
+    }
+
+    .type-topic {
+      color: #b45309;
+      background: #fef3c7;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      min-height: 24px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      line-height: 18px;
+      font-weight: 720;
+      color: var(--muted);
+      background: var(--surface-soft);
+      border: 1px solid var(--line);
+      white-space: nowrap;
+    }
+
+    .badge.green {
+      color: var(--green);
+      background: var(--green-soft);
+      border-color: rgba(22, 163, 74, 0.22);
+    }
+
+    .badge.amber {
+      color: var(--amber);
+      background: var(--amber-soft);
+      border-color: rgba(217, 119, 6, 0.24);
+    }
+
+    .badge.red {
+      color: var(--red);
+      background: var(--red-soft);
+      border-color: rgba(220, 38, 38, 0.22);
+    }
+
+    .badge.blue {
+      color: var(--blue);
+      background: var(--blue-soft);
+      border-color: rgba(37, 99, 235, 0.22);
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(300px, 0.42fr);
+      gap: 16px;
+    }
+
+    .status-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .status-card {
+      padding: 12px;
+      min-height: 82px;
+    }
+
+    .status-card .num {
+      margin-top: 6px;
+      font-size: 24px;
+      line-height: 30px;
+      font-weight: 820;
+    }
+
+    .draft-list,
+    .manage-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .draft-item,
+    .manage-row {
+      padding: 12px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .draft-item[data-flash-list-item],
+    .manage-row[data-flash-list-item] {
+      align-items: flex-start;
+    }
+
+    .flash-line-text {
+      max-width: 760px;
+      color: #334155;
+      font-size: 14px;
+      line-height: 22px;
+      font-weight: 560;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .meta-line {
+      margin-top: 6px;
+      color: var(--weak);
+      font-size: 12px;
+      line-height: 18px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .row-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      justify-content: flex-end;
+    }
+
+    .plain-link {
+      color: var(--brand-strong);
+      background: transparent;
+      font-size: 13px;
+      line-height: 18px;
+      font-weight: 760;
+      padding: 0;
+    }
+
+    .data-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .data-card {
+      padding: 12px;
+    }
+
+    .data-card strong {
+      display: block;
+      margin-top: 6px;
+      font-size: 20px;
+      line-height: 26px;
+    }
+
+    .workspace-brief {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 16px;
+      align-items: center;
+      padding: 14px;
+      border: 1px solid rgba(15, 159, 143, 0.20);
+      border-radius: var(--radius);
+      background: linear-gradient(135deg, rgba(232, 250, 246, 0.94), rgba(255, 255, 255, 0.96));
+      margin-bottom: 16px;
+    }
+
+    .workspace-brief h2 {
+      font-size: 19px;
+      line-height: 27px;
+    }
+
+    .workspace-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .next-action {
+      color: var(--brand-strong);
+      font-size: 12px;
+      line-height: 18px;
+      font-weight: 720;
+    }
+
+    .tabs {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+
+    .tab {
+      height: 32px;
+      padding: 0 12px;
+      border-radius: 8px;
+      background: #fff;
+      border: 1px solid var(--line);
+      color: var(--muted);
+      display: inline-flex;
+      align-items: center;
+      font-size: 13px;
+      line-height: 18px;
+      font-weight: 720;
+    }
+
+    .tab.active {
+      color: var(--brand-strong);
+      background: var(--brand-soft);
+      border-color: rgba(15, 159, 143, 0.34);
+    }
+
+    .editor-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 300px;
+      gap: 16px;
+      align-items: start;
+    }
+
+    .editor-layout.single-column {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .editor-main,
+    .editor-side {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .field {
+      padding: 12px;
+    }
+
+    .field label {
+      display: block;
+      color: var(--text);
+      font-size: 13px;
+      line-height: 18px;
+      font-weight: 760;
+      margin-bottom: 8px;
+    }
+
+    .field input,
+    .field textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      outline: 0;
+      background: var(--surface-soft);
+      color: var(--text);
+      padding: 10px 11px;
+      font-size: 14px;
+      line-height: 22px;
+      resize: vertical;
+    }
+
+    .field textarea {
+      min-height: 104px;
+    }
+
+    .field textarea.body-editor {
+      min-height: 260px;
+    }
+
+    .flash-compose-card {
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .flash-compose-shell {
+      min-height: 320px;
+      border: 1px solid var(--line-strong);
+      border-radius: 10px;
+      background: var(--surface-soft);
+      overflow: hidden;
+      display: grid;
+      grid-template-rows: minmax(220px, 1fr) 44px;
+    }
+
+    .flash-compose-shell textarea {
+      width: 100%;
+      min-height: 220px;
+      resize: none;
+      border: 0;
+      border-radius: 0;
+      outline: none;
+      background: transparent;
+      color: var(--text);
+      padding: 14px;
+      font-size: 14px;
+      line-height: 22px;
+    }
+
+    .flash-compose-bar {
+      min-width: 0;
+      height: 44px;
+      padding: 6px 10px;
+      border-top: 1px solid rgba(209, 217, 228, 0.92);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(255, 255, 255, 0.62);
+    }
+
+    .flash-compose-tools,
+    .flash-compose-toolbar {
+      min-width: 0;
+      display: flex;
+      align-items: center;
+    }
+
+    .flash-compose-toolbar {
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .flash-md-tool {
+      height: 30px;
+      width: 30px;
+      padding: 0;
+      border-radius: 7px;
+      border: 1px solid rgba(209, 217, 228, 0.9);
+      background: rgba(255, 255, 255, 0.96);
+      color: var(--text);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: border-color 0.16s ease, background 0.16s ease;
+    }
+
+    .flash-md-tool img {
+      width: 15px;
+      height: 15px;
+      flex-shrink: 0;
+      opacity: 0.82;
+    }
+
+    .flash-md-tool:hover,
+    .flash-md-tool:focus-visible {
+      border-color: rgba(15, 159, 143, 0.34);
+      background: rgba(15, 159, 143, 0.08);
+    }
+
+    .flash-md-tool.primary {
+      border-color: rgba(15, 159, 143, 0.34);
+      background: rgba(15, 159, 143, 0.10);
+    }
+
+    .flash-compose-counter {
+      margin-left: auto;
+      flex-shrink: 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 18px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .topic-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .topic-pill {
+      min-height: 28px;
+      padding: 4px 9px;
+      color: var(--brand-strong);
+      background: var(--brand-soft);
+      border-color: rgba(15, 159, 143, 0.20);
+      font-size: 12px;
+      line-height: 18px;
+      font-weight: 740;
+    }
+
+    .upload-zone {
+      padding: 16px;
+      min-height: 110px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 8px;
+      background: var(--surface-soft);
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .editor-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+      position: sticky;
+      bottom: 12px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(12px);
+      box-shadow: var(--shadow);
+    }
+
+    .btn {
+      height: 36px;
+      padding: 0 13px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      color: var(--text);
+      background: #fff;
+      font-size: 13px;
+      line-height: 18px;
+      font-weight: 760;
+      white-space: nowrap;
+    }
+
+    .btn.primary {
+      border-color: var(--brand-strong);
+      background: var(--brand);
+      color: #fff;
+    }
+
+    .btn.soft {
+      border-color: rgba(15, 159, 143, 0.24);
+      background: var(--brand-soft);
+      color: var(--brand-strong);
+    }
+
+    .btn.warn {
+      border-color: rgba(217, 119, 6, 0.22);
+      background: var(--amber-soft);
+      color: var(--amber);
+    }
+
+    .mode-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .mode-card {
+      min-height: 180px;
+      padding: 18px;
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .mode-card p {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 20px;
+    }
+
+    .code-sample {
+      margin: 0;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: #101827;
+      color: #dbeafe;
+      font-size: 12px;
+      line-height: 18px;
+      overflow: auto;
+      white-space: pre-wrap;
+    }
+
+    .right-rail {
+      position: sticky;
+      top: 84px;
+      padding: 14px;
+      min-width: 0;
+      min-height: calc(100vh - 116px);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .workspace.no-right-rail .right-rail {
+      display: none;
+    }
+
+    .rail-section {
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface-soft);
+    }
+
+    .rail-list {
+      margin: 10px 0 0;
+      padding: 0;
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 18px;
+    }
+
+    .rail-list li {
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+    }
+
+    .rail-list li::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      margin-top: 6px;
+      border-radius: 50%;
+      background: var(--brand);
+      flex: 0 0 auto;
+    }
+
+    .rail-toggle {
+      display: none;
+      position: fixed;
+      right: 24px;
+      bottom: 24px;
+      z-index: 32;
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: var(--brand);
+      box-shadow: 0 14px 32px rgba(15, 159, 143, 0.28);
+    }
+
+    .rail-toggle img {
+      filter: brightness(0) invert(1);
+      margin: auto;
+    }
+
+    .rail-toggle[hidden] {
+      display: none !important;
+    }
+
+    .markdown-preview-card {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface-soft);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .markdown-preview-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .markdown-preview-head h3 {
+      font-size: 14px;
+      line-height: 20px;
+    }
+
+    .markdown-preview-body {
+      min-height: 420px;
+      padding: 14px;
+      border: 1px solid rgba(207, 217, 228, 0.82);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--text);
+      overflow: auto;
+    }
+
+    .markdown-card-surface {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .markdown-card-surface h4 {
+      font-size: 18px;
+      line-height: 26px;
+    }
+
+    .markdown-preview-summary,
+    .markdown-preview-rendered p,
+    .markdown-preview-rendered li,
+    .markdown-preview-rendered blockquote {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 21px;
+    }
+
+    .markdown-preview-rendered {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .markdown-preview-rendered h5 {
+      margin-top: 4px;
+      font-size: 14px;
+      line-height: 22px;
+      color: var(--text);
+    }
+
+    .markdown-preview-rendered ul,
+    .markdown-preview-rendered ol {
+      margin: 0;
+      padding-left: 18px;
+    }
+
+    .markdown-preview-rendered blockquote {
+      margin: 0;
+      padding: 8px 10px;
+      border-left: 3px solid var(--brand);
+      background: var(--brand-soft);
+      color: var(--brand-strong);
+    }
+
+    .markdown-image-placeholder {
+      min-height: 88px;
+      border: 1px dashed var(--line-strong);
+      border-radius: 8px;
+      background: var(--surface-soft);
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      line-height: 18px;
+    }
+
+    .right-drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 352px;
+      height: 100vh;
+      z-index: 40;
+      background: #fff;
+      border-left: 1px solid var(--line);
+      box-shadow: -18px 0 40px rgba(32, 48, 70, 0.14);
+      transform: translateX(100%);
+      transition: transform 0.18s ease;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      visibility: hidden;
+    }
+
+    .right-drawer.open {
+      transform: translateX(0);
+      visibility: visible;
+    }
+
+    .drawer-head {
+      height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .toast {
+      min-height: 26px;
+      color: var(--brand-strong);
+      font-size: 12px;
+      line-height: 18px;
+      font-weight: 720;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .empty-note {
+      padding: 18px;
+      border-radius: 8px;
+      background: var(--surface-soft);
+      border: 1px dashed var(--line-strong);
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 20px;
+    }
+
+    .state-center {
+      min-height: 420px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      flex-direction: column;
+      gap: 12px;
+      padding: 32px;
+    }
+
+    .state-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--brand-soft);
+    }
+
+    @media (max-width: 1320px) {
+      .topbar-inner {
+        margin: 0 24px;
+      }
+
+      .brand {
+        width: 188px;
+      }
+
+      .workspace {
+        width: calc(100vw - 48px);
+        min-width: 1232px;
+        grid-template-columns: 200px minmax(760px, 1fr);
+        gap: 16px;
+      }
+
+      .workspace.no-right-rail {
+        grid-template-columns: 200px minmax(760px, 1fr);
+      }
+
+      .right-rail {
+        display: none;
+      }
+
+      .rail-toggle {
+        display: flex;
+      }
+
+      .editor-layout {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .editor-side {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .publish-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    /* Brand lockup override: pure SVG mark, frontend-rendered wordmark. */
+    .brand .brand-mark {
+      width: 62px !important;
+      height: 42px !important;
+      object-fit: contain !important;
+      border-radius: 0 !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      color: transparent !important;
+      flex: 0 0 auto !important;
+    }
+
+    .brand .brand-mark::before,
+    .brand .brand-mark::after {
+      content: none !important;
+      display: none !important;
+    }
+
+    .brand .brand-name {
+      font-size: 24px !important;
+      line-height: 28px !important;
+      font-weight: 900 !important;
+      letter-spacing: 0 !important;
+      transform: skewX(-8deg) scaleX(1.04) !important;
+      transform-origin: left center !important;
+      text-shadow: 1px 0 0 currentColor !important;
+      white-space: nowrap !important;
+    }
+
+    .brand .brand-sub {
+      margin-top: 2px !important;
+      font-size: 11px !important;
+      line-height: 14px !important;
+      font-weight: 680 !important;
+      letter-spacing: 0 !important;
+      color: #4f4f4f !important;
+      white-space: nowrap !important;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="page" data-page>
+    <header class="topbar" data-topbar>
+      <div class="topbar-inner">
+        <div class="brand">
+          <img class="brand-mark" src="../_assets/brand/duoyuan-shiguang-logo-mark.svg?v=20260616-nav2" alt="" aria-hidden="true" />
+          <div>
+            <div class="brand-name">多元拾光</div>
+            <div class="brand-sub">AI原生实践者社区</div>
+          </div>
+        </div>
+        <button class="top-action" data-go="home">
+          <img data-icon src="../../../resources/icons/remixicon/svg/Arrows/arrow-left-line.svg" alt="" />
+          返回社区
+        </button>
+        <div class="top-spacer"></div>
+        <button class="icon-action" aria-label="通知">
+          <img data-icon src="../../../resources/icons/remixicon/svg/Media/notification-3-line.svg" alt="" />
+        </button>
+        <div class="avatar">HX</div>
+      </div>
+    </header>
+
+    <div class="workspace" data-workspace>
+      <aside class="left-nav" data-left-nav>
+        <div class="side-heading">作者工作台</div>
+        <button class="side-item" data-nav="home" data-go="home">
+          <img data-icon src="../../../resources/icons/remixicon/svg/Design/palette-line.svg" alt="" />
+          创作首页
+        </button>
+        <button class="side-item" data-nav="management" data-go="management">
+          <img data-icon src="../../../resources/icons/remixicon/svg/Editor/list-check.svg" alt="" />
+          内容管理
+        </button>
+        <button class="side-item" data-nav="drafts" data-go="drafts">
+          <img data-icon src="../../../resources/icons/remixicon/svg/Document/draft-line.svg" alt="" />
+          草稿箱
+        </button>
+        <button class="side-item" data-nav="analytics" data-go="analytics">
+          <img data-icon src="../../../resources/icons/remixicon/svg/Business/line-chart-line.svg" alt="" />
+          数据概览
+        </button>
+        <button class="side-item" data-nav="guide" data-go="guide">
+          <img data-icon src="../../../resources/icons/remixicon/svg/System/shield-check-line.svg" alt="" />
+          创作规范
+        </button>
+        <div class="side-footer">
+          发布前请补全必要信息和素材；不确定时先保存草稿。
+        </div>
+      </aside>
+
+      <main class="main" data-main id="app"></main>
+
+      <aside class="right-rail" data-right-rail id="rightRail"></aside>
+    </div>
+
+    <button class="rail-toggle" data-rail-toggle aria-label="展开卡片预览" hidden>
+      <img data-icon src="../../../resources/icons/remixicon/svg/System/menu-fold-line.svg" alt="" />
+    </button>
+    <aside class="right-drawer" data-right-drawer>
+      <div class="drawer-head">
+        <h3 data-drawer-title>预览</h3>
+        <button class="icon-action" data-close-drawer aria-label="关闭">
+          <img data-icon src="../../../resources/icons/remixicon/svg/System/close-line.svg" alt="" />
+        </button>
+      </div>
+      <div id="drawerRail"></div>
+    </aside>
+  </div>
+
+  <script>
+    const iconRoot = "../../../resources/icons/remixicon/svg/";
+    const icons = {
+      flash: "Design/quill-pen-line.svg",
+      article: "Document/article-line.svg",
+      image: "Media/image-line.svg",
+      video: "Media/video-line.svg",
+      skill: "Logos/github-line.svg",
+      mcp: "Device/server-line.svg",
+      check: "System/check-line.svg",
+      time: "System/time-line.svg",
+      warn: "System/error-warning-line.svg",
+      eye: "System/eye-line.svg",
+      save: "Device/save-3-line.svg",
+      submit: "Business/send-plane-line.svg",
+      upload: "System/upload-cloud-2-line.svg",
+      markdown: "Document/markdown-line.svg",
+      settings: "System/settings-3-line.svg",
+      code: "Development/code-box-line.svg",
+      heading: "Editor/h-2.svg",
+      bold: "Editor/bold.svg",
+      italic: "Editor/italic.svg",
+      quote: "Editor/double-quotes-l.svg",
+      unordered: "Editor/list-unordered.svg",
+      ordered: "Editor/list-ordered.svg",
+      imageAdd: "Media/image-add-line.svg"
+    };
+
+    const normalTypes = [
+      { label: "闪念", state: "editor-flash", icon: "flash", desc: "短内容、想法、观察和快速记录" },
+      { label: "文章", state: "editor-article", icon: "article", desc: "教程、评测、经验和长文整理" },
+      { label: "图文", state: "editor-image", icon: "image", desc: "图片组、提示词案例和过程说明" },
+      { label: "视频", state: "editor-video", icon: "video", desc: "演示、教程、作品集和封面说明" }
+    ];
+
+    const assetTypes = [
+      { label: "Skill", state: "skill-mode", icon: "skill", desc: "复用能力包，区分仓库导入和在线填写" },
+      { label: "MCP", state: "mcp-mode", icon: "mcp", desc: "工具连接说明，强调配置占位和权限边界" }
+    ];
+
+    const allStates = [
+      "home",
+      "management",
+      "drafts",
+      "analytics",
+      "guide",
+      "editor-flash",
+      "editor-article",
+      "editor-image",
+      "editor-video",
+      "skill-mode",
+      "skill-github",
+      "skill-custom",
+      "mcp-mode",
+      "mcp-github",
+      "mcp-custom",
+      "reviewing",
+      "rejected",
+      "published"
+    ];
+
+    const markdownPreviewStates = new Set([
+      "editor-flash",
+      "editor-article",
+      "skill-github",
+      "skill-custom",
+      "mcp-github",
+      "mcp-custom"
+    ]);
+
+    window.__CREATION_PLATFORM_V2__ = {
+      workspaceMinWidth: 1280,
+      desktopUsesAvailableWidth: true,
+      normalPublishTypes: normalTypes.map((item) => item.label),
+      aiAssetPublishTypes: assetTypes.map((item) => item.label),
+      workflowRemovedInThisVersion: true,
+      skillCreateModes: ["GitHub", "自定义"],
+      mcpCreateModes: ["GitHub", "自定义"],
+      noRealSecrets: true,
+      noBackendGovernanceText: true,
+      draftReviewPublishedRejectedFlow: true,
+      creatorWorkspaceReusesCreationPlatform: true,
+      creatorWorkspaceLightweightOnly: true,
+      creatorWorkspaceHasBasicDataSummary: true,
+      noCreatorRevenue: true,
+      noComplexCreatorAnalytics: true,
+      prototypeCanInteract: true,
+      states: allStates
+    };
+
+    const routeTitles = {
+      home: "创作首页",
+      management: "内容管理",
+      drafts: "草稿箱",
+      analytics: "数据概览",
+      guide: "创作规范",
+      "editor-flash": "发闪念",
+      "editor-article": "写文章",
+      "editor-image": "发图文",
+      "editor-video": "发视频",
+      "skill-mode": "创建 Skill",
+      "skill-github": "从 GitHub 创建 Skill",
+      "skill-custom": "自定义创建 Skill",
+      "mcp-mode": "创建 MCP",
+      "mcp-github": "从 GitHub 创建 MCP",
+      "mcp-custom": "自定义创建 MCP",
+      reviewing: "审核中",
+      rejected: "未通过",
+      published: "已发布"
+    };
+
+    function icon(name) {
+      return `<img data-icon src="${iconRoot}${icons[name]}" alt="" />`;
+    }
+
+    function getState() {
+      const params = new URLSearchParams(location.search);
+      const state = params.get("state") || "home";
+      return allStates.includes(state) ? state : "home";
+    }
+
+    function go(state) {
+      const url = new URL(location.href);
+      url.searchParams.set("state", state);
+      history.pushState({}, "", url);
+      render();
+    }
+
+    function sectionTitle(title, action = "") {
+      return `<div class="section-title"><h2>${title}</h2>${action}</div>`;
+    }
+
+    function publishCard(item, group) {
+      return `
+        <button class="publish-card" data-publish-type="${item.label}" data-publish-group="${group}" data-go="${item.state}">
+          <span class="publish-icon">${icon(item.icon)}</span>
+          <strong>${item.label}</strong>
+          <span>${item.desc}</span>
+        </button>
+      `;
+    }
+
+    function typeBadge(label) {
+      const className = {
+        "工作流": "type-workflow",
+        "视频": "type-workflow",
+        "Skill": "type-skill",
+        "Skill/MCP": "type-skill",
+        "MCP": "type-mcp",
+        "教程案例": "type-case",
+        "文章": "type-case",
+        "教程/文章": "type-case",
+        "模型服务": "type-model",
+        "图文": "type-model",
+        "闪念": "type-topic"
+      }[label] || "type-case";
+
+      return `<span class="type-badge ${className}" data-content-type="${escapeHtml(label)}">${escapeHtml(label)}</span>`;
+    }
+
+    function homeView() {
+      return `
+        <section class="panel" data-state-view="home">
+          <div class="page-title">
+            <div>
+              <h1>作者工作台</h1>
+              <p class="subtext">从我的主页或创作中心进入，回查内容状态、继续草稿，并选择下一次发布类型。</p>
+            </div>
+            <span class="badge green">${icon("check")} 创作工作台</span>
+          </div>
+          <div class="workspace-brief" data-creator-workspace-summary>
+            <div>
+              <h2>今天优先处理 3 件事</h2>
+              <p class="subtext">继续 3 条高完成度草稿、补 1 条未通过内容说明、查看近 7 日基础反馈。</p>
+            </div>
+            <div class="workspace-actions">
+              <button class="btn soft" data-go="drafts" data-creator-next-action>继续草稿</button>
+              <button class="btn soft" data-go="rejected" data-creator-next-action>处理未通过</button>
+              <button class="btn primary" data-go="home" data-creator-next-action>${icon("flash")} 新建内容</button>
+            </div>
+          </div>
+          ${sectionTitle("选择发布类型", '<span class="badge blue">快速开始</span>')}
+          <div class="publish-grid">
+            ${normalTypes.map((item) => publishCard(item, "normal")).join("")}
+            ${assetTypes.map((item) => publishCard(item, "asset")).join("")}
+          </div>
+        </section>
+        <section class="panel" data-home-overview>
+          ${sectionTitle("基础数据概览", '<button class="plain-link" data-go="analytics">查看全部</button>')}
+          <div class="data-grid" data-basic-data-summary>
+            ${dataCard("近 7 日阅读", "28.6k", "只做汇总")}
+            ${dataCard("收藏", "412", "来自已发布内容")}
+            ${dataCard("评论", "86", "需要回复 7 条")}
+            ${dataCard("新增关注", "342", "来自内容页和主页")}
+          </div>
+        </section>
+        <div class="two-col" data-home-guidance>
+          <section class="panel">
+            ${sectionTitle("待处理内容", '<button class="plain-link" data-go="management">进入管理</button>')}
+            <div class="status-grid" data-creator-status-lane>
+              ${statusCard("草稿", "8", "drafts", "blue")}
+              ${statusCard("审核中", "2", "reviewing", "amber")}
+              ${statusCard("未通过", "1", "rejected", "red")}
+              ${statusCard("已发布", "16", "published", "green")}
+            </div>
+          </section>
+          <section class="panel">
+            ${sectionTitle("创作提示", '<button class="plain-link" data-go="guide">查看规范</button>')}
+            <div class="draft-list">
+              ${draftItem("AIGC 图片一致性提示词整理", "文章", "12 分钟前", "editor-article")}
+              ${draftItem("MCP 文件助手说明补齐", "MCP", "昨天 22:10", "mcp-custom")}
+            </div>
+          </section>
+        </div>
+      `;
+    }
+
+    function statusCard(name, num, state, tone) {
+      return `
+        <button class="status-card" data-go="${state}">
+          <span class="badge ${tone}">${name}</span>
+          <div class="num">${num}</div>
+          <div class="meta-line">点击进入对应状态</div>
+        </button>
+      `;
+    }
+
+    function draftItem(title, type, time, state, isContentType = true) {
+      const typeNode = isContentType ? typeBadge(type) : `<span>${escapeHtml(type)}</span>`;
+      const isFlash = isContentType && type === "闪念";
+      const rowAttrs = isFlash ? ' data-flash-list-item data-no-detail="flash"' : "";
+      const contentNode = isFlash
+        ? `<p class="flash-line-text">${escapeHtml(title)}</p>`
+        : `<h3>${escapeHtml(title)}</h3>`;
+      return `
+        <div class="draft-item" data-draft-item${rowAttrs}>
+          <div>
+            ${contentNode}
+            <div class="meta-line">${typeNode}<span>${time}</span><span>已自动保存</span></div>
+          </div>
+          <button class="btn soft" data-go="${state}" data-creator-next-action>继续编辑</button>
+        </div>
+      `;
+    }
+
+    function dataCard(name, value, delta) {
+      return `
+        <div class="data-card">
+          <span class="badge">${name}</span>
+          <strong>${value}</strong>
+          <div class="meta-line">${delta}</div>
+        </div>
+      `;
+    }
+
+    function managementView() {
+      const rows = [
+        ["AIGC 图片一致性提示词整理", "文章", "草稿", "今天 15:20", "editor-article", "继续编辑"],
+        ["AI 工具选型经验", "图文", "审核中", "今天 12:02", "reviewing", "等待结果"],
+        ["MCP 浏览器助手配置说明", "MCP", "未通过", "昨天 19:31", "rejected", "补权限边界"],
+        ["调试时先把复现步骤、最小改动和验证命令写清楚，再让 Claude Code 或 Codex 接手。", "闪念", "已发布", "昨天 10:18", "published", "查看表现"]
+      ];
+      return `
+        <section class="panel" data-state-view="management">
+          <div class="page-title">
+            <div>
+              <h1>内容管理</h1>
+              <p class="subtext">按草稿、审核中、未通过和已发布状态回查内容，作者只看到可处理状态和下一步动作。</p>
+            </div>
+            <button class="btn primary" data-go="home">${icon("flash")} 新建内容</button>
+          </div>
+          <div class="tabs">
+            ${["全部", "草稿", "审核中", "未通过", "已发布"].map((item, index) => `<button class="tab ${index === 0 ? "active" : ""}" data-management-filter>${item}</button>`).join("")}
+          </div>
+          <div class="manage-list">
+            ${rows.map((row) => manageRow(...row)).join("")}
+          </div>
+        </section>
+      `;
+    }
+
+    function manageRow(title, type, status, time, state, nextAction = "查看") {
+      const tone = status === "已发布" ? "green" : status === "未通过" ? "red" : status === "审核中" ? "amber" : "blue";
+      const isFlash = type === "闪念";
+      const rowAttrs = isFlash ? ' data-flash-list-item data-no-detail="flash"' : "";
+      const contentNode = isFlash
+        ? `<p class="flash-line-text">${escapeHtml(title)}</p>`
+        : `<h3>${escapeHtml(title)}</h3>`;
+      return `
+        <div class="manage-row"${rowAttrs}>
+          <div>
+            ${contentNode}
+            <div class="meta-line">${typeBadge(type)}<span>${time}</span><span class="next-action" data-creator-next-action>下一步：${escapeHtml(nextAction)}</span></div>
+          </div>
+          <div class="row-actions">
+            <span class="badge ${tone}">${status}</span>
+            <button class="plain-link" data-go="${state}">查看</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function draftsView() {
+      return `
+        <section class="panel" data-state-view="drafts">
+          <div class="page-title">
+            <div>
+              <h1>草稿箱</h1>
+              <p class="subtext">草稿不进入公共展示，可继续编辑或提交。</p>
+            </div>
+            <span class="badge blue">8 条草稿</span>
+          </div>
+          <div class="draft-list">
+            ${draftItem("AIGC 图片一致性提示词整理", "文章", "12 分钟前", "editor-article")}
+            ${draftItem("今天发现调试任务最容易返工的地方，是没有提前写清哪些文件不能动。", "闪念", "38 分钟前", "editor-flash")}
+            ${draftItem("图文案例：短视频封面生成", "图文", "今天 09:42", "editor-image")}
+            ${draftItem("MCP 文件助手说明补齐", "MCP", "昨天 22:10", "mcp-custom")}
+            ${draftItem("Skill：软著材料整理", "Skill", "昨天 18:16", "skill-custom")}
+          </div>
+        </section>
+      `;
+    }
+
+    function analyticsView() {
+      return `
+        <section class="panel" data-state-view="analytics">
+          <div class="page-title">
+            <div>
+              <h1>数据概览</h1>
+              <p class="subtext">查看阅读、收藏、评论、关注和内容状态的基础汇总，用于判断下一步更新重点。</p>
+            </div>
+            <button class="btn primary" data-go="home">${icon("flash")} 新建内容</button>
+          </div>
+          <div class="data-grid" data-basic-data-summary>
+            ${dataCard("近 7 日阅读", "28.6k", "基础汇总")}
+            ${dataCard("收藏", "412", "已发布内容累计")}
+            ${dataCard("评论", "86", "需要回复 7 条")}
+            ${dataCard("新增关注", "342", "内容页和主页带来")}
+          </div>
+        </section>
+        <section class="panel" data-analytics-content>
+          ${sectionTitle("内容表现", '<span class="badge blue">近 7 日</span>')}
+          <div class="manage-list">
+            ${manageRow("调试时先把复现步骤、最小改动和验证命令写清楚，再让 Claude Code 或 Codex 接手。", "闪念", "已发布", "阅读 8.2k", "published")}
+            ${manageRow("AIGC 图片一致性提示词整理", "文章", "草稿", "预计 6 分钟读完", "editor-article")}
+            ${manageRow("MCP 浏览器助手配置说明", "MCP", "未通过", "需补充权限边界", "rejected")}
+          </div>
+        </section>
+        <section class="panel" data-analytics-next>
+          ${sectionTitle("下一步动作")}
+          <div class="draft-list">
+            ${draftItem("补全未通过内容的修改说明", "建议优先处理", "今天", "rejected", false)}
+            ${draftItem("继续完善阅读较高的教程类内容", "可扩展成系列", "本周", "editor-article", false)}
+          </div>
+        </section>
+      `;
+    }
+
+    function guideView() {
+      return `
+        <section class="panel" data-state-view="guide">
+          <div class="page-title">
+            <div>
+              <h1>创作规范</h1>
+              <p class="subtext">发布前按内容质量、素材说明和使用边界检查，减少来回修改。</p>
+            </div>
+            <button class="btn primary" data-go="home">${icon("flash")} 去发布</button>
+          </div>
+          <div class="data-grid">
+            ${dataCard("标题", "明确问题", "让用户一眼知道解决什么")}
+            ${dataCard("摘要", "说明收益", "概括适用场景和结果")}
+            ${dataCard("正文", "可复现", "步骤、参数、边界写清楚")}
+            ${dataCard("素材", "可追溯", "截图、封面和仓库信息一致")}
+          </div>
+        </section>
+        <div class="two-col" data-guide-sections>
+          <section class="panel">
+            ${sectionTitle("发布前确认")}
+            <div class="draft-list">
+              <div class="draft-item">
+                <div>
+                  <h3>内容是否能独立看懂</h3>
+                  <div class="meta-line"><span>标题、摘要、正文信息一致</span></div>
+                </div>
+                <span class="badge green">${icon("check")} 建议</span>
+              </div>
+              <div class="draft-item">
+                <div>
+                  <h3>是否补充必要边界</h3>
+                  <div class="meta-line"><span>适用人群、前置条件、限制说明</span></div>
+                </div>
+                <span class="badge blue">必看</span>
+              </div>
+              <div class="draft-item">
+                <div>
+                  <h3>是否避免敏感信息</h3>
+                  <div class="meta-line"><span>不要提交密钥、账号凭据或个人隐私</span></div>
+                </div>
+                <span class="badge red">禁止</span>
+              </div>
+            </div>
+          </section>
+          <section class="panel">
+            ${sectionTitle("适合发布的内容")}
+            <div class="draft-list">
+              ${draftItem("完整工具使用经验", "教程/文章", "推荐", "editor-article")}
+              ${draftItem("可复用能力包说明", "Skill/MCP", "推荐", "skill-mode")}
+              ${draftItem("有结论的快速观察", "闪念", "推荐", "editor-flash")}
+            </div>
+          </section>
+        </div>
+      `;
+    }
+
+    function flashTool(command, iconName, label, primary = false) {
+      return `
+        <button type="button" class="flash-md-tool${primary ? " primary" : ""}" data-md-command="${command}" title="${label}" aria-label="${label}">
+          ${icon(iconName)}
+        </button>
+      `;
+    }
+
+    function flashEditorView() {
+      return `
+        <section class="panel" data-state-view="editor-flash">
+          <div class="page-title">
+            <div>
+              <h1>发闪念</h1>
+              <p class="subtext">写一条短经验、代码片段或工具发现。</p>
+            </div>
+            <span class="badge blue">闪念</span>
+          </div>
+          <div class="flash-compose-card" data-editor="flash">
+            <div class="flash-compose-shell" data-flash-compose-shell>
+              <textarea data-flash-compose-textarea maxlength="600" placeholder="写一条短经验、代码片段或工具发现。"></textarea>
+              <div class="flash-compose-bar" data-flash-compose-bar>
+                <div class="flash-compose-tools">
+                  <div class="flash-compose-toolbar" data-flash-md-toolbar aria-label="编辑工具">
+                    ${flashTool("heading", "heading", "Heading")}
+                    ${flashTool("bold", "bold", "Bold")}
+                    ${flashTool("italic", "italic", "Italic")}
+                    ${flashTool("quote", "quote", "Quote")}
+                    ${flashTool("list", "unordered", "List")}
+                    ${flashTool("ordered-list", "ordered", "Ordered list")}
+                    ${flashTool("image", "imageAdd", "Image", true)}
+                    <input type="file" accept="image/*" multiple hidden data-flash-compose-image-input />
+                  </div>
+                </div>
+                <span class="flash-compose-counter" data-flash-compose-counter>0 / 600</span>
+              </div>
+            </div>
+          </div>
+          ${editorActions()}
+        </section>
+      `;
+    }
+
+    function normalEditorView(kind) {
+      const config = {
+        "editor-article": {
+          type: "文章",
+          title: "写文章",
+          helper: "适合教程、评测、经验复盘和方案拆解。",
+          body: "## 结论\nAI 任务型资产需要先说明适用场景，再给出可复用步骤。\n\n## 步骤\n1. 明确输入。\n2. 说明处理过程。\n3. 给出输出样例。",
+          media: "可选上传封面或辅助图片"
+        },
+        "editor-image": {
+          type: "图文",
+          title: "发图文",
+          helper: "图片组和说明并重，至少保留 1 张可检查图片。",
+          body: "这组图文用于说明提示词迭代前后的画面差异。",
+          media: "上传图片组和封面"
+        },
+        "editor-video": {
+          type: "视频",
+          title: "发视频",
+          helper: "视频文件和封面优先，正文承担说明与检索。",
+          body: "视频说明：演示如何把一个 MCP 说明页拆成配置、权限和使用场景。",
+          media: "上传视频文件和封面"
+        }
+      }[kind];
+
+      return `
+        <section class="panel" data-state-view="${kind}">
+          <div class="page-title">
+            <div>
+              <h1>${config.title}</h1>
+              <p class="subtext">${config.helper}</p>
+            </div>
+            <span class="badge blue">${config.type}</span>
+          </div>
+          <div class="editor-layout single-column" data-editor="normal">
+            <div class="editor-main">
+              ${field("title", "标题", `${config.type}标题示例`)}
+              ${field("summary", "摘要", "用 1-2 句话说明内容价值。")}
+              ${topicPicker()}
+              ${["editor-image", "editor-video"].includes(kind) ? mediaField(config.media) : ""}
+              ${markdownEditorField("body", "Markdown 编辑器", config.body)}
+            </div>
+          </div>
+          ${editorActions()}
+        </section>
+      `;
+    }
+
+    function field(key, label, value) {
+      return `
+        <div class="field" data-field="${key}">
+          <label>${label}</label>
+          <input value="${value}" />
+        </div>
+      `;
+    }
+
+    function textareaField(key, label, value, extra = "") {
+      return `
+        <div class="field" data-field="${key}">
+          <label>${label}</label>
+          <textarea class="${extra}">${value}</textarea>
+        </div>
+      `;
+    }
+
+    function markdownEditorField(key, label, value) {
+      return textareaField(key, label, value, "body-editor markdown-editor");
+    }
+
+    function topicPicker() {
+      return `
+        <div class="field" data-field="topics">
+          <label>话题</label>
+          <div class="topic-row">
+            <span class="topic-pill">#AI工具</span>
+            <span class="topic-pill">#实战教程</span>
+            <span class="topic-pill">#Prompt</span>
+          </div>
+        </div>
+      `;
+    }
+
+    function mediaField(copy) {
+      return `
+        <div class="upload-zone" data-field="media">
+          ${icon("upload")}
+          <strong>${copy}</strong>
+          <span class="subtext">原型仅展示上传入口和状态，不进行真实上传。</span>
+        </div>
+      `;
+    }
+
+    function editorActions() {
+      return `
+        <div class="editor-actions">
+          <span class="toast" data-toast></span>
+          <button class="btn" data-action="save-draft">${icon("save")} 保存草稿</button>
+          <button class="btn primary" data-action="submit-review">${icon("submit")} 提交</button>
+        </div>
+      `;
+    }
+
+    function skillModeView() {
+      return `
+        <section class="panel" data-state-view="skill-mode">
+          <div class="page-title">
+            <div>
+              <h1>创建 Skill</h1>
+              <p class="subtext">Skill 是可复用能力包，需要先选择创建路径。</p>
+            </div>
+            <span class="badge blue">AI 资产</span>
+          </div>
+          <div class="mode-grid">
+            <button class="mode-card" data-skill-mode="GitHub" data-go="skill-github">
+              <span class="mode-icon">${icon("skill")}</span>
+              <h2>从 GitHub 创建</h2>
+              <p>填写仓库地址后，用一个 Markdown 编辑器补齐能力、触发场景、输入输出和边界。</p>
+            </button>
+            <button class="mode-card" data-skill-mode="自定义" data-go="skill-custom">
+              <span class="mode-icon">${icon("markdown")}</span>
+              <h2>自定义创建</h2>
+              <p>填写 Skill 名称后，直接用 Markdown 写完整能力说明。</p>
+            </button>
+          </div>
+        </section>
+      `;
+    }
+
+    function skillEditorView(mode) {
+      const isGithub = mode === "github";
+      return `
+        <section class="panel" data-state-view="skill-${mode}">
+          <div class="page-title">
+            <div>
+              <h1>${isGithub ? "从 GitHub 创建 Skill" : "自定义创建 Skill"}</h1>
+              <p class="subtext">${isGithub ? "填写公开仓库信息后，继续补充能力说明和使用边界。" : "不依赖仓库，直接填写并编辑能力说明文件。"}</p>
+            </div>
+            <span class="badge blue">${isGithub ? "GitHub" : "自定义"}</span>
+          </div>
+          <div class="editor-layout single-column" data-editor="skill">
+            <div class="editor-main">
+              ${isGithub ? field("githubRepoUrl", "GitHub 仓库地址", "https://github.com/duoyuan-shiguang/example-skill") : field("title", "Skill 名称", "软著材料整理 Skill")}
+              ${markdownEditorField("skillMarkdown", "Markdown 编辑器", "## 能力说明\n帮助作者把分散项目材料转成可提交、可复核的结构化资料。\n\n## 触发场景\n用户提到软著、材料整理、鉴别材料、说明书或字段汇总时。\n\n## 输入输出\n- 输入：项目路径、版本说明、已有材料。\n- 输出：材料目录、文档草案、检查清单。\n\n## 使用边界\n不替代法律意见，不保存用户私密凭证，不承诺一次生成即可提交。")}
+            </div>
+          </div>
+          ${editorActions()}
+        </section>
+      `;
+    }
+
+    function mcpModeView() {
+      return `
+        <section class="panel" data-state-view="mcp-mode">
+          <div class="page-title">
+            <div>
+              <h1>创建 MCP</h1>
+              <p class="subtext">MCP 需要明确服务对象、工具能力、配置方式和权限边界。</p>
+            </div>
+            <span class="badge blue">AI 资产</span>
+          </div>
+          <div class="mode-grid">
+            <button class="mode-card" data-mcp-mode="GitHub" data-go="mcp-github">
+              <span class="mode-icon">${icon("skill")}</span>
+              <h2>从 GitHub 创建</h2>
+              <p>填写仓库地址和 Server 基础信息后，用 Markdown 补齐能力、配置和边界。</p>
+            </button>
+            <button class="mode-card" data-mcp-mode="自定义" data-go="mcp-custom">
+              <span class="mode-icon">${icon("mcp")}</span>
+              <h2>自定义创建</h2>
+              <p>填写 Server 和连接对象后，用 Markdown 写完整说明。</p>
+            </button>
+          </div>
+        </section>
+      `;
+    }
+
+    function mcpEditorView(mode) {
+      const isGithub = mode === "github";
+      return `
+        <section class="panel" data-state-view="mcp-${mode}">
+          <div class="page-title">
+            <div>
+              <h1>${isGithub ? "从 GitHub 创建 MCP" : "自定义创建 MCP"}</h1>
+              <p class="subtext">${isGithub ? "原型只做仓库信息模拟，不建立外部连接。" : "手动定义服务说明和配置占位，便于后续审核与详情页展示。"}</p>
+            </div>
+            <span class="badge blue">${isGithub ? "GitHub" : "自定义"}</span>
+          </div>
+          <div class="editor-layout single-column" data-editor="mcp">
+            <div class="editor-main">
+              ${isGithub ? field("githubRepoUrl", "GitHub 仓库地址", "https://github.com/duoyuan-shiguang/example-mcp-server") : ""}
+              ${field("serverInfo", "MCP Server 名称", "duoyuan-shiguang-files-helper")}
+              ${field("connectionTarget", "连接对象", "本地文件目录 / 文档资料")}
+              ${markdownEditorField("mcpMarkdown", "Markdown 编辑器", "## Tools 概览\n- list_docs：列出资料目录。\n- read_doc：读取指定文档片段。\n- create_summary：生成结构化摘要。\n\n## Resources / Prompts\nresources：项目文档目录。\nprompts：资料整理模板。\n\n## 配置方式\n使用占位配置说明命令、参数和环境变量，不填写真实密钥。\n\n## 权限边界\n默认只读取用户选择的目录；写入动作需要用户确认；不保存敏感配置。\n\n## 使用场景\n适合项目资料整理、文档问答、内容生产辅助。")}
+            </div>
+          </div>
+          ${editorActions()}
+        </section>
+      `;
+    }
+
+    function statePanel(state) {
+      const map = {
+        reviewing: {
+          icon: "time",
+          title: "内容已提交",
+          copy: "作者可以查看状态，但不能重复提交。审核完成后会进入已发布或未通过。",
+          badge: "审核中",
+          tone: "amber",
+          action: '<button class="btn soft" data-go="management">查看内容管理</button>'
+        },
+        rejected: {
+          icon: "warn",
+          title: "内容未通过",
+          copy: "原因：示例配置说明不够完整，请补充权限边界和使用场景后重新提交。",
+          badge: "未通过",
+          tone: "red",
+          action: '<button class="btn primary" data-action="resubmit-edit">修改后重提</button>'
+        },
+        published: {
+          icon: "check",
+          title: "内容已发布",
+          copy: "已发布内容可以被访问，可继续优化标题、摘要和封面表现。",
+          badge: "已发布",
+          tone: "green",
+          action: '<button class="btn soft" data-go="management">回到内容管理</button>'
+        }
+      }[state];
+
+      return `
+        <section class="panel" data-state-view="${state}">
+          <div class="state-center">
+            <span class="state-icon">${icon(map.icon)}</span>
+            <span class="badge ${map.tone}">${map.badge}</span>
+            <h1>${map.title}</h1>
+            <p class="subtext" style="max-width:520px;">${map.copy}</p>
+            <div class="row-actions">${map.action}</div>
+          </div>
+        </section>
+      `;
+    }
+
+    function rightRail(state) {
+      if (!markdownPreviewStates.has(state)) return "";
+      return `
+        <div class="markdown-preview-card" data-markdown-preview-card data-preview-state="${state}">
+          <div class="markdown-preview-head">
+            <h3>卡片预览</h3>
+            <span class="badge blue">Markdown</span>
+          </div>
+          <div class="markdown-preview-body" data-markdown-preview-body></div>
+        </div>
+      `;
+    }
+
+    function escapeHtml(value = "") {
+      return String(value).replace(/[&<>"']/g, (char) => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        "\"": "&quot;",
+        "'": "&#039;"
+      }[char]));
+    }
+
+    function renderInlineMarkdown(value = "") {
+      return escapeHtml(value)
+        .replace(/`([^`]+)`/g, "<code>$1</code>")
+        .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
+        .replace(/\*([^*]+)\*/g, "<em>$1</em>");
+    }
+
+    function renderMarkdown(value = "") {
+      const lines = String(value || "").split(/\r?\n/);
+      let html = "";
+      let listType = "";
+      const closeList = () => {
+        if (listType) {
+          html += `</${listType}>`;
+          listType = "";
+        }
+      };
+
+      lines.forEach((line) => {
+        const trimmed = line.trim();
+        if (!trimmed) {
+          closeList();
+          return;
+        }
+        const headingMatch = trimmed.match(/^#{1,3}\s+(.+)$/);
+        if (headingMatch) {
+          closeList();
+          html += `<h5>${renderInlineMarkdown(headingMatch[1])}</h5>`;
+          return;
+        }
+        const imageMatch = trimmed.match(/^!\[([^\]]*)\]\(([^)]+)\)$/);
+        if (imageMatch) {
+          closeList();
+          html += `<div class="markdown-image-placeholder">${renderInlineMarkdown(imageMatch[1] || "图片预览")}</div>`;
+          return;
+        }
+        const quoteMatch = trimmed.match(/^>\s+(.+)$/);
+        if (quoteMatch) {
+          closeList();
+          html += `<blockquote>${renderInlineMarkdown(quoteMatch[1])}</blockquote>`;
+          return;
+        }
+        const orderedMatch = trimmed.match(/^\d+\.\s+(.+)$/);
+        if (orderedMatch) {
+          if (listType !== "ol") {
+            closeList();
+            html += "<ol>";
+            listType = "ol";
+          }
+          html += `<li>${renderInlineMarkdown(orderedMatch[1])}</li>`;
+          return;
+        }
+        const unorderedMatch = trimmed.match(/^[-*]\s+(.+)$/);
+        if (unorderedMatch) {
+          if (listType !== "ul") {
+            closeList();
+            html += "<ul>";
+            listType = "ul";
+          }
+          html += `<li>${renderInlineMarkdown(unorderedMatch[1])}</li>`;
+          return;
+        }
+        closeList();
+        html += `<p>${renderInlineMarkdown(trimmed)}</p>`;
+      });
+
+      closeList();
+      return html || '<p class="markdown-preview-summary">暂无可预览内容。</p>';
+    }
+
+    function fieldValue(key) {
+      const fieldNode = document.querySelector(`[data-field='${key}']`);
+      const inputNode = fieldNode?.querySelector("textarea, input");
+      return inputNode?.value.trim() || "";
+    }
+
+    function markdownPreviewSource(state) {
+      if (state === "editor-flash") {
+        return {
+          type: "闪念",
+          title: "闪念预览",
+          summary: "短内容会以卡片形式进入作者内容流。",
+          body: document.querySelector("[data-flash-compose-textarea]")?.value.trim()
+            || "写一条短经验、代码片段或工具发现。"
+        };
+      }
+      if (state === "editor-article") {
+        return {
+          type: "文章",
+          title: fieldValue("title") || "文章标题示例",
+          summary: fieldValue("summary") || "用 1-2 句话说明内容价值。",
+          body: fieldValue("body")
+        };
+      }
+      if (state.startsWith("skill-")) {
+        const title = fieldValue("title") || fieldValue("githubRepoUrl").split("/").filter(Boolean).pop() || "Skill 预览";
+        return {
+          type: "Skill",
+          title,
+          summary: "能力包卡片预览会直接渲染 Markdown 编辑器内容。",
+          body: fieldValue("skillMarkdown")
+        };
+      }
+      if (state.startsWith("mcp-")) {
+        return {
+          type: "MCP",
+          title: fieldValue("serverInfo") || "MCP Server 预览",
+          summary: "MCP 卡片预览会直接渲染 Markdown 编辑器内容。",
+          body: fieldValue("mcpMarkdown")
+        };
+      }
+      return { type: "Markdown", title: "卡片预览", summary: "", body: "" };
+    }
+
+    function updateMarkdownPreview() {
+      const previewNodes = document.querySelectorAll("[data-markdown-preview-body]");
+      if (!previewNodes.length) return;
+      const source = markdownPreviewSource(getState());
+      const html = `
+        <article class="markdown-card-surface">
+          <span class="badge blue">${escapeHtml(source.type)}</span>
+          <h4>${escapeHtml(source.title)}</h4>
+          ${source.summary ? `<p class="markdown-preview-summary">${escapeHtml(source.summary)}</p>` : ""}
+          <div class="markdown-preview-rendered">${renderMarkdown(source.body)}</div>
+        </article>
+      `;
+      previewNodes.forEach((node) => {
+        node.innerHTML = html;
+      });
+    }
+
+    function render() {
+      const state = getState();
+      const app = document.getElementById("app");
+      const view = {
+        home: homeView,
+        management: managementView,
+        drafts: draftsView,
+        analytics: analyticsView,
+        guide: guideView,
+        "editor-flash": flashEditorView,
+        "editor-article": () => normalEditorView("editor-article"),
+        "editor-image": () => normalEditorView("editor-image"),
+        "editor-video": () => normalEditorView("editor-video"),
+        "skill-mode": skillModeView,
+        "skill-github": () => skillEditorView("github"),
+        "skill-custom": () => skillEditorView("custom"),
+        "mcp-mode": mcpModeView,
+        "mcp-github": () => mcpEditorView("github"),
+        "mcp-custom": () => mcpEditorView("custom"),
+        reviewing: () => statePanel("reviewing"),
+        rejected: () => statePanel("rejected"),
+        published: () => statePanel("published")
+      }[state] || homeView;
+
+      app.innerHTML = view();
+      const rail = rightRail(state);
+      const hasRail = rail.trim().length > 0;
+      const workspace = document.querySelector("[data-workspace]");
+      const rightRailNode = document.getElementById("rightRail");
+      const drawerRailNode = document.getElementById("drawerRail");
+      const railToggle = document.querySelector("[data-rail-toggle]");
+      const drawerNode = document.querySelector("[data-right-drawer]");
+      const drawerTitle = document.querySelector("[data-drawer-title]");
+
+      workspace.classList.toggle("no-right-rail", !hasRail);
+      rightRailNode.innerHTML = rail;
+      drawerRailNode.innerHTML = rail;
+      railToggle.hidden = !hasRail;
+      railToggle.setAttribute("aria-label", hasRail ? "展开卡片预览" : "展开右侧栏");
+      if (drawerTitle) drawerTitle.textContent = hasRail ? "预览" : "";
+      if (!hasRail) drawerNode.classList.remove("open");
+
+      updateMarkdownPreview();
+      document.title = `多元拾光 创作服务平台 - ${routeTitles[state] || "创作首页"}`;
+      document.querySelectorAll("[data-nav]").forEach((node) => node.classList.remove("active"));
+      const activeNav = state === "management" || ["reviewing", "rejected", "published"].includes(state)
+        ? "management"
+        : state === "drafts"
+          ? "drafts"
+          : state === "analytics" || state === "guide"
+            ? state
+            : "home";
+      const activeNode = document.querySelector(`[data-nav="${activeNav}"]`);
+      if (activeNode) activeNode.classList.add("active");
+    }
+
+    const flashMarkdownSnippets = {
+      heading: "\n## 小标题\n",
+      bold: "**重点内容**",
+      italic: "*补充说明*",
+      quote: "\n> 关键判断\n",
+      list: "\n- 要点一\n- 要点二\n",
+      "ordered-list": "\n1. 第一步\n2. 第二步\n",
+      image: "\n![图片说明](image-url)\n"
+    };
+
+    function updateFlashCounter() {
+      const textarea = document.querySelector("[data-flash-compose-textarea]");
+      const counter = document.querySelector("[data-flash-compose-counter]");
+      if (!textarea || !counter) return;
+      counter.textContent = `${textarea.value.length} / ${textarea.maxLength || 600}`;
+    }
+
+    function insertFlashSnippet(command) {
+      const textarea = document.querySelector("[data-flash-compose-textarea]");
+      const snippet = flashMarkdownSnippets[command];
+      if (!textarea || !snippet) return;
+      let start = textarea.selectionStart ?? textarea.value.length;
+      let end = textarea.selectionEnd ?? textarea.value.length;
+      if (document.activeElement !== textarea && start === 0 && end === 0 && textarea.value.length) {
+        start = textarea.value.length;
+        end = textarea.value.length;
+      }
+      const nextValue = `${textarea.value.slice(0, start)}${snippet}${textarea.value.slice(end)}`;
+      textarea.value = nextValue.slice(0, textarea.maxLength || 600);
+      const nextPosition = Math.min(start + snippet.length, textarea.value.length);
+      textarea.focus();
+      textarea.setSelectionRange(nextPosition, nextPosition);
+      updateFlashCounter();
+      updateMarkdownPreview();
+    }
+
+    document.addEventListener("click", (event) => {
+      const markdownNode = event.target.closest("[data-flash-md-toolbar] [data-md-command]");
+      if (markdownNode) {
+        event.preventDefault();
+        insertFlashSnippet(markdownNode.getAttribute("data-md-command"));
+        return;
+      }
+
+      const goNode = event.target.closest("[data-go]");
+      if (goNode) {
+        go(goNode.getAttribute("data-go"));
+        return;
+      }
+
+      const actionNode = event.target.closest("[data-action]");
+      if (!actionNode) return;
+
+      const action = actionNode.getAttribute("data-action");
+      if (action === "save-draft") {
+        const toast = document.querySelector("[data-toast]");
+        if (toast) toast.innerHTML = `${icon("check")} 草稿已保存`;
+      }
+      if (action === "submit-review") {
+        go("reviewing");
+      }
+      if (action === "resubmit-edit") {
+        go("editor-article");
+      }
+    });
+
+    document.addEventListener("input", (event) => {
+      if (event.target.closest("[data-flash-compose-textarea]")) {
+        updateFlashCounter();
+      }
+      updateMarkdownPreview();
+    });
+
+    document.querySelector("[data-rail-toggle]").addEventListener("click", () => {
+      document.querySelector("[data-right-drawer]").classList.add("open");
+    });
+
+    document.querySelector("[data-close-drawer]").addEventListener("click", () => {
+      document.querySelector("[data-right-drawer]").classList.remove("open");
+    });
+
+    window.addEventListener("popstate", render);
+    render();
+  </script>
+  <script src="../_shared/c-end-prototype-interactions.js"></script>
+</body>
+</html>

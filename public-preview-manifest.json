@@ -1,0 +1,79 @@
+{
+  "generatedAt": "2026-06-16T10:42:12.435Z",
+  "sourceRoot": "outputs/figma_prototype_work",
+  "entry": "index.html",
+  "homepage": "outputs/figma_prototype_work/c-end-home-aggregate-feed-v1/index.html",
+  "pageCount": 13,
+  "pages": [
+    {
+      "slug": "c-end-home-aggregate-feed-v1",
+      "label": "首页",
+      "path": "outputs/figma_prototype_work/c-end-home-aggregate-feed-v1/index.html"
+    },
+    {
+      "slug": "c-end-flash-channel-v1",
+      "label": "闪念",
+      "path": "outputs/figma_prototype_work/c-end-flash-channel-v1/index.html"
+    },
+    {
+      "slug": "c-end-aigc-experience-center-v2",
+      "label": "AIGC 体验",
+      "path": "outputs/figma_prototype_work/c-end-aigc-experience-center-v2/index.html"
+    },
+    {
+      "slug": "c-end-model-service-channel-v1",
+      "label": "模型服务",
+      "path": "outputs/figma_prototype_work/c-end-model-service-channel-v1/index.html"
+    },
+    {
+      "slug": "c-end-ai-plus-channel-v1",
+      "label": "AI+",
+      "path": "outputs/figma_prototype_work/c-end-ai-plus-channel-v1/index.html"
+    },
+    {
+      "slug": "c-end-search-results-v1",
+      "label": "搜索",
+      "path": "outputs/figma_prototype_work/c-end-search-results-v1/index.html"
+    },
+    {
+      "slug": "c-end-topic-square-v1",
+      "label": "话题广场",
+      "path": "outputs/figma_prototype_work/c-end-topic-square-v1/index.html"
+    },
+    {
+      "slug": "c-end-topic-aggregate-v1",
+      "label": "话题聚合",
+      "path": "outputs/figma_prototype_work/c-end-topic-aggregate-v1/index.html"
+    },
+    {
+      "slug": "c-end-detail-page-v1",
+      "label": "详情页",
+      "path": "outputs/figma_prototype_work/c-end-detail-page-v1/index.html"
+    },
+    {
+      "slug": "c-end-user-profile-v1",
+      "label": "用户主页",
+      "path": "outputs/figma_prototype_work/c-end-user-profile-v1/index.html"
+    },
+    {
+      "slug": "c-end-favorites-v1",
+      "label": "收藏夹",
+      "path": "outputs/figma_prototype_work/c-end-favorites-v1/index.html"
+    },
+    {
+      "slug": "c-end-creation-platform-v2",
+      "label": "创作服务",
+      "path": "outputs/figma_prototype_work/c-end-creation-platform-v2/index.html"
+    },
+    {
+      "slug": "c-end-announcement-list-v1",
+      "label": "社区公告",
+      "path": "outputs/figma_prototype_work/c-end-announcement-list-v1/index.html"
+    }
+  ],
+  "copiedRuntimeRoots": [
+    "outputs/figma_prototype_work/_shared",
+    "outputs/figma_prototype_work/_assets",
+    "resources/icons/remixicon/svg"
+  ]
+}
