@@ -493,6 +493,8 @@
       border-radius: 6px;
       background: #ffffff;
       box-shadow: none;
+      cursor: pointer;
+      transition: border-color 0.16s ease, transform 0.16s ease;
     }
 
     .service-card::before {
@@ -503,6 +505,13 @@
       right: 0;
       height: 2px;
       background: rgba(36, 36, 36, 0.42);
+    }
+
+    .service-card:hover,
+    .service-card:focus-visible {
+      border-color: #dcdcdc;
+      transform: translateY(-1px);
+      outline: none;
     }
 
     .card-top,
@@ -960,6 +969,508 @@
       gap: 16px;
     }
 
+    .model-detail-panel {
+      width: 876px;
+      min-height: 700px;
+      overflow: hidden;
+    }
+
+    .model-detail-hero {
+      padding: 22px 24px 24px;
+      border-bottom: 1px solid #f1f1f1;
+      background: #ffffff;
+    }
+
+    .detail-back {
+      height: 34px;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      color: #4f4f4f;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 760;
+    }
+
+    .detail-back img {
+      width: 16px;
+      height: 16px;
+    }
+
+    .detail-kicker {
+      margin-top: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .detail-title {
+      margin: 12px 0 8px;
+      color: #242424;
+      font-size: 30px;
+      line-height: 38px;
+      font-weight: 880;
+    }
+
+    .detail-summary {
+      width: 720px;
+      margin: 0;
+      color: #4f4f4f;
+      font-size: 15px;
+      line-height: 23px;
+    }
+
+    .detail-tags {
+      margin-top: 14px;
+    }
+
+    .model-detail-grid {
+      padding: 18px 24px 4px;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .detail-fact {
+      min-height: 62px;
+      padding: 12px 14px;
+      border: 1px solid #e8e8e8;
+      border-radius: 6px;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 4px;
+    }
+
+    .detail-fact span {
+      color: #8a8a8a;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .detail-fact strong {
+      color: #242424;
+      font-size: 14px;
+      font-weight: 820;
+      line-height: 20px;
+    }
+
+    .detail-section {
+      padding: 18px 24px 24px;
+    }
+
+    .detail-intro-section,
+    .detail-scenario-section,
+    .detail-conversion-section {
+      border-bottom: 1px solid #f1f1f1;
+    }
+
+    .detail-status-pill {
+      min-height: 24px;
+      padding: 2px 10px;
+      border: 1px solid #e4e4e4;
+      border-radius: 5px;
+      background: linear-gradient(90deg, rgba(36, 36, 36, 0.08), rgba(36, 36, 36, 0.02));
+      color: #242424;
+      font-size: 12px;
+      line-height: 20px;
+      font-weight: 720;
+      white-space: nowrap;
+    }
+
+    .detail-intro-copy {
+      display: grid;
+      gap: 8px;
+    }
+
+    .detail-intro-copy p {
+      margin: 0;
+      color: #4f4f4f;
+      font-size: 14px;
+      line-height: 22px;
+    }
+
+    .detail-scenario-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .detail-scenario-card {
+      min-height: 174px;
+      padding: 14px;
+      border: 1px solid #e8e8e8;
+      border-radius: 6px;
+      background: #ffffff;
+    }
+
+    .detail-scenario-card span {
+      color: #242424;
+      font-size: 13px;
+      line-height: 20px;
+      font-weight: 820;
+    }
+
+    .detail-template-section {
+      padding-bottom: 12px;
+      border-bottom: 1px solid #f1f1f1;
+    }
+
+    .detail-template-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .detail-template-card {
+      min-height: 146px;
+      padding: 14px;
+      border: 1px solid #e8e8e8;
+      border-radius: 6px;
+      background: #ffffff;
+    }
+
+    .detail-template-card span {
+      color: #8a8a8a;
+      font-size: 12px;
+      line-height: 18px;
+      font-weight: 760;
+    }
+
+    .detail-list {
+      margin: 10px 0 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 8px;
+    }
+
+    .detail-list li {
+      position: relative;
+      padding-left: 12px;
+      color: #4f4f4f;
+      font-size: 13px;
+      line-height: 19px;
+    }
+
+    .detail-list li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 8px;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: #242424;
+    }
+
+    .detail-flow {
+      margin-top: 12px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+
+    .detail-flow span {
+      min-height: 34px;
+      padding: 7px 10px;
+      border: 1px solid #eeeeee;
+      border-radius: 6px;
+      background: #fafafa;
+      color: #4f4f4f;
+      font-size: 12px;
+      line-height: 18px;
+      font-weight: 720;
+      text-align: center;
+    }
+
+    .detail-content-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .detail-content-card {
+      min-height: 152px;
+      padding: 14px;
+      border: 1px solid #e8e8e8;
+      border-radius: 6px;
+      background: #ffffff;
+    }
+
+    .detail-slot-card {
+      min-height: 170px;
+    }
+
+    .slot-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .slot-head em {
+      min-height: 20px;
+      padding: 1px 7px;
+      border-radius: 4px;
+      background: #f6f6f6;
+      color: #6b6b6b;
+      font-style: normal;
+      font-size: 11px;
+      line-height: 18px;
+      font-weight: 720;
+      white-space: nowrap;
+    }
+
+    .detail-content-card span {
+      color: #8a8a8a;
+      font-size: 12px;
+      font-weight: 760;
+    }
+
+    .detail-content-card strong {
+      display: block;
+      margin-top: 8px;
+      color: #242424;
+      font-size: 15px;
+      line-height: 21px;
+      font-weight: 850;
+    }
+
+    .detail-content-card p {
+      margin: 8px 0 0;
+      color: #4f4f4f;
+      font-size: 13px;
+      line-height: 20px;
+    }
+
+    .detail-action-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .detail-action-card {
+      min-height: 136px;
+      padding: 14px;
+      border: 1px solid #e8e8e8;
+      border-radius: 6px;
+      background: #fafafa;
+    }
+
+    .detail-action-card span {
+      color: #8a8a8a;
+      font-size: 12px;
+      line-height: 18px;
+      font-weight: 760;
+    }
+
+    .detail-action-card strong {
+      display: block;
+      margin-top: 8px;
+      color: #242424;
+      font-size: 15px;
+      line-height: 21px;
+      font-weight: 850;
+    }
+
+    .detail-action-card p {
+      margin: 8px 0 0;
+      color: #4f4f4f;
+      font-size: 13px;
+      line-height: 20px;
+    }
+
+    .generated-post-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .generated-post-card {
+      min-height: 176px;
+      padding: 16px;
+      border: 1px solid #e8e8e8;
+      border-radius: 6px;
+      background: #ffffff;
+      cursor: pointer;
+      transition: border-color 0.16s ease, background 0.16s ease, transform 0.16s ease;
+    }
+
+    .generated-post-card:hover,
+    .generated-post-card:focus-visible {
+      border-color: #242424;
+      background: #fbfbfb;
+      transform: translateY(-1px);
+      outline: none;
+    }
+
+    .post-card-top,
+    .post-card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .post-card-top span,
+    .post-card-footer span {
+      color: #8a8a8a;
+      font-size: 12px;
+      line-height: 18px;
+      font-weight: 760;
+    }
+
+    .post-card-top em {
+      min-height: 20px;
+      padding: 1px 7px;
+      border-radius: 4px;
+      background: #f6f6f6;
+      color: #6b6b6b;
+      font-style: normal;
+      font-size: 11px;
+      line-height: 18px;
+      font-weight: 720;
+      white-space: nowrap;
+    }
+
+    .generated-post-card strong {
+      display: block;
+      margin-top: 10px;
+      color: #242424;
+      font-size: 16px;
+      line-height: 22px;
+      font-weight: 860;
+    }
+
+    .generated-post-card p {
+      margin: 8px 0 0;
+      color: #4f4f4f;
+      font-size: 13px;
+      line-height: 20px;
+    }
+
+    .post-card-footer {
+      margin-top: 16px;
+      padding-top: 12px;
+      border-top: 1px solid #f0f0f0;
+    }
+
+    .post-card-footer b {
+      color: #242424;
+      font-size: 12px;
+      line-height: 18px;
+      font-weight: 800;
+    }
+
+    .model-content-panel {
+      overflow: hidden;
+    }
+
+    .content-detail-hero {
+      padding: 28px 24px 24px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .content-detail-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 300px;
+      gap: 16px;
+      padding: 20px 24px 24px;
+    }
+
+    .content-main-article {
+      display: grid;
+      gap: 12px;
+    }
+
+    .content-block,
+    .content-model-card {
+      padding: 16px;
+      border: 1px solid #e8e8e8;
+      border-radius: 6px;
+      background: #ffffff;
+    }
+
+    .content-block span,
+    .content-model-card span {
+      color: #8a8a8a;
+      font-size: 12px;
+      line-height: 18px;
+      font-weight: 760;
+    }
+
+    .content-block p,
+    .content-model-card p {
+      margin: 8px 0 0;
+      color: #4f4f4f;
+      font-size: 14px;
+      line-height: 23px;
+    }
+
+    .content-block ul {
+      margin: 10px 0 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 8px;
+    }
+
+    .content-block li {
+      position: relative;
+      padding-left: 14px;
+      color: #4f4f4f;
+      font-size: 14px;
+      line-height: 22px;
+    }
+
+    .content-block li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 9px;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: #242424;
+    }
+
+    .content-side-panel {
+      display: grid;
+      align-content: start;
+      gap: 12px;
+    }
+
+    .content-model-card strong {
+      display: block;
+      margin-top: 8px;
+      color: #242424;
+      font-size: 17px;
+      line-height: 24px;
+      font-weight: 860;
+    }
+
+    .content-model-card a {
+      display: inline-flex;
+      align-items: center;
+      min-height: 30px;
+      margin-top: 12px;
+      padding: 0 10px;
+      border: 1px solid #242424;
+      border-radius: 5px;
+      color: #242424;
+      font-size: 12px;
+      line-height: 18px;
+      font-weight: 760;
+      text-decoration: none;
+    }
+
+    .detail-safe-note {
+      margin: 0 24px 24px;
+    }
+
     .skeleton-card {
       height: 250px;
       border-radius: 6px;
@@ -1073,25 +1584,29 @@
         <section class="panel tabs-panel" data-filter-bar data-filter-panel>
           <div class="model-filter-shell">
             <div class="type-tabs" role="tablist" aria-label="模型类型筛选">
-              <button class="type-tab active" data-type-filter="all" data-filter-count="97">
+              <button class="type-tab active" data-type-filter="all" data-filter-count="15">
                 <img data-icon src="../../../resources/icons/remixicon/svg/Design/layout-grid-line.svg" alt="" />
-                <span>ALL</span><strong>97</strong>
+                <span>全部</span><strong>15</strong>
               </button>
-              <button class="type-tab" data-type-filter="text" data-filter-count="79">
+              <button class="type-tab" data-type-filter="text" data-filter-count="13">
                 <img data-icon src="../../../resources/icons/remixicon/svg/Document/file-text-line.svg" alt="" />
-                <span>文本</span><strong>79</strong>
+                <span>文本</span><strong>13</strong>
               </button>
-              <button class="type-tab" data-type-filter="image" data-filter-count="9">
+              <button class="type-tab" data-type-filter="image" data-filter-count="0">
                 <img data-icon src="../../../resources/icons/remixicon/svg/Media/image-line.svg" alt="" />
-                <span>图像</span><strong>9</strong>
+                <span>图像</span><strong>0</strong>
               </button>
-              <button class="type-tab" data-type-filter="audio" data-filter-count="0">
+              <button class="type-tab" data-type-filter="audio" data-filter-count="1">
                 <img data-icon src="../../../resources/icons/remixicon/svg/Media/voiceprint-line.svg" alt="" />
-                <span>音频</span><strong>0</strong>
+                <span>音频</span><strong>1</strong>
               </button>
-              <button class="type-tab" data-type-filter="video" data-filter-count="2">
+              <button class="type-tab" data-type-filter="video" data-filter-count="0">
                 <img data-icon src="../../../resources/icons/remixicon/svg/Media/video-line.svg" alt="" />
-                <span>视频</span><strong>2</strong>
+                <span>视频</span><strong>0</strong>
+              </button>
+              <button class="type-tab" data-type-filter="api" data-filter-count="1">
+                <img data-icon src="../../../resources/icons/remixicon/svg/Device/database-2-line.svg" alt="" />
+                <span>API</span><strong>1</strong>
               </button>
             </div>
             <div class="filter-actions">
@@ -1150,23 +1665,24 @@
             <a href="#">更多</a>
           </div>
           <div class="hot-list">
-            <div class="hot-item" data-hot-item><span class="hot-name"><span class="rank">1</span>Qwen3-32B 接入</span><span class="right-num">12.6k</span></div>
-            <div class="hot-item" data-hot-item><span class="hot-name"><span class="rank">2</span>Claude 3.5 Sonnet</span><span class="right-num">9.8k</span></div>
-            <div class="hot-item" data-hot-item><span class="hot-name"><span class="rank">3</span>Stable Diffusion 3</span><span class="right-num">8.1k</span></div>
-            <div class="hot-item" data-hot-item><span class="hot-name"><span class="rank">4</span>GPT-4o 多模态</span><span class="right-num">7.6k</span></div>
-            <div class="hot-item" data-hot-item><span class="hot-name"><span class="rank">5</span>DeepSeek Coder</span><span class="right-num">6.4k</span></div>
+            <div class="hot-item" data-hot-item><span class="hot-name"><span class="rank">1</span>gpt-5.2</span><span class="right-num">官方</span></div>
+            <div class="hot-item" data-hot-item><span class="hot-name"><span class="rank">2</span>gpt-4.1</span><span class="right-num">代码</span></div>
+            <div class="hot-item" data-hot-item><span class="hot-name"><span class="rank">3</span>claude-sonnet-4-6</span><span class="right-num">长文</span></div>
+            <div class="hot-item" data-hot-item><span class="hot-name"><span class="rank">4</span>gemini-3-pro-preview</span><span class="right-num">多模态</span></div>
+            <div class="hot-item" data-hot-item><span class="hot-name"><span class="rank">5</span>grok-4.1</span><span class="right-num">联网</span></div>
           </div>
         </section>
 
-        <section class="panel right-module" data-right-module="compare">
+        <section class="panel right-module" data-right-module="selection-guide">
           <div class="right-title">
-            <h3>服务对比</h3>
+            <h3>选型路径</h3>
             <a href="#">查看</a>
           </div>
           <div class="compare-list">
-            <div class="compare-item"><span>中文业务接入</span><span class="badge">3 项</span></div>
-            <div class="compare-item"><span>图像生成 API</span><span class="badge purple">4 项</span></div>
-            <div class="compare-item"><span>代码生成助手</span><span class="badge green">3 项</span></div>
+            <div class="compare-item"><span>官方介绍</span><span class="badge">15 个模型</span></div>
+            <div class="compare-item"><span>场景案例</span><span class="badge purple">重点模型</span></div>
+            <div class="compare-item"><span>AIGC 作品</span><span class="badge green">图像/视频</span></div>
+            <div class="compare-item"><span>API 用户经验</span><span class="badge">灰度承接</span></div>
           </div>
         </section>
 
@@ -1179,394 +1695,8 @@
     </div>
   </div>
 
-  <script>
-    const icon = (name) => `../../../resources/icons/remixicon/svg/${name}`;
-    const params = new URLSearchParams(window.location.search);
-    const state = params.get("state") || "default";
-    const stage = document.querySelector("[data-stage]");
-
-    const services = {
-      default: [
-        {
-          type: "基础模型",
-          badge: "精选",
-          badgeClass: "green",
-          title: "Qwen3-32B API 接入服务",
-          source: "通义千问官方整理",
-          summary: "中文业务、工具调用和知识库问答场景的稳定接入参考，适合中低成本验证。",
-          tags: ["文本", "代码", "工具调用", "中文"],
-          scene: "适合企业内部问答、运营工具和轻量 Agent",
-          access: "兼容",
-          cost: "低",
-          limit: "32K",
-          topics: ["模型接入", "低成本调用"],
-          author: "多元拾光官方",
-          time: "06-12 更新",
-          read: "12.6k",
-          comments: "86"
-        },
-        {
-          type: "API 服务",
-          badge: "高关注",
-          badgeClass: "purple",
-          title: "Claude 3.5 Sonnet 长文本调用",
-          source: "Anthropic 文档整理",
-          summary: "长文档、代码审阅和复杂推理体验较稳定，适合对结果质量要求高的任务。",
-          tags: ["长文本", "代码", "推理", "写作"],
-          scene: "适合代码审阅、需求拆解和长内容分析",
-          access: "SDK",
-          cost: "中高",
-          limit: "长上下文",
-          topics: ["代码生成", "长上下文"],
-          author: "ModelLab",
-          time: "06-11 更新",
-          read: "9.8k",
-          comments: "74"
-        },
-        {
-          type: "生成服务",
-          badge: "图像",
-          badgeClass: "orange",
-          title: "Stable Diffusion 3 图像服务",
-          source: "社区验证经验",
-          summary: "适合需要参数可控和风格稳定的图像生成任务，可关联 AIGC 作品复用。",
-          tags: ["图像", "风格控制", "Prompt", "工作流"],
-          scene: "适合产品图、视觉探索和批量素材生成",
-          access: "平台",
-          cost: "中",
-          limit: "图像",
-          topics: ["图像 API", "AIGC"],
-          author: "VisionFlow",
-          time: "06-10 更新",
-          read: "8.1k",
-          comments: "62"
-        },
-        {
-          type: "聚合服务",
-          badge: "多模态",
-          badgeClass: "",
-          title: "GPT-4o 多模态聚合入口",
-          source: "合作来源整理",
-          summary: "文本、图像和语音任务的统一入口，适合先验证多模态应用流程。",
-          tags: ["多模态", "文本", "图像", "语音"],
-          scene: "适合客服助手、图文理解和演示型应用",
-          access: "聚合",
-          cost: "中",
-          limit: "多模态",
-          topics: ["多模态应用", "模型接入"],
-          author: "API Notes",
-          time: "06-09 更新",
-          read: "7.6k",
-          comments: "51"
-        },
-        {
-          type: "调用方案",
-          badge: "实用",
-          badgeClass: "green",
-          title: "低成本模型降级调用方案",
-          source: "多元拾光官方",
-          summary: "将复杂任务和普通任务拆分到不同服务，降低试错成本并保留结果稳定性。",
-          tags: ["降级", "成本控制", "路由", "稳定性"],
-          scene: "适合调用量增长后的成本优化",
-          access: "方案",
-          cost: "低",
-          limit: "需评估",
-          topics: ["低成本调用", "模型接入"],
-          author: "多元拾光官方",
-          time: "06-08 更新",
-          read: "6.9k",
-          comments: "44"
-        },
-        {
-          type: "基础模型",
-          badge: "代码",
-          badgeClass: "purple",
-          title: "DeepSeek Coder 代码生成服务",
-          source: "社区整理",
-          summary: "围绕代码补全、脚本生成和错误解释整理接入方式，适合工程效率场景。",
-          tags: ["代码", "脚本", "解释", "重构"],
-          scene: "适合开发辅助、代码片段生成和脚本说明",
-          access: "兼容",
-          cost: "低",
-          limit: "代码",
-          topics: ["代码生成", "Vibe Coding"],
-          author: "DevNote",
-          time: "06-07 更新",
-          read: "6.4k",
-          comments: "39"
-        }
-      ],
-      following: [],
-      latest: [],
-      hot: []
-    };
-
-    services.all = services.default;
-    services.text = [services.default[0], services.default[1], services.default[4], services.default[5]];
-    services.image = [services.default[2], services.default[3]];
-    services.audio = [];
-    services.video = [services.default[3]];
-    services.following = [services.default[1], services.default[4], services.default[5], services.default[0]];
-    services.latest = [services.default[0], services.default[1], services.default[2], services.default[3], services.default[4], services.default[5]];
-    services.hot = [services.default[0], services.default[1], services.default[2], services.default[3], services.default[5], services.default[4]];
-
-    const filterLabels = {
-      all: "全部",
-      text: "文本",
-      image: "图像",
-      audio: "音频",
-      video: "视频"
-    };
-
-    function setActiveType(type) {
-      document.querySelectorAll("[data-type-filter]").forEach((tab) => {
-        tab.classList.toggle("active", tab.dataset.typeFilter === type);
-      });
-    }
-
-    function setProviderMenu(open) {
-      document.querySelector("[data-provider-filter]")?.classList.toggle("is-open", open);
-    }
-
-    function filterByProvider(provider) {
-      return services.default.filter((item) => {
-        const name = `${item.title} ${item.source} ${item.author}`;
-        if (provider === "anthropic") return /Claude|Anthropic/i.test(name);
-        if (provider === "doubao") return /Qwen|Doubao|豆包|通义/i.test(name);
-        if (provider === "google") return /Google|Gemini|Stable/i.test(name);
-        if (provider === "grok") return /Grok/i.test(name);
-        if (provider === "openai") return /GPT|OpenAI/i.test(name);
-        if (provider === "openai-plus") return /GPT-4o|OpenAI Plus/i.test(name);
-        if (provider === "xai") return /xAI|Grok/i.test(name);
-        return !/Claude|Anthropic|Qwen|Doubao|豆包|通义|Google|Gemini|Stable|GPT|OpenAI|xAI|Grok/i.test(name);
-      });
-    }
-
-    function applyTypeFilter(type) {
-      setActiveType(type);
-      setProviderMenu(false);
-      const list = services[type] || services.default;
-      if (list.length) {
-        renderGrid(list);
-      } else {
-        renderEmpty(`${filterLabels[type] || "当前"}模型服务`);
-      }
-    }
-
-    function renderCard(item) {
-      const tagHtml = item.tags.map((tag) => `<span class="tag">${tag}</span>`).join("");
-      const topicHtml = item.topics.map((topic) => `<span class="tag"># ${topic}</span>`).join("");
-      return `
-        <article class="service-card" data-service-card>
-          <div class="card-top">
-            <div class="badge-row">
-              <span class="badge ${item.badgeClass}">${item.type}</span>
-              <span class="badge ${item.badgeClass}">${item.badge}</span>
-            </div>
-            <span class="source">${item.source}</span>
-          </div>
-          <h3 class="service-title">${item.title}</h3>
-          <p class="summary">${item.summary}</p>
-          <div class="tag-row">${tagHtml}</div>
-          <div class="spec-row">
-            <span class="spec">接入 <strong>${item.access}</strong></span>
-            <span class="spec">成本 <strong>${item.cost}</strong></span>
-            <span class="spec">限制 <strong>${item.limit}</strong></span>
-          </div>
-          <div class="card-footer">
-            <div class="provider-line">
-              <span>@${item.author}</span>
-              <span>·</span>
-              <span>${item.time}</span>
-            </div>
-            <div class="stat-line">
-              <span class="stat"><img class="meta-icon" data-icon src="${icon("System/eye-line.svg")}" alt="" />${item.read}</span>
-              <span class="stat"><img class="meta-icon" data-icon src="${icon("Communication/chat-3-line.svg")}" alt="" />${item.comments}</span>
-            </div>
-          </div>
-          <div class="hover-layer" data-hover-layer>
-            <button class="ghost-btn primary-soft">查看详情</button>
-            <button class="ghost-btn">调用示例</button>
-            <button class="ghost-btn">加入对比</button>
-          </div>
-          <div style="display:none">${topicHtml}</div>
-        </article>
-      `;
-    }
-
-    function renderGrid(list) {
-      const visibleList = list;
-      stage.innerHTML = `<div class="service-grid" data-service-grid>${visibleList.map((item) => renderCard(item)).join("")}</div>`;
-    }
-
-    function renderCompare() {
-      stage.innerHTML = `
-        <section class="panel compare-panel" data-compare-panel>
-          <div class="panel-title-row">
-            <div>
-              <h2>中文业务接入对比</h2>
-              <p>按场景、成本口径、上下文、接入方式和限制整理，帮助先做方向判断。</p>
-            </div>
-            <button class="ghost-btn primary-soft">查看完整详情</button>
-          </div>
-          <div class="compare-table">
-            <div class="compare-cell header">维度</div>
-            <div class="compare-cell header">Qwen3-32B</div>
-            <div class="compare-cell header">Claude 3.5 Sonnet</div>
-            <div class="compare-cell header">GPT-4o</div>
-            <div class="compare-cell label">适合场景</div>
-            <div class="compare-cell">中文问答、工具调用、低成本验证。</div>
-            <div class="compare-cell">长文档、代码审阅、复杂推理。</div>
-            <div class="compare-cell">图文理解、语音入口、多模态演示。</div>
-            <div class="compare-cell label">成本口径</div>
-            <div class="compare-cell">偏低，适合先跑通业务闭环。</div>
-            <div class="compare-cell">偏高，适合高价值任务。</div>
-            <div class="compare-cell">中等，取决于任务模态。</div>
-            <div class="compare-cell label">上下文</div>
-            <div class="compare-cell">常见业务文档和知识库可覆盖。</div>
-            <div class="compare-cell">长文本处理体验更完整。</div>
-            <div class="compare-cell">多模态输入更重要。</div>
-            <div class="compare-cell label">接入方式</div>
-            <div class="compare-cell">兼容接口或官方控制台。</div>
-            <div class="compare-cell">SDK 或控制台路径。</div>
-            <div class="compare-cell">聚合服务或官方控制台。</div>
-            <div class="compare-cell label">注意事项</div>
-            <div class="compare-cell">需要根据业务数据做人工验收。</div>
-            <div class="compare-cell">成本敏感任务需控制调用范围。</div>
-            <div class="compare-cell">多模态链路需要额外设计输入输出。</div>
-          </div>
-        </section>
-      `;
-    }
-
-    function renderApiExample() {
-      stage.innerHTML = `
-        <section class="panel api-panel" data-api-example-panel>
-          <div class="panel-title-row">
-            <div>
-              <h2>OpenAI 兼容请求示例</h2>
-              <p>示例只用于说明接入形态，具体参数以服务详情和官方文档为准。</p>
-            </div>
-            <button class="ghost-btn primary-soft">进入详情页</button>
-          </div>
-          <div class="api-card">
-            <div class="api-card-head">
-              <div>
-                <span class="badge green">JavaScript</span>
-                <span class="badge">占位符示例</span>
-              </div>
-              <span class="gray-text">Qwen3-32B 接入参考</span>
-            </div>
-            <pre class="api-code">const client = createModelClient({
-  baseUrl: "https://api.example.com/v1",
-  token: "[API_KEY]"
-});
-
-const result = await client.chat({
-  model: "qwen3-32b",
-  messages: [
-    { role: "user", content: "把这份产品需求整理成验收清单" }
-  ]
-});
-
-console.log(result.text);</pre>
-          </div>
-          <div class="safe-note">不要在前端页面或公开仓库中暴露密钥；生产环境应由服务端代理请求，并限制权限范围。</div>
-        </section>
-      `;
-    }
-
-    function renderEmpty(scope = "当前筛选") {
-      stage.innerHTML = `
-        <section class="panel empty-state" data-empty>
-          <div class="empty-box">
-            <div class="state-icon">
-              <img data-icon src="${icon("System/star-line.svg")}" alt="" />
-            </div>
-            <h2 class="state-title">${scope}暂无可展示服务</h2>
-            <p class="state-desc">可以切换类型或供应商，先浏览已整理的文本、图像和多模态模型服务。</p>
-            <button class="ghost-btn primary-soft" data-reset-filter>回到全部</button>
-          </div>
-        </section>
-      `;
-      stage.querySelector("[data-reset-filter]")?.addEventListener("click", () => applyTypeFilter("all"));
-    }
-
-    function renderLoading() {
-      stage.innerHTML = `
-        <section class="loading-state" data-loading>
-          <div class="loading-grid">
-            ${Array.from({ length: 6 }).map(() => `<div class="skeleton-card" data-skeleton-card></div>`).join("")}
-          </div>
-        </section>
-      `;
-    }
-
-    function renderFailed() {
-      stage.innerHTML = `
-        <section class="panel failed-state" data-failed>
-          <div class="failed-box">
-            <div class="state-icon">
-              <img data-icon src="${icon("System/error-warning-line.svg")}" alt="" />
-            </div>
-            <h2 class="state-title">模型服务加载失败</h2>
-            <p class="state-desc">网络可能暂时不可用，可以重试或先浏览精选服务。</p>
-            <button class="ghost-btn primary-soft">重新加载</button>
-          </div>
-        </section>
-      `;
-    }
-
-    document.querySelectorAll("[data-type-filter]").forEach((button) => {
-      button.addEventListener("click", () => applyTypeFilter(button.dataset.typeFilter));
-    });
-
-    document.querySelector("[data-provider-trigger]")?.addEventListener("click", () => {
-      const filter = document.querySelector("[data-provider-filter]");
-      filter?.classList.toggle("is-open");
-    });
-
-    document.querySelectorAll("[data-provider-option]").forEach((button) => {
-      button.addEventListener("click", () => {
-        document.querySelectorAll("[data-provider-option]").forEach((item) => item.classList.toggle("active", item === button));
-        document.querySelector("[data-provider-label]").textContent = button.textContent.trim();
-        setProviderMenu(false);
-        setActiveType("all");
-        const list = filterByProvider(button.dataset.providerOption);
-        if (list.length) {
-          renderGrid(list);
-        } else {
-          renderEmpty(button.textContent.trim());
-        }
-      });
-    });
-
-    if (state === "text") {
-      applyTypeFilter("text");
-    } else if (state === "image") {
-      applyTypeFilter("image");
-    } else if (state === "audio") {
-      applyTypeFilter("audio");
-    } else if (state === "video") {
-      applyTypeFilter("video");
-    } else if (state === "provider") {
-      applyTypeFilter("all");
-      setProviderMenu(true);
-    } else if (state === "hover") {
-      applyTypeFilter("all");
-    } else if (state === "empty") {
-      setActiveType("audio");
-      renderEmpty("音频模型服务");
-    } else if (state === "loading") {
-      setActiveType("all");
-      renderLoading();
-    } else if (state === "failed") {
-      setActiveType("all");
-      renderFailed();
-    } else {
-      applyTypeFilter("all");
-    }
-  </script>
-  <script src="../_shared/c-end-prototype-interactions.js?v=20260616-subpath-routing-v2"></script>
+  <script src="./model-service-models.js"></script>
+  <script src="./model-service-page.js"></script>
+  <script src="../_shared/c-end-prototype-interactions.js?v=20260617-model-service-content-v1"></script>
 </body>
 </html>

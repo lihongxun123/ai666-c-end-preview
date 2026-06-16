@@ -28,6 +28,14 @@
     ["API 排错", "982"],
     ["MCP Server", "876"]
   ];
+  const MODEL_DETAIL_RECOMMENDED_TOPICS = [
+    ["模型选型", "2.4k"],
+    ["API 迁移", "1.9k"],
+    ["长上下文", "1.5k"],
+    ["工具调用", "1.2k"],
+    ["成本控制", "986"],
+    ["Embedding", "724"]
+  ];
   const STANDARD_TOPIC_ICON_SRC = "../../../resources/icons/remixicon/svg/Editor/hashtag.svg";
 
   const REVIEW_PAGES = [
@@ -55,9 +63,8 @@
     ],
     "c-end-flash-channel-v1": [
       ["default", "时间流"],
+      ["hot", "热门态"],
       ["compose", "发闪念"],
-      ["code", "代码片段"],
-      ["media", "图片视频"],
       ["comments", "评论展开"],
       ["comments-all", "全部评论"]
     ],
@@ -77,6 +84,8 @@
       ["image", "图像"],
       ["audio", "音频"],
       ["video", "视频"],
+      ["api", "API"],
+      ["detail", "模型详情"],
       ["provider", "供应商"],
       ["hover", "卡片悬停"],
       ["empty", "筛选空态"],
@@ -195,6 +204,356 @@
       ["rejected", "未通过"],
       ["published", "已发布"]
     ]
+  };
+
+  const PAGE_RULES = {
+    "c-end-home-aggregate-feed-v1": {
+      title: "首页聚合与运营承接",
+      purpose: [
+        "聚合内容消费入口，让新用户先看到内容、话题、活动和官方公告。",
+        "承接 6-7 月 P0 内容曝光、闪念消费、话题发现和活动引导，最后再和研发过首页。"
+      ],
+      fields: [
+        "信息对象：Feed 内容、闪念卡片、内容类型、话题、作者、阅读/评论/点赞、封面、右侧运营位。",
+        "状态：关注、推荐、最新、热门；搜索聚焦、创作入口悬停、内容 hover。",
+        "闪念卡片媒体与闪念频道保持一致：正文下方展示媒体，按原图或视频比例呈现。"
+      ],
+      logic: [
+        "首页不是详情页，也不是发布页；卡片点击进入详情，闪念卡片不进入独立详情。",
+        "推荐话题名称进入话题聚合页，右侧箭头进入话题广场。",
+        "操作区统一 icon + 数字，已点赞/已收藏不用外层背景。"
+      ],
+      ops: [
+        "右侧公告、推荐话题、活动入口和赞助位由运营人工维护，6-7 月先用配置文件承接。",
+        "首页推荐位可先人工排定 P0 内容池，不在原型里表达算法或后台治理状态。"
+      ],
+      acceptance: [
+        "首页不新增顶部 Banner、左侧导航、快速发帖或后台配置说明。",
+        "右侧运营位主文本字号和字重一致，推荐话题不加标题/列表分割线。",
+        "横向溢出为 0，页面结构保持当前首页聚合流。"
+      ]
+    },
+    "c-end-flash-channel-v1": {
+      title: "闪念轻内容频道",
+      purpose: [
+        "承接轻创作和轻互动，验证专业用户的短经验、工具发现和问题片段是否能形成消费反馈。",
+        "不拆内部 Tab，不做独立详情页，消费和互动都留在闪念时间流内完成。"
+      ],
+      fields: [
+        "信息对象：闪念正文、媒体附件、话题、作者、时间、评论、回复、点赞、分享、热度分。",
+        "发闪念正文最多 600 字，媒体最多 6 个，图片和视频同属媒体字段，短视频限制作为发布规则隐藏处理。",
+        "评论只支持纯文字；卡片内摘要评论默认展示 10 条，全部评论展示完整列表。"
+      ],
+      logic: [
+        "热门态按近 7 天热度分排序，C端只展示热度分和统计窗口，不展示内部公式。",
+        "评论支持回复闪念和回复评论，视觉上按二级楼层承载。",
+        "参与话题进入发闪念并带入话题；推荐话题仍进入话题聚合页。"
+      ],
+      ops: [
+        "热门闪念池、推荐话题、参与话题和广告 Banner 由运营人工配置。",
+        "6-7 月先用配置文件维护热门池、话题池、Banner 图片、标题和跳转。"
+      ],
+      acceptance: [
+        "页面没有内部 Tab 和独立详情跳转。",
+        "媒体在正文下方展示，无数量角标和发布限制文案。",
+        "走查规则抽屉非模态，不加蒙版，不点击外部关闭。"
+      ]
+    },
+    "c-end-aigc-experience-center-v2": {
+      title: "AIGC 体验中心",
+      purpose: [
+        "让用户用可理解的模板和体验点完成 AIGC 试用，不把 workflow 或 API 灰度提前暴露给普通用户。",
+        "验证图像、编辑、视频、漫剧、点数不足和任务返还等关键体验状态。"
+      ],
+      fields: [
+        "信息对象：模板、体验分类、Prompt 输入、消耗预估、生成结果、任务返还、精选模板、案例复用。",
+        "状态：推荐、图像生成、图像编辑、视频创作、漫剧生成、生成成功、点数不足、任务返还。"
+      ],
+      logic: [
+        "模板点击切换体验上下文，输入区只表达用户可理解字段。",
+        "点数不足只展示用户可读提醒，不展示余额、扣费、接口错误或真实支付链路。",
+        "任务返还是 7 月运营承接能力，不在原型里表达自动积分发放。"
+      ],
+      ops: [
+        "体验模板、案例复用、任务返还文案和右侧体验点由运营人工维护。",
+        "6-7 月先通过配置文件管理模板排序、消耗说明、返还任务和精选案例。"
+      ],
+      acceptance: [
+        "页面不出现 workflow/API 灰度承接文案。",
+        "状态 token、按钮、右侧栏保持黑白灰 hairline 视觉。",
+        "生成成功、点数不足和任务返还状态都能单独走查。"
+      ]
+    },
+    "c-end-model-service-channel-v1": {
+      title: "模型服务频道",
+      purpose: [
+        "以 API 中转站 109 条全量模型对象库为底层数据，前台先展示首批 15 个已进入运营复核的模型。",
+        "频道默认态承接首批模型目录，搜索、供应商/类型筛选和模型服务专属详情先服务当前可运营的模型集合。",
+        "承接 7 月 API 灰度意向，但不在 C端列表暴露真实 API Key、余额、价格维护后台或接口实现。"
+      ],
+      fields: [
+        "信息对象：模型对象、模型名、供应商、原始类型、前台分类、计费口径、能力标签、内容覆盖状态、来源和更新时间。",
+        "前台分类按用户理解校正：文本、图像、音频、视频、Embedding/API、聚合；原始类型只进入资料表，不直接决定 C端展示。",
+        "状态：首批模型、文本、图像、音频、视频、API、模型详情、案例与经验内容详情、供应商筛选、悬停、空态、加载、失败。"
+      ],
+      logic: [
+        "模型卡片是聚合入口，整卡进入模型服务频道内的专属详情态；案例与 API 经验生成贴在模型服务频道内进入内容详情态。",
+        "模型服务专属详情先展示模型介绍、适合/不适合场景、使用前确认、内容看点、案例与经验生成贴和下一步入口；内容详情态必须反链回模型详情。",
+        "类型筛选和供应商筛选只改变列表结果，不新增比较页、API 管理页、余额页或真实调用页。",
+        "图像、视频、音频生成类案例优先回流到 AIGC 创意广场，模型详情只做能力说明、提示词样例和结果反链。",
+        "Embedding、转写、聚合入口优先承接 API 用户经验和 AI+ 工作流内容。"
+      ],
+      ops: [
+        "模型对象库来自中转站 pricing 清单，刷新后由产品人工校对前台分类、供应商归组和内容生产顺序。",
+        "前台列表先隐藏非首批模型；官方介绍先由脚本按模板生成初稿，再由运营人工复核来源、边界、成本口径和关联案例。",
+        "运营先补首批模型的官方介绍、场景案例生成贴和 API 用户经验生成贴，再补 AIGC 作品反链和长尾模型介绍骨架。",
+        "推荐话题、热门模型服务、选型路径和广告位由运营人工维护；API 灰度名单和回访状态属于运营表，不在 C端卡片展示。"
+      ],
+      acceptance: [
+        "筛选计数与当前首批 15 个前台模型口径一致；109 条全量对象库仍保留为后续放量基础。",
+        "首批 15 个模型详情页都能显示模型介绍、适合/不适合、使用前确认、内容看点、2 个案例与经验生成贴和下一步入口；内部生产状态不作为 C端详情主体内容。",
+        "每个首批模型的场景案例贴和 API 经验贴都能打开内容详情，详情包含输入材料、生成结果摘要、人工复核点、使用模型和回到模型详情的反链。",
+        "卡片无彩色 accent、无持久多按钮堆叠，不展示真实密钥、实时价格、账户额度、跑分或自动可用性。",
+        "右侧栏包含 API 灰度申请、推荐话题、热门模型服务、选型路径和广告位；筛选空态、加载、失败态有用户可读反馈。"
+      ]
+    },
+    "c-end-ai-plus-channel-v1": {
+      title: "AI+ 资产频道",
+      purpose: [
+        "聚合工作流、Skill、MCP 和教程案例，让用户发现可复用 AI 资产。",
+        "验证专业资产卡片、分类筛选、关注空态和右侧创作入口。"
+      ],
+      fields: [
+        "信息对象：AI+ 资源、类型、作者/来源、能力标签、话题、收藏/热度/使用量、创作入口。",
+        "状态：精选、最新、热门、关注、工作流、Skill、MCP、教程案例、关注空态、加载、失败。"
+      ],
+      logic: [
+        "卡片点击进入详情，列表内不放复制步骤、安装步骤或持久详情按钮。",
+        "关注空态只引导发现和关注，不自动推荐关注关系。",
+        "右侧创作入口进入创作服务对应资产发布路径。"
+      ],
+      ops: [
+        "精选资源、热门实战、精选专题、推荐话题和广告位由运营人工维护。",
+        "6-7 月先人工维护资产池和专题，不表达自动排序算法。"
+      ],
+      acceptance: [
+        "资源卡片保持 AI Asset Card 轻变体。",
+        "右侧创作、热门、专题和话题模块字号字重一致。",
+        "关注空态、加载、失败态可走查。"
+      ]
+    },
+    "c-end-search-results-v1": {
+      title: "搜索结果页",
+      purpose: [
+        "承接用户主动检索，把内容、话题、模型服务和 AI+ 资源放在同一搜索结果框架下。",
+        "验证搜索无结果、加载和失败时的低成本反馈。"
+      ],
+      fields: [
+        "信息对象：搜索词、结果类型、标题、摘要、作者/来源、话题、阅读/评论、右侧推荐搜索和推荐话题。",
+        "状态：全部、内容、话题、模型服务、AI+资源、加载、无结果、加载失败。"
+      ],
+      logic: [
+        "分类 Tab 只筛选当前搜索结果，不改变全局频道导航。",
+        "命中词高亮使用中性弱底，不使用蓝/青强调。",
+        "话题结果进入话题聚合页，其他内容结果进入详情页。"
+      ],
+      ops: [
+        "推荐搜索、推荐话题、广告位和无结果推荐内容由运营人工维护。",
+        "搜索词热度可以先由人工配置，不在原型表达搜索算法。"
+      ],
+      acceptance: [
+        "结果列表与首页内容流视觉一致。",
+        "无结果、加载和失败态都有明确下一步入口。",
+        "右侧推荐话题遵循全局话题跳转规则。"
+      ]
+    },
+    "c-end-topic-square-v1": {
+      title: "话题广场",
+      purpose: [
+        "提供全局话题发现和筛选入口，让用户从主题进入内容消费和创作参与。",
+        "验证话题分类、活跃排序、已关注和空态。"
+      ],
+      fields: [
+        "信息对象：话题、分类、浏览量/内容量、关注状态、话题说明、右侧推荐话题/活动/广告。",
+        "状态：全部话题、AI Coding、模型与API、AIGC、工作流、Skill/MCP、教程案例、最新活跃、已关注、空态、加载、失败。"
+      ],
+      logic: [
+        "话题卡片进入话题聚合页；关注只改变关注状态，不引入完整用户等级体系。",
+        "分类和排序只服务发现，不表现后台话题管理。",
+        "话题指标同一模块内保持统一口径。"
+      ],
+      ops: [
+        "话题分类、推荐话题、活动入口、广告位和展示顺序由运营人工维护。",
+        "6-7 月优先维护 P0 内容相关话题，降低冷启动空洞。"
+      ],
+      acceptance: [
+        "话题页不出现后台分类管理视觉。",
+        "推荐话题箭头进入话题广场，话题名进入聚合页。",
+        "已关注、空态、加载和失败状态可走查。"
+      ]
+    },
+    "c-end-topic-aggregate-v1": {
+      title: "话题聚合页",
+      purpose: [
+        "把某个话题下的内容、闪念和相关入口集中起来，验证从话题到消费和参与的闭环。",
+        "承接推荐话题、内容话题 token 和话题广场卡片跳转。"
+      ],
+      fields: [
+        "信息对象：话题标题、说明、统计、关注状态、内容流、相关话题、右侧精选/活动/广告。",
+        "状态：推荐、已关注、最新、无内容、加载、失败、不可用、登录关注。"
+      ],
+      logic: [
+        "话题聚合页是话题消费页，不是话题管理页。",
+        "关注动作只表达关注状态；登录关注态给出登录引导，不展示权限系统。",
+        "内容卡片点击进入详情，闪念不进入独立详情。"
+      ],
+      ops: [
+        "话题说明、精选内容、相关话题、活动入口和广告位由运营人工维护。",
+        "无内容态可人工配置推荐话题或返回广场入口。"
+      ],
+      acceptance: [
+        "话题指标口径统一，不混用浏览量/内容量/热度。",
+        "无内容、不可用、登录关注状态有用户可读反馈。",
+        "右侧运营位与其他频道对齐。"
+      ]
+    },
+    "c-end-detail-page-v1": {
+      title: "内容详情页",
+      purpose: [
+        "承接内容深度阅读、互动、收藏和相关推荐，是内容消费闭环的核心页。",
+        "验证评论面板、无评论、未登录、不可见、加载失败、权限不足和不同内容类型；模型对象详情由模型服务频道内的专属详情态承接。"
+      ],
+      fields: [
+        "信息对象：标题、正文、作者、时间、内容类型、话题、阅读/评论/点赞/收藏/分享、评论、相关推荐、右侧作者/目录/话题/广告。",
+        "状态：默认、评论面板、无评论、未登录、不可见、加载失败、权限不足、文章、图文、视频、工作流、Skill、MCP、AIGC、闪念。",
+        "模型相关内容在本页只作为单篇官方介绍、案例、作品说明或用户经验出现，不再承担单模型聚合详情。"
+      ],
+      logic: [
+        "评论只支持纯文字输入；回复按二级楼层承载，不做无限嵌套。",
+        "已点赞和已收藏使用填充图标 + 深色文本，不加外层背景。",
+        "相关推荐卡片进入详情，推荐话题进入话题聚合页。",
+        "单篇模型内容必须反链到模型服务专属详情，让用户回到模型对象、案例集合和 API 经验的聚合入口。"
+      ],
+      ops: [
+        "相关推荐、推荐话题、广告位和作者侧重点由运营人工维护。",
+        "不可见、权限不足和加载失败文案先以配置文件维护，不暴露后台审核细节。",
+        "模型官方介绍、关联案例、作品反链、API 用户经验和模型类型纠偏由模型服务清单维护，本页只展示单篇内容。"
+      ],
+      acceptance: [
+        "评论输入后有发布按钮，回复点击后出现当前评论下的回复框。",
+        "二级回复外部无框体。",
+        "C端不展示审核命中、治理状态或实现备注。",
+        "模型相关内容不展示真实密钥、余额、调用日志、消费清单、在线调用入口或实时价格承诺。"
+      ]
+    },
+    "c-end-user-profile-v1": {
+      title: "用户主页与关系",
+      purpose: [
+        "提供轻量用户成长底座，让用户能看自己的主页、资料状态、关注和粉丝。",
+        "验证作者公开主页、资料编辑、手机号/微信绑定和关系列表。"
+      ],
+      fields: [
+        "信息对象：用户资料、头像、昵称、简介、关注/粉丝、内容列表、收藏入口、作者工作台入口、绑定状态。",
+        "状态：我的主页、资料待完善、作者主页、已关注作者、资料编辑、手机号绑定、微信绑定、关注列表、粉丝列表、无内容。"
+      ],
+      logic: [
+        "主页 hero 可以展示昵称，不强制加 @；主页内容卡片仍按内容流作者规则呈现。",
+        "关注只表达关注/已关注关系，不引入推荐关注、等级、积分或私信。",
+        "手机号使用验证码绑定/解绑，微信使用扫码绑定/解绑。"
+      ],
+      ops: [
+        "资料完善提示、作者工作台入口、无内容推荐和成长提示由运营人工维护。",
+        "6-7 月先验证轻路径，不扩展完整用户体系。"
+      ],
+      acceptance: [
+        "已关注状态不用外层背景。",
+        "资料编辑和绑定状态不展示敏感完整字段。",
+        "关注/粉丝列表和无内容态可走查。"
+      ]
+    },
+    "c-end-favorites-v1": {
+      title: "收藏夹",
+      purpose: [
+        "承接内容复访，验证用户是否能按类型和标签找回已收藏内容。",
+        "服务留存和二次消费，不做文件管理器或后台素材库。"
+      ],
+      fields: [
+        "信息对象：收藏内容、内容类型、收藏时间、标签、分类筛选、空态。",
+        "状态：全部收藏、文章、AIGC、模型服务、API 标签、空态。"
+      ],
+      logic: [
+        "筛选只改变收藏列表，不创建复杂文件夹层级。",
+        "收藏状态使用填充图标 + 深色文本，不加外层背景。",
+        "收藏内容点击进入对应详情或目标页。"
+      ],
+      ops: [
+        "空态推荐、默认标签和类型筛选文案由运营人工维护。",
+        "6-7 月先支持分类/标签的轻管理，不做完整收藏夹运营后台。"
+      ],
+      acceptance: [
+        "收藏列表不出现后台管理按钮。",
+        "空态有返回内容消费或发现入口。",
+        "API 标签筛选能单独走查。"
+      ]
+    },
+    "c-end-creation-platform-v2": {
+      title: "创作服务中心",
+      purpose: [
+        "承接作者工作台和内容发布路径，让创作者能管理草稿、审核中、未通过、已发布和基础数据。",
+        "验证轻创作、文章、图文/视频、Skill/MCP 的发布入口和状态流。"
+      ],
+      fields: [
+        "信息对象：作品、草稿、审核状态、发布路径、Markdown/正文、媒体字段、Skill/MCP 来源、数据概览。",
+        "状态：首页、内容管理、草稿箱、数据概览、创作规范、闪念编辑、文章编辑、图文编辑、视频编辑、Skill 路径、Skill GitHub、Skill 自定义、MCP 路径、MCP GitHub、MCP 自定义、审核中、未通过、已发布。"
+      ],
+      logic: [
+        "发布字段按对象分离，媒体作为独立字段，不和正文混排成不可控展示。",
+        "审核中、未通过、已发布只表达用户可见状态，不暴露审核命中或操作日志。",
+        "作者工作台是轻版能力，不扩展完整运营后台。"
+      ],
+      ops: [
+        "创作规范、状态提示、推荐发布路径和右侧提示由运营人工维护。",
+        "6-7 月先用配置文件维护发布指引和状态文案。"
+      ],
+      acceptance: [
+        "编辑态字段清晰，发布后状态能进入对应管理列表。",
+        "未通过态只给用户可执行修改方向。",
+        "创作服务保持工作台效率，但不出现 B端管理系统口吻。"
+      ]
+    },
+    "c-end-announcement-list-v1": {
+      title: "社区公告",
+      purpose: [
+        "承接社区规则、隐私公告和运营通知，让用户能查看官方说明。",
+        "验证公告列表、公告详情、空态、加载和失败。"
+      ],
+      fields: [
+        "信息对象：公告标题、公告类型、发布时间、摘要、正文、状态、返回入口。",
+        "状态：社区公告、隐私公告详情、空态、加载、失败。"
+      ],
+      logic: [
+        "公告是用户阅读页，不展示后台发布流程、审核状态或配置字段。",
+        "公告详情只承接阅读和返回，不放多余运营按钮。",
+        "失败态给用户可读反馈和重试/返回入口。"
+      ],
+      ops: [
+        "公告标题、正文、排序、置顶和展示周期由运营人工维护。",
+        "6-7 月先由配置文件维护公告内容，不做后台。"
+      ],
+      acceptance: [
+        "公告列表不后台化，不出现系统日志或配置说明。",
+        "空态、加载和失败态可走查。",
+        "公告详情正文排版保持阅读优先。"
+      ]
+    }
+  };
+
+  const RULE_SECTION_LABELS = {
+    purpose: "页面目的",
+    fields: "字段状态",
+    logic: "产品逻辑",
+    ops: "运营维护",
+    acceptance: "验收口径"
   };
 
   const TAB_STATE = {
@@ -770,24 +1129,67 @@
 
       [data-prototype-shell] {
         position: fixed;
-        right: 24px;
+        right: 0;
+        top: 92px;
         bottom: 24px;
         z-index: 1600;
         width: 360px;
-        max-height: min(560px, calc(100vh - 48px));
-        overflow: auto;
-        padding: 14px;
-        border: 1px solid rgba(18, 107, 255, 0.18);
-        border-radius: 12px;
-        background: rgba(255, 255, 255, 0.96);
-        box-shadow: 0 18px 44px rgba(15, 23, 42, 0.18);
-        backdrop-filter: blur(14px);
+        max-height: calc(100vh - 116px);
         color: #172033;
         font: 13px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        pointer-events: none;
       }
 
       [data-prototype-shell] * {
         box-sizing: border-box;
+      }
+
+      .prototype-shell-trigger {
+        position: absolute;
+        right: 0;
+        top: 0;
+        width: 30px;
+        min-height: 94px;
+        padding: 10px 6px;
+        border: 1px solid #dddddd;
+        border-right: 0;
+        border-radius: 8px 0 0 8px;
+        background: #ffffff;
+        color: #242424;
+        box-shadow: 0 12px 28px rgba(15, 23, 42, 0.10);
+        writing-mode: vertical-rl;
+        letter-spacing: 0;
+        font-size: 13px;
+        line-height: 16px;
+        font-weight: 700;
+        pointer-events: auto;
+        cursor: pointer;
+      }
+
+      .prototype-shell-panel {
+        position: absolute;
+        top: 0;
+        right: 0;
+        display: none;
+        width: 360px;
+        max-height: min(680px, calc(100vh - 116px));
+        overflow: auto;
+        padding: 14px;
+        border: 1px solid #dddddd;
+        border-right: 0;
+        border-radius: 12px 0 0 12px;
+        background: rgba(255, 255, 255, 0.98);
+        box-shadow: 0 18px 44px rgba(15, 23, 42, 0.16);
+        color: #242424;
+        pointer-events: auto;
+      }
+
+      [data-prototype-shell].is-open .prototype-shell-panel {
+        display: block;
+      }
+
+      [data-prototype-shell].is-open .prototype-shell-trigger {
+        display: none;
       }
 
       .prototype-shell-head {
@@ -799,16 +1201,25 @@
       }
 
       .prototype-shell-title {
+        display: grid;
+        gap: 2px;
         font-size: 14px;
         font-weight: 700;
-        color: #172033;
+        color: #242424;
+      }
+
+      .prototype-shell-title span {
+        color: #8a8a8a;
+        font-size: 12px;
+        line-height: 16px;
+        font-weight: 500;
       }
 
       .prototype-shell-close {
         border: 0;
-        background: #edf4ff;
-        color: #126bff;
-        border-radius: 999px;
+        background: #242424;
+        color: #ffffff;
+        border-radius: 50%;
         width: 24px;
         height: 24px;
         cursor: pointer;
@@ -822,7 +1233,7 @@
 
       .prototype-shell-label {
         margin-bottom: 7px;
-        color: #697386;
+        color: #8a8a8a;
         font-size: 12px;
         font-weight: 600;
       }
@@ -839,18 +1250,75 @@
         justify-content: center;
         min-height: 28px;
         padding: 5px 10px;
-        border: 1px solid #d8e4f5;
+        border: 1px solid #dddddd;
         border-radius: 999px;
-        background: #f7fbff;
-        color: #25324a;
+        background: #ffffff;
+        color: #4f4f4f;
         text-decoration: none;
         white-space: nowrap;
       }
 
       .prototype-shell-link.active {
-        border-color: #126bff;
-        background: #126bff;
+        border-color: #242424;
+        background: #242424;
         color: #ffffff;
+      }
+
+      .prototype-shell-main-tabs,
+      .prototype-shell-rule-tabs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: 10px 0 12px;
+      }
+
+      .prototype-shell-main-tab,
+      .prototype-shell-rule-tab {
+        min-height: 28px;
+        padding: 5px 10px;
+        border: 1px solid #dddddd;
+        border-radius: 999px;
+        background: #ffffff;
+        color: #4f4f4f;
+        font-size: 12px;
+        line-height: 16px;
+        font-weight: 650;
+        pointer-events: auto;
+      }
+
+      .prototype-shell-main-tab.is-active,
+      .prototype-shell-rule-tab.is-active {
+        border-color: #242424;
+        background: #242424;
+        color: #ffffff;
+      }
+
+      .prototype-shell-page-summary {
+        margin: 0 0 10px;
+        color: #4f4f4f;
+        font-size: 13px;
+        line-height: 20px;
+      }
+
+      .prototype-shell-rule-pane {
+        display: grid;
+        gap: 7px;
+        margin-top: 8px;
+      }
+
+      .prototype-shell-rule-pane[hidden],
+      .prototype-shell-main-pane[hidden] {
+        display: none !important;
+      }
+
+      .prototype-shell-rule-pane ul {
+        margin: 0;
+        padding-left: 17px;
+      }
+
+      .prototype-shell-rule-pane li {
+        margin: 0 0 6px;
+        color: #4f4f4f;
       }
 
       .prototype-creator-popover {
@@ -956,16 +1424,17 @@
       }
 
       [data-topic-rail-standard] {
-        padding: 0 0 16px !important;
+        padding: 18px !important;
         overflow: hidden !important;
       }
 
       [data-topic-rail-standard] .rail-head,
       [data-topic-rail-standard] .right-title {
-        height: 48px !important;
-        padding: 0 18px !important;
-        margin: 0 0 12px !important;
-        border-bottom: 1px solid #e6edf5 !important;
+        height: auto !important;
+        min-height: 22px !important;
+        padding: 0 !important;
+        margin: 0 0 14px !important;
+        border-bottom: 0 !important;
         box-sizing: border-box !important;
         display: flex !important;
         align-items: center !important;
@@ -977,7 +1446,7 @@
       [data-topic-rail-standard] .right-title h3 {
         margin: 0 !important;
         color: #111827 !important;
-        font: 760 16px/22px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+        font: 700 16px/22px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
       }
 
       [data-topic-rail-standard] .rail-head .rail-more,
@@ -991,15 +1460,15 @@
       [data-topic-rail-standard] .prototype-topic-list {
         display: grid !important;
         grid-template-columns: 1fr !important;
-        gap: 8px !important;
-        padding: 0 12px !important;
+        gap: 12px !important;
+        padding: 0 !important;
         margin: 0 !important;
       }
 
       [data-topic-rail-standard] .prototype-topic-pill {
         width: 100%;
         min-width: 0;
-        height: 26px;
+        height: 22px;
         padding: 0;
         box-sizing: border-box;
         display: flex;
@@ -1010,7 +1479,7 @@
         border-radius: 0;
         background: transparent;
         color: #475467;
-        font: 650 13px/18px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        font: 500 13px/18px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
         cursor: pointer;
       }
 
@@ -1038,7 +1507,7 @@
       [data-topic-rail-standard] .prototype-topic-count {
         flex: 0 0 auto;
         color: #98a2b3;
-        font-weight: 650;
+        font-weight: 500;
       }
 
       .prototype-topic-chip-unified {
@@ -1393,9 +1862,9 @@
       html.prototype-preview.prototype-ai666-home-skin [data-right-module] h2,
       html.prototype-preview.prototype-ai666-home-skin [data-right-module] h3 {
         color: #242424 !important;
-        font-size: 15px !important;
+        font-size: 16px !important;
         line-height: 22px !important;
-        font-weight: 620 !important;
+        font-weight: 700 !important;
       }
 
       html.prototype-preview.prototype-ai666-home-skin .rail-more,
@@ -1462,7 +1931,7 @@
       html.prototype-preview.prototype-ai666-home-skin .topic-count {
         color: #8a8a8a !important;
         font-size: 12px !important;
-        font-weight: 420 !important;
+        font-weight: 500 !important;
       }
 
       html.prototype-preview.prototype-ai666-home-skin .feed-item,
@@ -2177,6 +2646,16 @@
           event.preventDefault();
           return;
         }
+        if (detailTarget.matches("[data-service-card]")) {
+          const href = detailTarget.getAttribute("data-detail-href");
+          if (href) {
+            event.preventDefault();
+            location.href = href;
+            return;
+          }
+          navigate("c-end-model-service-channel-v1", "detail");
+          return;
+        }
         navigate("c-end-detail-page-v1", "default");
       }
     });
@@ -2285,7 +2764,10 @@
       const list = module.querySelector(".topic-list, .rail-list, .related-list") || document.createElement("div");
       list.className = "prototype-topic-list";
       list.setAttribute("data-standard-topic-list", "true");
-      list.innerHTML = STANDARD_RECOMMENDED_TOPICS.map(([name, count]) => `
+      const topics = currentDir() === "c-end-detail-page-v1" && document.body.dataset.state === "model"
+        ? MODEL_DETAIL_RECOMMENDED_TOPICS
+        : STANDARD_RECOMMENDED_TOPICS;
+      list.innerHTML = topics.map(([name, count]) => `
         <div class="prototype-topic-pill" role="link" tabindex="0" data-topic-rail data-href="../c-end-topic-aggregate-v1/index.html?topic=${encodeURIComponent(name)}">
           <span class="prototype-topic-label">
             <img class="prototype-topic-icon" src="${STANDARD_TOPIC_ICON_SRC}" alt="" data-icon />
@@ -2377,35 +2859,145 @@
     }).join("");
   }
 
+  function escapeHtml(value) {
+    return String(value || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  }
+
+  function renderRuleList(items) {
+    return `<ul>${(items || []).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>`;
+  }
+
+  function renderRuleTabs(rules, activeKey) {
+    return Object.keys(RULE_SECTION_LABELS)
+      .filter((key) => rules[key]?.length)
+      .map((key) => `
+        <button
+          type="button"
+          class="prototype-shell-rule-tab${key === activeKey ? " is-active" : ""}"
+          data-prototype-rule-tab="${key}"
+          aria-selected="${key === activeKey ? "true" : "false"}"
+        >${RULE_SECTION_LABELS[key]}</button>
+      `).join("");
+  }
+
+  function renderRulePanes(rules, activeKey) {
+    return Object.keys(RULE_SECTION_LABELS)
+      .filter((key) => rules[key]?.length)
+      .map((key) => `
+        <section class="prototype-shell-rule-pane" data-prototype-rule-pane="${key}" ${key === activeKey ? "" : "hidden"}>
+          <div class="prototype-shell-label">${RULE_SECTION_LABELS[key]}</div>
+          ${renderRuleList(rules[key])}
+        </section>
+      `).join("");
+  }
+
+  function setPrototypeShellMainTab(shell, nextKey) {
+    const key = nextKey === "rules" ? "rules" : "walkthrough";
+    shell.querySelectorAll("[data-prototype-main-tab]").forEach((tab) => {
+      const active = tab.getAttribute("data-prototype-main-tab") === key;
+      tab.classList.toggle("is-active", active);
+      tab.setAttribute("aria-selected", active ? "true" : "false");
+    });
+    shell.querySelectorAll("[data-prototype-main-pane]").forEach((pane) => {
+      pane.hidden = pane.getAttribute("data-prototype-main-pane") !== key;
+    });
+  }
+
+  function setPrototypeRuleTab(shell, nextKey) {
+    const key = PAGE_RULES[currentDir()]?.[nextKey]?.length ? nextKey : "purpose";
+    shell.querySelectorAll("[data-prototype-rule-tab]").forEach((tab) => {
+      const active = tab.getAttribute("data-prototype-rule-tab") === key;
+      tab.classList.toggle("is-active", active);
+      tab.setAttribute("aria-selected", active ? "true" : "false");
+    });
+    shell.querySelectorAll("[data-prototype-rule-pane]").forEach((pane) => {
+      pane.hidden = pane.getAttribute("data-prototype-rule-pane") !== key;
+    });
+  }
+
   function renderPrototypeShell() {
     if (window.location.protocol === "file:") return;
     if (document.querySelector("[data-prototype-shell]")) return;
+    if (document.querySelector("[data-prototype-shell-merged]")) return;
 
     const dir = currentDir();
     const states = STATE_LABELS[dir] || [];
+    const rules = PAGE_RULES[dir] || {
+      title: "页面走查规则",
+      purpose: ["确认页面目的、字段状态、产品规则、运营维护和验收口径。"],
+      fields: ["按当前页面对象逐项确认字段、状态和入口。"],
+      logic: ["只表达 C端用户可见逻辑，不展示后台实现说明。"],
+      ops: ["可运营维护项先用配置文件承接。"],
+      acceptance: ["页面无横向溢出，状态和跳转可走查。"]
+    };
     const params = new URLSearchParams(window.location.search);
     const activeState = params.get("state") || states[0]?.[0] || "";
+    const requestedReview = params.get("review");
+    const initialMainTab = requestedReview === "rules" ? "rules" : "walkthrough";
+    const initialRuleTab = Object.keys(RULE_SECTION_LABELS).find((key) => rules[key]?.length) || "purpose";
 
     const shell = document.createElement("aside");
+    shell.className = "prototype-shell";
     shell.setAttribute("data-prototype-shell", "true");
     shell.innerHTML = `
-      <div class="prototype-shell-head">
-        <div class="prototype-shell-title">原型走查</div>
-        <button class="prototype-shell-close" type="button" aria-label="收起原型走查">×</button>
-      </div>
-      <div class="prototype-shell-group">
-        <div class="prototype-shell-label">页面</div>
-        <div class="prototype-shell-links">${renderPageLinks(REVIEW_PAGES, dir)}</div>
-      </div>
-      ${states.length > 1 ? `
-        <div class="prototype-shell-group">
-          <div class="prototype-shell-label">状态</div>
-          <div class="prototype-shell-links">${renderStateLinks(states, dir, activeState)}</div>
+      <button class="prototype-shell-trigger" type="button" data-prototype-shell-open aria-label="打开走查规则">走查规则</button>
+      <section class="prototype-shell-panel" role="complementary" aria-label="页面走查规则">
+        <div class="prototype-shell-head">
+          <div class="prototype-shell-title">
+            <strong>走查规则</strong>
+            <span>${escapeHtml(rules.title)}</span>
+          </div>
+          <button class="prototype-shell-close" type="button" data-prototype-shell-close aria-label="收起走查规则">×</button>
         </div>
-      ` : ""}
+        <div class="prototype-shell-main-tabs" role="tablist" aria-label="走查规则分区">
+          <button type="button" class="prototype-shell-main-tab${initialMainTab === "walkthrough" ? " is-active" : ""}" data-prototype-main-tab="walkthrough" aria-selected="${initialMainTab === "walkthrough" ? "true" : "false"}">原型走查</button>
+          <button type="button" class="prototype-shell-main-tab${initialMainTab === "rules" ? " is-active" : ""}" data-prototype-main-tab="rules" aria-selected="${initialMainTab === "rules" ? "true" : "false"}">研发规则</button>
+        </div>
+        <div class="prototype-shell-main-pane" data-prototype-main-pane="walkthrough" ${initialMainTab === "walkthrough" ? "" : "hidden"}>
+          <p class="prototype-shell-page-summary">当前页面用于演示可见页面、状态切换和核心跳转；说明面板不影响页面操作。</p>
+          <div class="prototype-shell-group" data-prototype-page-group>
+            <div class="prototype-shell-label">页面</div>
+            <div class="prototype-shell-links">${renderPageLinks(REVIEW_PAGES, dir)}</div>
+          </div>
+          ${states.length > 1 ? `
+            <div class="prototype-shell-group" data-prototype-state-group>
+              <div class="prototype-shell-label">状态</div>
+              <div class="prototype-shell-links">${renderStateLinks(states, dir, activeState)}</div>
+            </div>
+          ` : ""}
+        </div>
+        <div class="prototype-shell-main-pane" data-prototype-main-pane="rules" ${initialMainTab === "rules" ? "" : "hidden"}>
+          <p class="prototype-shell-page-summary">以下规则用于产品、运营和研发对齐页面逻辑，6-7 月先按配置文件承接人工维护项。</p>
+          <div class="prototype-shell-rule-tabs" role="tablist" aria-label="研发规则栏目">
+            ${renderRuleTabs(rules, initialRuleTab)}
+          </div>
+          ${renderRulePanes(rules, initialRuleTab)}
+        </div>
+      </section>
     `;
-    shell.querySelector(".prototype-shell-close").addEventListener("click", () => shell.remove());
+    shell.querySelector("[data-prototype-shell-open]").addEventListener("click", () => {
+      shell.classList.add("is-open");
+      setPrototypeShellMainTab(shell, "walkthrough");
+    });
+    shell.querySelector("[data-prototype-shell-close]").addEventListener("click", () => {
+      shell.classList.remove("is-open");
+    });
+    shell.querySelectorAll("[data-prototype-main-tab]").forEach((tab) => {
+      tab.addEventListener("click", () => setPrototypeShellMainTab(shell, tab.getAttribute("data-prototype-main-tab")));
+    });
+    shell.querySelectorAll("[data-prototype-rule-tab]").forEach((tab) => {
+      tab.addEventListener("click", () => setPrototypeRuleTab(shell, tab.getAttribute("data-prototype-rule-tab")));
+    });
     document.body.appendChild(shell);
+    if (requestedReview === "rules" || requestedReview === "walkthrough") {
+      shell.classList.add("is-open");
+      setPrototypeShellMainTab(shell, initialMainTab);
+    }
   }
 
   function init() {

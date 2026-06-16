@@ -1204,7 +1204,7 @@
           </div>
 
           <section class="body-section" data-body-section>
-            <h2>正文说明</h2>
+            <h2 data-body-title>正文说明</h2>
             <p data-body-a>先把目标拆成可验证的小任务，再让 AI 负责生成候选实现，最后用测试和人工审查把风险收口。</p>
             <p data-body-b>这类内容的价值不是炫技，而是让团队知道什么时候可以复用，什么时候必须停下来人工判断。</p>
             <div class="code-block" data-code>npm test
@@ -1318,9 +1318,9 @@ node scripts/validate-detail-fields.mjs</div>
               <div class="rail-link rail-icon-link" aria-label="查看更多">更多</div>
             </div>
             <div class="related-list">
-              <div class="related-item">接口文档转测试用例的工作流</div>
-              <div class="related-item">代码审查 Skill 最小结构</div>
-              <div class="related-item">GitHub MCP 使用边界</div>
+              <div class="related-item" data-related-a>接口文档转测试用例的工作流</div>
+              <div class="related-item" data-related-b>代码审查 Skill 最小结构</div>
+              <div class="related-item" data-related-c>GitHub MCP 使用边界</div>
             </div>
           </section>
 
@@ -1330,10 +1330,10 @@ node scripts/validate-detail-fields.mjs</div>
               <div class="rail-link rail-icon-link" aria-label="换一换">换一换</div>
             </div>
             <div class="topic-list">
-              <span class="topic topic-chip">AI Coding</span>
-              <span class="topic topic-chip">Vibe Coding</span>
-              <span class="topic topic-chip">MCP</span>
-              <span class="topic topic-chip">工作流自动化</span>
+              <span class="topic topic-chip" data-rail-topic-a>AI Coding</span>
+              <span class="topic topic-chip" data-rail-topic-b>Vibe Coding</span>
+              <span class="topic topic-chip" data-rail-topic-c>MCP</span>
+              <span class="topic topic-chip" data-rail-topic-d>工作流自动化</span>
             </div>
           </section>
 
@@ -1393,10 +1393,17 @@ node scripts/validate-detail-fields.mjs</div>
         authorPosts: "117",
         authorReads: "148k",
         authorFollowers: "144",
+        updated: "2 小时前更新",
         media: false,
+        bodyTitle: "正文说明",
+        bodyA: "先把目标拆成可验证的小任务，再让 AI 负责生成候选实现，最后用测试和人工审查把风险收口。",
+        bodyB: "这类内容的价值不是炫技，而是让团队知道什么时候可以复用，什么时候必须停下来人工判断。",
+        code: "npm test\ngit diff --check\nnode scripts/validate-detail-fields.mjs",
         moduleTitle: "教程案例要点",
         fields: [["背景问题", "AI 编码流程难以稳定复用"], ["适用人群", "技术类用户、独立开发者"], ["结果", "形成可复查的协作流程"]],
-        boundary: "边界：该案例只提供流程参考，不承诺自动生成代码可直接上线。"
+        boundary: "边界：该案例只提供流程参考，不承诺自动生成代码可直接上线。",
+        related: ["接口文档转测试用例的工作流", "代码审查 Skill 最小结构", "GitHub MCP 使用边界"],
+        railTopics: ["AI Coding", "Vibe Coding", "MCP", "工作流自动化"]
       },
       comments: {},
       "no-comments": { comments: "0 评论", likes: "128 点赞", favorites: "316 收藏" },
@@ -1447,17 +1454,25 @@ node scripts/validate-detail-fields.mjs</div>
       },
       model: {
         type: "模型服务",
-        topics: ["模型服务", "API 调用"],
-        title: "Qwen3-32B API 接入实践与成本优化",
-        summary: "从首次调用、错误处理、上下文控制和成本边界四个角度判断模型服务是否适合接入。",
+        topics: ["OpenAI", "API 调用"],
+        title: "gpt-5.2 模型详情：复杂编码与智能任务选型",
+        summary: "围绕 gpt-5.2 的模型对象信息、官方介绍、适合场景、成本口径和关联内容，帮助 API 用户判断是否值得接入。",
         reads: "12.6k 阅读",
         comments: "86 评论",
         likes: "328 点赞",
         favorites: "674 收藏",
+        author: "多元拾光模型服务",
+        updated: "2026-06-17 收录",
         media: false,
-        moduleTitle: "模型服务信息",
-        fields: [["服务名称", "Qwen3-32B"], ["适用场景", "长上下文问答、代码辅助"], ["主要限制", "成本与上下文策略需先评估"]],
-        boundary: "边界：价格、可用性和性能以实际服务为准，本页不提供实时价格承诺或在线调用。"
+        bodyTitle: "官方介绍",
+        bodyA: "gpt-5.2 是 OpenAI 文本与多模态输入模型，适合复杂编码、长上下文分析、结构化输出和多步骤工具调用等专业任务。",
+        bodyB: "适合用于代码协作、需求拆解、知识库问答、截图理解和文件分析；成本敏感的批处理、简单客服和高频摘要任务应优先比较 mini 或 nano 系列。",
+        code: "输入：text / image / file\n输出：text\n接口：openai / openai-response",
+        moduleTitle: "模型详情聚合",
+        fields: [["模型对象", "OpenAI · 文本 · 对话/识图/工具"], ["成本口径", "按量计费：model_ratio=0.875，completion_ratio=8"], ["关联内容", "官方介绍、场景案例、AIGC 作品反链、API 用户经验"]],
+        boundary: "边界：本页不提供在线调用、实时价格承诺、自动可用性检测或真实账户信息；价格和可用性以中转站实际服务为准。",
+        related: ["gpt-4.1 与 gpt-5.2 API 迁移清单", "知识库问答如何选择 Embedding 与主模型", "成本敏感任务何时改用 mini/nano"],
+        railTopics: ["模型选型", "API迁移", "长上下文", "工具调用"]
       },
       workflow: {
         type: "工作流",
@@ -1559,6 +1574,7 @@ node scripts/validate-detail-fields.mjs</div>
     setText("[data-summary]", current.summary);
     setText("[data-author]", `@${current.author || base.author}`);
     setText("[data-rail-author]", current.author || base.author);
+    setText("[data-updated]", current.updated || base.updated);
     setMetricText("[data-reads]", current.reads);
     setMetricText("[data-comments-count]", current.comments);
     setMetricText("[data-likes]", current.likes);
@@ -1569,6 +1585,10 @@ node scripts/validate-detail-fields.mjs</div>
     setText("[data-author-posts]", current.authorPosts || base.authorPosts);
     setText("[data-author-reads]", current.authorReads || base.authorReads);
     setText("[data-author-followers]", current.authorFollowers || base.authorFollowers);
+    setText("[data-body-title]", current.bodyTitle || base.bodyTitle);
+    setText("[data-body-a]", current.bodyA || base.bodyA);
+    setText("[data-body-b]", current.bodyB || base.bodyB);
+    setText("[data-code]", current.code || base.code);
     setText("[data-module-title]", current.moduleTitle);
     setText("[data-toc-module]", current.moduleTitle);
     setText("[data-field-label-a]", current.fields[0][0]);
@@ -1578,6 +1598,15 @@ node scripts/validate-detail-fields.mjs</div>
     setText("[data-field-label-c]", current.fields[2][0]);
     setText("[data-field-c]", current.fields[2][1]);
     setText("[data-boundary]", current.boundary);
+    const related = current.related || base.related;
+    const railTopics = current.railTopics || base.railTopics;
+    setText("[data-related-a]", related[0]);
+    setText("[data-related-b]", related[1]);
+    setText("[data-related-c]", related[2]);
+    setText("[data-rail-topic-a]", railTopics[0]);
+    setText("[data-rail-topic-b]", railTopics[1]);
+    setText("[data-rail-topic-c]", railTopics[2]);
+    setText("[data-rail-topic-d]", railTopics[3]);
 
     if (current.cover) {
       document.querySelector("[data-cover]").src = assetBase + current.cover;
@@ -1603,6 +1632,6 @@ node scripts/validate-detail-fields.mjs</div>
       setText("[data-comment-placeholder]", "成为第一位评论的人");
     }
   </script>
-  <script src="../_shared/c-end-prototype-interactions.js?v=20260616-subpath-routing-v2"></script>
+  <script src="../_shared/c-end-prototype-interactions.js?v=20260617-model-service-content-v1"></script>
 </body>
 </html>

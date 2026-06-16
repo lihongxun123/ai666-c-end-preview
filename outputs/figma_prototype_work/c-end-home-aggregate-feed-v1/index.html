@@ -626,6 +626,40 @@
       -webkit-box-orient: vertical;
     }
 
+    .home-flash-media-grid {
+      width: min(520px, 100%);
+      margin: 12px 0 0;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      align-items: start;
+    }
+
+    .home-flash-media-item {
+      aspect-ratio: var(--media-ratio, 16 / 9);
+      margin: 0;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel-soft);
+    }
+
+    .home-flash-media-item img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+    }
+
+    .home-flash-media-item.is-video::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(0, 0, 0, 0.02), rgba(0, 0, 0, 0.22));
+      pointer-events: none;
+    }
+
     .meta-line {
       margin-top: 16px;
       display: flex;
@@ -1209,6 +1243,15 @@
                 <span class="type-badge type-topic">闪念</span>
               </div>
               <p class="summary flash-text">从项目规模、上下文长度、代码审查和本地环境控制几个角度做轻量比较：长上下文更适合 Claude Code，本地改动审查和小步验证更适合 Codex GUI 插件。</p>
+              <div class="home-flash-media-grid media-grid" data-home-flash-media-grid>
+                <figure class="home-flash-media-item" style="--media-ratio: 4 / 3;" data-media data-home-flash-media-item data-media-order="1">
+                  <img src="../_assets/figma/create-article-thumb-01.png" alt="" />
+                </figure>
+                <figure class="home-flash-media-item is-video" style="--media-ratio: 16 / 9;" data-media data-home-flash-media-item data-media-order="2" data-video data-short-video>
+                  <img src="../_assets/figma/create-video-cover-source.png" alt="" />
+                  <span class="play-mark"><span>▶</span></span>
+                </figure>
+              </div>
               <div class="meta-line">
                 <div class="topics">
                   <span class="topic-chip">Vibe Coding</span>
@@ -1337,7 +1380,7 @@
       </aside>
     </main>
   </div>
-  <script src="../_shared/c-end-prototype-interactions.js?v=20260616-subpath-routing-v2"></script>
+  <script src="../_shared/c-end-prototype-interactions.js?v=20260617-model-service-content-v1"></script>
   <script>
     (() => {
       const initHomeInteractions = () => {
@@ -1774,7 +1817,7 @@
     }
 
     body .feed-item.flash-inline {
-      min-height: 136px !important;
+      min-height: 336px !important;
     }
 
     body .feed-item::before {
@@ -1866,6 +1909,10 @@
       max-width: 760px !important;
       font-size: 16px !important;
       line-height: 22px !important;
+    }
+
+    body .home-flash-media-grid {
+      margin-top: 14px !important;
     }
 
     body .meta-line {

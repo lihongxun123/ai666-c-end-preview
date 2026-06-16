@@ -465,13 +465,7 @@
     }
 
     .feed-card.highlight::before {
-      content: "";
-      position: absolute;
-      left: 0;
-      top: 0;
-      bottom: 0;
-      width: 3px;
-      background: #242424;
+      content: none;
     }
 
     .author-line {
@@ -524,7 +518,7 @@
     }
 
     .body-text {
-      margin: 12px 0 0 52px;
+      margin: 0;
       color: #4f4f4f;
       font-size: 15px;
       line-height: 24px;
@@ -535,7 +529,8 @@
     }
 
     .topic-row {
-      margin: 12px 0 0 52px;
+      min-width: 0;
+      margin: 0;
       display: flex;
       align-items: center;
       gap: 8px;
@@ -556,7 +551,7 @@
     }
 
     .code-block {
-      margin: 14px 0 0 52px;
+      margin: 14px 0 0;
       border-radius: 10px;
       background: #242424;
       overflow: hidden;
@@ -585,38 +580,59 @@
       white-space: pre-wrap;
     }
 
-    .media-grid {
-      margin: 14px 0 0 52px;
-      display: grid;
-      grid-template-columns: repeat(3, 112px);
-      gap: 8px;
+    .flash-content-row {
+      margin: 12px 0 0 52px;
+      display: block;
     }
 
-    .media-thumb {
-      width: 112px;
-      height: 78px;
+    .flash-text-stack {
+      min-width: 0;
+    }
+
+    .flash-media-grid {
+      width: min(520px, 100%);
+      margin: 12px 0 0;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      align-items: start;
+    }
+
+    .flash-media-grid[data-media-count="1"] {
+      width: min(360px, 100%);
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .flash-media-column {
+      min-width: 0;
+      display: grid;
+      gap: 8px;
+      align-content: start;
+    }
+
+    .flash-media-item {
+      aspect-ratio: var(--media-ratio, 16 / 9);
+      margin: 0;
       border-radius: 8px;
-      object-fit: cover;
+      overflow: hidden;
+      position: relative;
       border: 1px solid var(--line);
       background: var(--panel-soft);
     }
 
-    .video-thumb {
-      margin: 14px 0 0 52px;
-      width: 268px;
-      height: 150px;
-      border-radius: 10px;
-      overflow: hidden;
-      position: relative;
-      border: 1px solid var(--line);
-      background: #242424;
-    }
-
-    .video-thumb img {
+    .flash-media-item img {
       width: 100%;
       height: 100%;
+      display: block;
       object-fit: cover;
-      opacity: 0.88;
+    }
+
+    .flash-media-item.is-video::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(0, 0, 0, 0.02), rgba(0, 0, 0, 0.22));
+      pointer-events: none;
     }
 
     .play-mark {
@@ -630,6 +646,7 @@
       background: rgba(255, 255, 255, 0.92);
       display: grid;
       place-items: center;
+      z-index: 1;
     }
 
     .play-mark img {
@@ -653,13 +670,23 @@
       font-weight: 760;
     }
 
-    .actions {
+    .card-meta-row {
       margin: 14px 0 0 52px;
-      padding-top: 12px;
-      border-top: 1px solid var(--line);
       display: flex;
       align-items: center;
-      gap: 18px;
+      justify-content: space-between;
+      gap: 16px;
+      min-width: 0;
+    }
+
+    .actions {
+      margin: 0 0 0 auto;
+      padding-top: 0;
+      border-top: 0;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-shrink: 0;
     }
 
     .action {
@@ -681,10 +708,10 @@
 
     .action.liked {
       color: #242424;
-      border: 1px solid #e2e2e2;
-      border-radius: 999px;
-      background: #f6f6f6;
-      padding: 3px 9px;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      padding: 3px 0;
       font-weight: 760;
       position: relative;
     }
@@ -786,6 +813,13 @@
       line-height: 20px;
     }
 
+    .comments-summary {
+      color: var(--weak);
+      font-size: 12px;
+      line-height: 16px;
+      font-weight: 620;
+    }
+
     .comment-item {
       display: block;
       padding: 14px 0;
@@ -872,19 +906,19 @@
     }
 
     .comment-action.is-liked {
-      border-color: #e2e2e2;
-      background: #f6f6f6;
+      border-color: transparent;
+      background: transparent;
       color: #242424;
     }
 
     .comment-replies {
       margin: 10px 0 0 44px;
-      padding: 10px 12px;
+      padding: 0;
       display: grid;
       gap: 10px;
-      border-radius: 8px;
-      background: rgba(248, 250, 252, 0.92);
-      border: 1px solid rgba(226, 232, 240, 0.86);
+      border-radius: 0;
+      background: transparent;
+      border: 0;
     }
 
     .comment-reply {
@@ -926,18 +960,51 @@
       gap: 8px;
     }
 
-    .comment-input {
+    .comment-composer,
+    .comment-reply-composer {
       margin-top: 12px;
-      height: 40px;
       border-radius: 8px;
       border: 1px solid var(--line-strong);
-      background: var(--panel-soft);
-      color: var(--weak);
-      display: flex;
+      background: #fff;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
       align-items: center;
-      padding: 0 12px;
+      gap: 10px;
+      padding: 8px;
+    }
+
+    .comment-reply-composer {
+      margin-left: 44px;
+      width: calc(100% - 44px);
+    }
+
+    .comment-input {
+      width: 100%;
+      height: 32px;
+      border: 0;
+      outline: none;
+      background: transparent;
+      color: #242424;
       font-size: 13px;
       line-height: 18px;
+    }
+
+    .comment-input::placeholder {
+      color: var(--weak);
+    }
+
+    .comment-submit {
+      height: 32px;
+      padding: 0 14px;
+      border-radius: 6px;
+      background: #242424;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      line-height: 18px;
+      font-weight: 760;
     }
 
     .comment-more {
@@ -945,11 +1012,15 @@
       margin-top: 4px;
       height: 38px;
       border-radius: 8px;
-      background: rgba(22, 184, 166, 0.08);
-      color: var(--brand-deep);
+      background: transparent;
+      color: #515151;
       font-size: 13px;
       line-height: 18px;
       font-weight: 780;
+    }
+
+    .comment-more:hover {
+      color: #242424;
     }
 
     .modal-layer {
@@ -971,7 +1042,7 @@
     }
 
     .compose-modal {
-      width: 620px;
+      width: min(760px, calc(100vw - 48px));
     }
 
     .all-comments-modal {
@@ -1006,6 +1077,292 @@
       line-height: 24px;
     }
 
+    .dev-rules-root {
+      position: fixed;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 1700;
+      pointer-events: none;
+    }
+
+    html.prototype-preview .dev-rules-root {
+      right: 0;
+    }
+
+    .dev-rules-trigger {
+      width: 28px;
+      min-height: 92px;
+      padding: 9px 6px;
+      border-radius: 8px 0 0 8px;
+      background: #242424;
+      color: #fff;
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.16);
+      font-size: 12px;
+      line-height: 14px;
+      font-weight: 780;
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      pointer-events: auto;
+    }
+
+    .dev-rules-layer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: min(360px, calc(100vw - 28px));
+      z-index: 1701;
+      background: transparent;
+      pointer-events: none;
+    }
+
+    .dev-rules-panel {
+      width: 100%;
+      height: 100vh;
+      max-height: 100vh;
+      overflow: hidden;
+      border-left: 1px solid rgba(226, 232, 240, 0.96);
+      background: rgba(255, 255, 255, 0.98);
+      box-shadow: -18px 0 44px rgba(15, 23, 42, 0.16);
+      display: grid;
+      grid-template-rows: auto auto minmax(0, 1fr);
+      pointer-events: auto;
+    }
+
+    .dev-rules-head {
+      min-height: 62px;
+      padding: 16px 16px 12px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .dev-rules-title {
+      display: grid;
+      gap: 3px;
+    }
+
+    .dev-rules-title strong {
+      color: #111827;
+      font-size: 16px;
+      line-height: 22px;
+      font-weight: 820;
+    }
+
+    .dev-rules-title span {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 18px;
+      font-weight: 620;
+    }
+
+    .dev-rules-close {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: var(--panel-soft);
+      color: var(--muted);
+      font-size: 20px;
+      line-height: 24px;
+      flex-shrink: 0;
+    }
+
+    .dev-rules-tabs {
+      padding: 0 0 12px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .dev-rules-primary-tabs {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--line);
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      background: rgba(247, 248, 250, 0.72);
+    }
+
+    .dev-rules-primary-tab {
+      height: 32px;
+      border-radius: 6px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: #515151;
+      font-size: 12px;
+      line-height: 16px;
+      font-weight: 820;
+    }
+
+    .dev-rules-primary-tab.is-active {
+      border-color: #242424;
+      background: #242424;
+      color: #fff;
+    }
+
+    .dev-rules-tab {
+      height: 30px;
+      padding: 0 11px;
+      border-radius: 6px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: #515151;
+      font-size: 12px;
+      line-height: 16px;
+      font-weight: 760;
+    }
+
+    .dev-rules-tab.is-active {
+      border-color: #242424;
+      background: #242424;
+      color: #fff;
+    }
+
+    .dev-rules-body {
+      padding: 14px 16px 16px;
+      overflow: auto;
+      display: grid;
+      gap: 12px;
+    }
+
+    .review-drawer-pane {
+      display: grid;
+      gap: 12px;
+      align-content: start;
+    }
+
+    .review-drawer-pane[hidden] {
+      display: none;
+    }
+
+    .prototype-review-group {
+      border-radius: 6px;
+      border: 1px solid var(--line);
+      background: #fff;
+      padding: 12px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .prototype-review-label {
+      color: #242424;
+      font-size: 13px;
+      line-height: 18px;
+      font-weight: 820;
+    }
+
+    .prototype-review-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+
+    .prototype-review-link {
+      min-height: 28px;
+      padding: 5px 9px;
+      border-radius: 999px;
+      border: 1px solid #d8e4f5;
+      background: #f7fbff;
+      color: #25324a;
+      text-decoration: none;
+      font-size: 12px;
+      line-height: 16px;
+      font-weight: 720;
+      white-space: nowrap;
+    }
+
+    .prototype-review-link.is-active {
+      border-color: #242424;
+      background: #242424;
+      color: #fff;
+    }
+
+    .dev-rule-pane {
+      display: grid;
+      gap: 12px;
+    }
+
+    .dev-rule-pane[hidden] {
+      display: none;
+    }
+
+    .dev-rule-block {
+      border-radius: 6px;
+      border: 1px solid var(--line);
+      background: #fff;
+      padding: 12px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .dev-rule-block h3 {
+      margin: 0;
+      color: #242424;
+      font-size: 13px;
+      line-height: 18px;
+      font-weight: 820;
+    }
+
+    .dev-rule-block ul {
+      margin: 0;
+      padding-left: 18px;
+      display: grid;
+      gap: 5px;
+    }
+
+    .dev-rule-block li {
+      color: #4b5563;
+      font-size: 12px;
+      line-height: 18px;
+    }
+
+    .dev-rule-table {
+      border-radius: 6px;
+      border: 1px solid rgba(226, 232, 240, 0.94);
+      overflow: hidden;
+      display: grid;
+    }
+
+    .dev-rule-row {
+      display: grid;
+      grid-template-columns: 118px minmax(0, 1fr);
+      gap: 10px;
+      padding: 9px 10px;
+      border-top: 1px solid rgba(226, 232, 240, 0.72);
+      background: #fff;
+    }
+
+    .dev-rule-row:first-child {
+      border-top: 0;
+    }
+
+    .dev-rule-row strong {
+      color: #242424;
+      font-size: 12px;
+      line-height: 18px;
+      font-weight: 820;
+    }
+
+    .dev-rule-row span {
+      color: #4b5563;
+      font-size: 12px;
+      line-height: 18px;
+    }
+
+    .dev-rule-note {
+      margin: 2px 0 0;
+      padding: 10px 12px;
+      border-radius: 6px;
+      background: #f6f6f6;
+      color: #515151;
+      font-size: 12px;
+      line-height: 18px;
+      font-weight: 650;
+    }
+
     .compose-body {
       padding: 18px 20px 20px;
       display: grid;
@@ -1016,9 +1373,9 @@
       border-radius: 10px;
       border: 1px solid var(--line-strong);
       background: var(--panel-soft);
-      overflow: hidden;
+      overflow: visible;
       display: grid;
-      grid-template-rows: 154px 44px;
+      grid-template-rows: 146px 42px 44px;
     }
 
     .compose-editor-bar {
@@ -1030,6 +1387,108 @@
       align-items: center;
       gap: 10px;
       background: rgba(255, 255, 255, 0.62);
+    }
+
+    .compose-media-section {
+      border-radius: 10px;
+      border: 1px solid var(--line-strong);
+      background: #ffffff;
+      padding: 12px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .compose-media-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      color: #344054;
+      font-size: 13px;
+      line-height: 18px;
+      font-weight: 760;
+    }
+
+    .compose-media-head span {
+      color: var(--weak);
+      font-size: 12px;
+      line-height: 18px;
+      font-weight: 680;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .compose-media-strip {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .compose-media-add,
+    .compose-media-item {
+      aspect-ratio: 1 / 1;
+      min-height: 0;
+      height: auto;
+      border-radius: 8px;
+      border: 1px dashed #d8d8d8;
+      background: #fafafa;
+      color: #6b6b6b;
+      display: grid;
+      place-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .compose-media-add img {
+      width: 18px;
+      height: 18px;
+      opacity: 0.8;
+    }
+
+    .compose-media-item {
+      border-style: solid;
+      background: #f6f6f6;
+      cursor: grab;
+    }
+
+    .compose-media-preview {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .compose-media-drag {
+      position: absolute;
+      right: 6px;
+      top: 6px;
+      width: 22px;
+      height: 22px;
+      border-radius: 6px;
+      display: grid;
+      place-items: center;
+      background: rgba(255, 255, 255, 0.88);
+      border: 1px solid rgba(226, 226, 226, 0.9);
+    }
+
+    .compose-media-drag img {
+      width: 14px;
+      height: 14px;
+      opacity: 0.78;
+    }
+
+    .compose-media-type {
+      position: absolute;
+      left: 6px;
+      bottom: 6px;
+      height: 20px;
+      padding: 0 6px;
+      border-radius: 5px;
+      display: inline-flex;
+      align-items: center;
+      background: rgba(17, 24, 39, 0.68);
+      color: #ffffff;
+      font-size: 11px;
+      line-height: 16px;
+      font-weight: 760;
     }
 
     .compose-editor-tools {
@@ -1090,7 +1549,7 @@
 
     .compose-body textarea {
       width: 100%;
-      height: 154px;
+      height: 146px;
       resize: none;
       border-radius: 0;
       border: 0;
@@ -1187,7 +1646,7 @@
       font-size: 16px;
       line-height: 22px;
       color: #111827;
-      font-weight: 820;
+      font-weight: 700;
     }
 
     .small-link,
@@ -1240,14 +1699,14 @@
       padding: 0;
       background: transparent;
       display: grid;
-      grid-template-columns: 22px 1fr auto;
+      grid-template-columns: minmax(0, 1fr) auto;
       gap: 8px;
       align-items: center;
       min-width: 0;
       color: #344054;
       font-size: 13px;
       line-height: 18px;
-      font: inherit;
+      font-family: inherit;
       text-align: left;
       cursor: pointer;
     }
@@ -1263,17 +1722,17 @@
 
     .topic-pill {
       min-width: 0;
-      height: 32px;
-      padding: 0 10px;
-      display: flex;
+      height: 22px;
+      padding: 0;
+      display: grid;
+      grid-template-columns: 1fr auto;
       align-items: center;
-      justify-content: space-between;
       gap: 8px;
       border: 0;
       border-radius: 0;
       background: transparent;
       color: #475467;
-      font-size: 12px;
+      font-size: 13px;
       line-height: 18px;
       text-decoration: none;
     }
@@ -1283,13 +1742,25 @@
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
-      font-weight: 650;
+      font-weight: 500;
     }
 
     .topic-count {
       color: #98a2b3;
-      font-weight: 720;
+      font-weight: 500;
       flex-shrink: 0;
+    }
+
+    .hot-row-score {
+      display: inline-flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 4px;
+      color: #6b6b6b;
+      font-size: 12px;
+      line-height: 18px;
+      font-weight: 500;
+      font-variant-numeric: tabular-nums;
     }
 
     .activity-row {
@@ -1321,32 +1792,58 @@
 
     .hot-score {
       margin-left: 4px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
       color: #6b6b6b;
       font-size: 12px;
       line-height: 18px;
       font-weight: 680;
     }
 
+    .hot-score img,
+    .hot-row-score img {
+      width: 13px;
+      height: 13px;
+      opacity: 0.78;
+    }
+
     .feed-card.hot-focus {
-      box-shadow: inset 3px 0 0 #242424;
+      box-shadow: inset 0 0 0 1px #d8d8d8;
       background: #fafafa;
     }
 
     .rank {
       color: #242424;
-      font-weight: 820;
+      font-weight: 560;
     }
 
     .row-title {
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      font-weight: 500;
     }
 
     .row-meta {
       color: var(--weak);
       font-size: 12px;
       line-height: 16px;
+      font-weight: 500;
+    }
+
+    .right-rail [data-topic-rail-standard] .rail-head strong,
+    .right-rail [data-topic-rail-standard] .rail-title,
+    .right-rail [data-topic-rail-standard] .right-title h3 {
+      font-weight: 700 !important;
+    }
+
+    .right-rail [data-topic-rail-standard] .prototype-topic-pill,
+    .right-rail [data-topic-rail-standard] .prototype-topic-name,
+    .right-rail [data-topic-rail-standard] .prototype-topic-count {
+      font-size: 13px !important;
+      line-height: 18px !important;
+      font-weight: 500 !important;
     }
 
     .ad-card {
@@ -1469,49 +1966,129 @@
     }
 
     .compose-topic-row {
-      min-height: 28px;
+      min-width: 0;
+      min-height: 42px;
+      padding: 6px 14px;
+      border-top: 1px solid rgba(226, 232, 240, 0.7);
       display: flex;
       align-items: center;
       gap: 8px;
       color: #6b6b6b;
       font-size: 12px;
       line-height: 18px;
+      overflow: hidden;
     }
 
-    .compose-topic-chip {
+    .compose-topic-chip,
+    .compose-topic-suggestion {
       height: 24px;
       padding: 0 9px;
       display: inline-flex;
       align-items: center;
-      border: 1px solid #d8d8d8;
+      max-width: 128px;
+      min-width: 0;
+      border: 1px solid transparent;
       border-radius: 999px;
-      color: #242424;
-      background: #fff;
-      font-weight: 680;
-    }
-
-    .topic-picker-panel {
-      margin-top: 8px;
-      display: none;
-      flex-wrap: wrap;
-      gap: 6px;
-    }
-
-    .topic-picker-panel.is-open {
-      display: flex;
-    }
-
-    .topic-option {
-      height: 26px;
-      padding: 0 9px;
-      border: 1px solid #e2e2e2;
-      border-radius: 999px;
-      background: #fff;
-      color: #4f4f4f;
+      color: #6b6b6b;
+      background: #f4f4f4;
       font-size: 12px;
       line-height: 18px;
       font-weight: 650;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      flex: 0 1 auto;
+    }
+
+    .topic-picker-panel {
+      position: absolute;
+      left: 0;
+      bottom: calc(100% + 8px);
+      z-index: 30;
+      width: 360px;
+      max-height: 270px;
+      padding: 10px;
+      border: 1px solid rgba(226, 232, 240, 0.96);
+      border-radius: 8px;
+      background: #ffffff;
+      box-shadow: 0 18px 46px rgba(15, 23, 42, 0.16);
+      display: none;
+      gap: 8px;
+    }
+
+    .topic-picker-panel.is-open {
+      display: grid;
+    }
+
+    .compose-topic-suggestion.is-active,
+    .compose-topic-chip {
+      border-color: #242424;
+      background: #ffffff;
+      color: #242424;
+      font-weight: 760;
+    }
+
+    .compose-topic-chip[hidden] {
+      display: none;
+    }
+
+    .compose-topic-tool {
+      position: relative;
+      display: inline-flex;
+    }
+
+    .topic-picker-query {
+      height: 28px;
+      padding: 0 4px;
+      color: #242424;
+      font-size: 14px;
+      line-height: 20px;
+      font-weight: 720;
+    }
+
+    .topic-picker-list {
+      max-height: 214px;
+      overflow: auto;
+      display: grid;
+      gap: 4px;
+    }
+
+    .topic-option {
+      width: 100%;
+      min-width: 0;
+      min-height: 38px;
+      padding: 0 12px;
+      border: 0;
+      border-radius: 6px;
+      background: transparent;
+      color: #242424;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 12px;
+      font-size: 13px;
+      line-height: 18px;
+      font-weight: 650;
+      text-align: left;
       cursor: pointer;
+    }
+
+    .topic-option:hover,
+    .topic-option:focus-visible {
+      background: #f5f5f5;
+    }
+
+    .topic-option span:first-child {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .topic-option-count {
+      color: #8a8a8a;
+      font-weight: 650;
+      white-space: nowrap;
     }
 
     /* Brand lockup override: pure SVG mark, frontend-rendered wordmark. */
@@ -1599,7 +2176,7 @@
               AI 技术轻内容
             </div>
             <h1>闪念</h1>
-            <div class="head-desc">短经验、代码片段、工具发现和技术讨论，先轻量表达，再沉淀为正式内容。</div>
+            <div class="head-desc">短经验、工具发现和技术讨论，先轻量表达，再沉淀为正式内容。</div>
           </div>
           <div class="signal-card">
             <strong>今日 128 条</strong>
@@ -1625,7 +2202,7 @@
 
         <div class="rail-card" data-right-module="topics">
           <div class="rail-head">
-            <div class="rail-title">推荐话题</div>
+            <strong>推荐话题</strong>
             <button type="button" class="rail-more" data-topic-more>更多</button>
           </div>
           <div class="topic-list" id="topic-list"></div>
@@ -1675,6 +2252,7 @@
       </aside>
     </main>
     <div id="modal-root"></div>
+    <div id="dev-rules-root" class="dev-rules-root" data-dev-rules-root data-prototype-shell-merged></div>
   </div>
 
   <script>
@@ -1744,7 +2322,11 @@
         time: "2 小时前",
         topics: ["工作流自动化", "测试调试"],
         text: "接口文档转测试用例这件事，最难的不是生成，而是把边界条件和失败回包列全。先让模型列检查点，再让人复核，会比直接生成脚本靠谱。",
-        images: [asset("create-article-thumb-01.png"), asset("create-article-thumb-02.png"), asset("create-article-thumb-03.png")],
+        mediaFiles: [
+          { type: "image", src: asset("create-article-thumb-01.png"), ratio: "4 / 3" },
+          { type: "image", src: asset("create-article-thumb-02.png"), ratio: "3 / 4" },
+          { type: "image", src: asset("create-article-thumb-03.png"), ratio: "16 / 9" }
+        ],
         read: "760",
         comments: 16,
         likes: 55,
@@ -1757,8 +2339,10 @@
         time: "3 小时前",
         topics: ["AIGC", "提示词工程"],
         text: "同一个视频提示词，把镜头运动单独写成一段后，结果稳定很多。图像提示词可以宽松一些，视频更像在写小分镜。",
-        video: asset("create-video-cover-source.png"),
-        mediaLabel: "短视频 · 50M 内",
+        mediaFiles: [
+          { type: "video", src: asset("create-video-cover-source.png"), ratio: "16 / 9" },
+          { type: "image", src: asset("cover-08-wide.png"), ratio: "16 / 9" }
+        ],
         read: "2.4k",
         comments: 41,
         likes: 146,
@@ -1859,7 +2443,7 @@
                 <button class="comment-action comment-like ${reply.likes >= 2 ? "is-liked" : ""}" data-comment-like>
                   <img data-icon src="${actionIcon("like", reply.likes >= 2)}" alt="" />赞 ${reply.likes}
                 </button>
-                <button class="comment-action" data-comment-reply>回复</button>
+                <button class="comment-action" data-comment-reply data-reply-target="${reply.name}">回复</button>
               </div>
             </div>
           `).join("")}
@@ -1881,9 +2465,18 @@
             <button class="comment-action comment-like ${liked ? "is-liked" : ""}" data-comment-like>
               <img data-icon src="${actionIcon("like", liked)}" alt="" />赞 ${comment.likes}
             </button>
-            <button class="comment-action" data-comment-reply>回复</button>
+            <button class="comment-action" data-comment-reply data-reply-target="${comment.name}">回复</button>
           </div>
           ${replies}
+        </div>
+      `;
+    }
+
+    function renderTextCommentComposer(placeholder, buttonText = "评论", extraAttrs = "") {
+      return `
+        <div class="comment-composer" data-text-only-comment ${extraAttrs}>
+          <input class="comment-input" type="text" placeholder="${placeholder}" maxlength="300" />
+          <button type="button" class="comment-submit">${buttonText}</button>
         </div>
       `;
     }
@@ -1894,28 +2487,49 @@
         <section class="comments-panel" data-comments-panel data-inline-comments>
           <div class="comments-head">
             <strong>评论 ${item.comments}</strong>
+            <span class="comments-summary" data-summary-comment-count>已展示 ${visibleComments.length} 条摘要评论</span>
           </div>
-          <div class="comment-input">写下你的评论或回复...</div>
+          ${renderTextCommentComposer("输入评论", "评论", "data-inline-comment-composer")}
           ${visibleComments.map((comment, index) => renderCommentItem(comment, index)).join("")}
-          <button class="comment-more" data-view-all-comments>查看全部评论</button>
+          <button class="comment-more" data-view-all-comments>查看全部 ${item.comments} 条评论</button>
         </section>
+      `;
+    }
+
+    function renderMediaFigure(file, mediaIndex) {
+      return `
+        <figure class="flash-media-item ${file.type === "video" ? "is-video" : ""}" style="--media-ratio: ${file.ratio || "16 / 9"};" data-media data-flash-media-item data-media-order="${mediaIndex + 1}" ${file.type === "video" ? "data-video data-short-video" : ""}>
+          <img src="${file.src}" alt="" />
+          ${file.type === "video" ? `<span class="play-mark"><img data-icon src="${icon("Media/play-mini-fill.svg")}" alt="" /></span>` : ""}
+        </figure>
+      `;
+    }
+
+    function renderMediaGrid(mediaFiles) {
+      if (!mediaFiles.length) return "";
+      const columnCount = mediaFiles.length === 1 ? 1 : 2;
+      const layout = mediaFiles.length >= 3 ? "masonry" : mediaFiles.length === 2 ? "split" : "single";
+      const columns = Array.from({ length: columnCount }, () => []);
+
+      mediaFiles.forEach((file, mediaIndex) => {
+        columns[mediaIndex % columnCount].push({ file, mediaIndex });
+      });
+
+      return `
+        <div class="flash-media-grid media-grid" data-flash-media-grid data-media-count="${mediaFiles.length}" data-media-layout="${layout}">
+          ${columns.map((items, columnIndex) => `
+            <div class="flash-media-column" data-media-column="${columnIndex + 1}">
+              ${items.map(({ file, mediaIndex }) => renderMediaFigure(file, mediaIndex)).join("")}
+            </div>
+          `).join("")}
+        </div>
       `;
     }
 
     function renderCard(item, index, showComments = false) {
       const isHotState = state === "hot";
       const isFocused = isHotState && requestedFocusId && item.id === requestedFocusId;
-      const media = item.images ? `
-        <div class="media-grid" data-media>
-          ${item.images.map((src) => `<img class="media-thumb" src="${src}" alt="" />`).join("")}
-        </div>
-      ` : item.video ? `
-        <div class="video-thumb" data-video data-short-video>
-          <img src="${item.video}" alt="" />
-          <span class="play-mark"><img data-icon src="${icon("Media/play-mini-fill.svg")}" alt="" /></span>
-          <span class="video-meta" data-short-video-limit>${item.mediaLabel || "短视频 · 50M 内"}</span>
-        </div>
-      ` : "";
+      const media = renderMediaGrid(item.mediaFiles || []);
 
       const code = item.code ? `
         <div class="code-block" data-code-snippet>
@@ -1932,21 +2546,27 @@
               <div class="name-line">
                 <span>${item.author}</span>
                 ${item.badge ? `<span class="badge ${item.badge === "官方" ? "official" : "featured"}">${item.badge}</span>` : ""}
-                ${isHotState ? `<span class="hot-score" data-hot-score>热度 ${item.hotScore || item.read}</span>` : ""}
+                ${isHotState ? `<span class="hot-score" data-hot-score aria-label="热度 ${item.hotScore || item.read}"><img data-icon src="${icon("Weather/fire-line.svg")}" alt="" />${item.hotScore || item.read}</span>` : ""}
               </div>
               <div class="time-line">${item.time}</div>
             </div>
           </div>
-          <div class="body-text">${item.text}</div>
-          ${code}
-          ${media}
-          <div class="topic-row">
-            ${item.topics.map((topic) => `<span class="topic-tag"># ${topic}</span>`).join("")}
+          <div class="flash-content-row ${media ? "has-media" : ""}">
+            <div class="flash-text-stack">
+              <div class="body-text">${item.text}</div>
+              ${code}
+              ${media}
+            </div>
           </div>
-          <div class="actions">
-            <button class="action" data-comment-action aria-label="评论 ${item.comments}"><img data-icon src="${actionIcon("comment")}" alt="" />${item.comments}</button>
-            <button class="action ${item.liked ? "liked" : ""}" aria-label="点赞 ${item.likes}"><img data-icon src="${actionIcon("like", item.liked)}" alt="" />${item.likes}</button>
-            <button class="action" aria-label="分享"><img data-icon src="${actionIcon("share")}" alt="" /></button>
+          <div class="card-meta-row">
+            <div class="topic-row">
+              ${item.topics.map((topic) => `<span class="topic-tag"># ${topic}</span>`).join("")}
+            </div>
+            <div class="actions">
+              <button class="action" data-comment-action aria-label="评论 ${item.comments}"><img data-icon src="${actionIcon("comment")}" alt="" />${item.comments}</button>
+              <button class="action ${item.liked ? "liked" : ""}" aria-label="点赞 ${item.likes}"><img data-icon src="${actionIcon("like", item.liked)}" alt="" />${item.likes}</button>
+              <button class="action" aria-label="分享"><img data-icon src="${actionIcon("share")}" alt="" /></button>
+            </div>
           </div>
           ${showComments ? renderInlineComments(item) : ""}
         </article>
@@ -1996,6 +2616,364 @@
       return "../c-end-topic-square-v1/index.html?state=default";
     }
 
+    const composeRecommendedTopics = ["Vibe Coding", "AI Coding 一周实践", "API 排错短记录", "MCP Server", "RAG 应用"];
+
+    const composeTopicOptions = [
+      ["Vibe Coding", "2.1k 浏览量"],
+      ["AI Coding 一周实践", "1.8k 浏览量"],
+      ["API 排错短记录", "982 浏览量"],
+      ["MCP Server", "876 浏览量"],
+      ["RAG 应用", "1.6k 浏览量"],
+      ["Agent", "1.8k 浏览量"],
+      ["ComfyUI", "1.3k 浏览量"],
+      ["提示词工程", "543 浏览量"]
+    ];
+
+    const prototypeReviewPages = [
+      ["首页", "c-end-home-aggregate-feed-v1"],
+      ["闪念", "c-end-flash-channel-v1"],
+      ["AIGC体验", "c-end-aigc-experience-center-v2"],
+      ["模型服务", "c-end-model-service-channel-v1"],
+      ["AI+", "c-end-ai-plus-channel-v1"],
+      ["搜索", "c-end-search-results-v1"],
+      ["公告", "c-end-announcement-list-v1"],
+      ["话题广场", "c-end-topic-square-v1"],
+      ["话题聚合", "c-end-topic-aggregate-v1"],
+      ["详情", "c-end-detail-page-v1"],
+      ["用户主页", "c-end-user-profile-v1"],
+      ["收藏夹", "c-end-favorites-v1"],
+      ["创作服务", "c-end-creation-platform-v2"]
+    ];
+
+    const prototypeReviewStates = [
+      ["default", "时间流"],
+      ["hot", "热门态"],
+      ["compose", "发闪念"],
+      ["comments", "评论展开"],
+      ["comments-all", "全部评论"]
+    ];
+
+    const devRuleTabs = [
+      {
+        key: "overview",
+        label: "总览",
+        sections: [
+          {
+            title: "模块页面",
+            rows: [
+              ["页面目的", "承接轻内容消费、轻发布、评论互动和右侧运营转化，不做首页聚合页职责。"],
+              ["主内容流", "闪念卡片列表和热门态都在同一频道页面内完成，闪念不区分内部 Tab。"],
+              ["轻发布", "发闪念用本页弹层承接，属于轻发布流程，不进入文章编辑器。"],
+              ["评论", "评论展开、回复、全部评论弹层都在频道内完成，不跳独立详情页。"],
+              ["右侧运营栏", "与主内容流同页展示，但按热门闪念、推荐话题、参与话题、广告 Banner 分模块维护。"]
+            ]
+          },
+          {
+            title: "内容边界",
+            rows: [
+              ["详情承接", "闪念没有独立详情页，阅读、媒体查看和评论优先在频道内完成。"],
+              ["作者展示", "作者身份由头像和昵称承载，卡片元信息不再重复显示 @ 用户。"],
+              ["首页复用", "首页闪念卡片与闪念列表保持同一正文、媒体和互动展示规则，仅创作者位置与呈现形式不同。"],
+              ["互动状态", "已点赞状态只通过实心图标、深色文字和数字体现，不使用灰底胶囊或额外背景。"],
+              ["内容范围", "围绕 AI 工具、API 排错、工作流、Skill/MCP、AIGC 过程和技术短讨论。"]
+            ]
+          }
+        ]
+      },
+      {
+        key: "compose",
+        label: "发闪念",
+        sections: [
+          {
+            title: "发闪念输入类型",
+            rows: [
+              ["正文 Markdown", "唯一正文输入，支持短经验、工具发现、排错记录和 AIGC 过程记录；最大 600 字。"],
+              ["话题", "可选；从参与话题进入发闪念时自动带入该话题，用户可替换或追加。"],
+              ["媒体文件", "独立于正文的附件字段，图片和短视频进入同一媒体列表；单条最多 6 个媒体文件。"],
+              ["媒体排序", "媒体文件支持拖动排序；闪念列表和首页闪念卡片按排序在正文下方展示；三张及以上采用两列瀑布流，按图片或视频比例展示但控制卡片留白，视频展示封面帧和播放标识。"]
+            ]
+          },
+          {
+            title: "携带话题规则",
+            points: [
+              "同一条闪念最多携带 3 个话题，重复话题需要去重。",
+              "发闪念弹层默认展示最多 5 个推荐话题，保持一行展示；完整话题选择从 # 话题按钮打开锚点弹层。",
+              "参与话题卡片点击后进入发闪念弹层，并自动带入对应话题。",
+              "推荐话题和参与话题来自同一话题配置池，6-7 月先由运营人工维护。",
+              "V0.1 原型先展示一个已选话题位，但产品规则不要被实现成单选硬限制。"
+            ]
+          },
+          {
+            title: "工具扩展栏按钮规则",
+            rows: [
+              ["H2", "在光标处插入二级标题格式，用于短经验的段落标题。"],
+              ["B", "将选中文本加粗；未选中时插入加粗占位。"],
+              ["I", "将选中文本斜体；未选中时插入斜体占位。"],
+              ["引用", "插入引用块，用于引用报错、结论或外部片段。"],
+              ["无序列表", "插入项目符号列表。"],
+              ["有序列表", "插入编号列表。"],
+              ["# 话题", "在按钮锚点处展开话题选择弹层，列表指标统一展示浏览量。"],
+              ["媒体上传区", "位于正文输入底部，支持图片和短视频统一上传、预览和拖动排序；短视频单文件 50M 以内。"],
+              ["弹层布局", "发闪念弹层宽度以 6 个媒体位单行展示为上限，上传位和已上传缩略图保持正方形。"]
+            ]
+          }
+        ]
+      },
+      {
+        key: "comments",
+        label: "评论",
+        sections: [
+          {
+            title: "模块目的",
+            points: [
+              "用低成本评论验证闪念是否能引发经验补充、排错协作和话题讨论。",
+              "评论区聚焦内容回复，不展示成员身份、用户等级或关系标签。"
+            ]
+          },
+          {
+            title: "评论结构",
+            rows: [
+              ["一级评论", "直接回复某条闪念，展示评论者、头像、内容、时间、点赞数和回复入口。"],
+              ["二级回复", "回复某条一级评论；回复也可以再回复，但展示上归并到二级结构，不做无限楼层。"],
+              ["摘要评论", "闪念卡片内默认展示 10 条摘要评论；超过 10 条时展示“查看全部 X 条评论”，点击后打开全部评论弹层。"],
+              ["全部评论", "全部评论弹层展示该闪念下的完整评论列表和底部评论输入，不跳转独立详情页。"],
+              ["评论输入", "评论和回复都只支持文字输入，按纯文本保存和展示；发布后进入该闪念的评论列表。"],
+              ["点击回复", "点击一级评论或二级回复的回复按钮后，在该评论下方展开文字回复框，输入后点击发布。"]
+            ]
+          }
+        ]
+      },
+      {
+        key: "rail",
+        label: "右侧运营",
+        sections: [
+          {
+            title: "右侧运营栏模块划分",
+            rows: [
+              ["发闪念入口", "固定生产入口，点击打开发闪念弹层。"],
+              ["热门闪念", "目的：让用户快速看到近 7 天互动更强的闪念；点击条目进入热门态并聚焦该闪念；点击右侧箭头进入完整热门态列表。"],
+              ["推荐话题", "目的：作为全局话题发现入口；点击话题进入话题聚合页；点击右侧箭头进入话题列表页；指标统一展示浏览量。"],
+              ["参与话题", "目的：把话题消费转成内容生产；点击话题进入发闪念弹层并携带该话题；点击右侧箭头进入话题列表页。"],
+              ["广告 Banner", "目的：承接活动、会员、工具或专题曝光；支持轮播；先配置图片、标题、说明、广告标识和站内目标页。"]
+            ]
+          },
+          {
+            title: "热门排序规则",
+            rows: [
+              ["统计窗口", "近 7 天滚动统计，只统计已发布且当前可见的闪念。"],
+              ["得分来源", "点赞、评论、回复、分享、收藏进入热度计算；阅读量只作为同分兜底，不直接加分。"],
+              ["计算公式", "热度值 = 点赞 × 1 + 评论 × 3 + 回复 × 2 + 分享 × 3 + 收藏 × 2。"],
+              ["同分规则", "热度值相同优先展示发布时间更新的内容；仍相同再按阅读量兜底排序。"],
+              ["展示格式", "统一展示整数，如“热度 312”；不展示小数、k 缩写、内部权重或推荐权重。"]
+            ]
+          },
+          {
+            title: "运营维护规则",
+            rows: [
+              ["热门标题", "不新增标题字段，取正文 Markdown 转纯文本后的前 18-24 字，超出用省略号。"],
+              ["候选池", "早期内容量不足时可人工维护热门候选池，但右侧展示的热度值仍按固定公式计算，不手填虚构数字。"],
+              ["热门条目", "右侧只展示标题和热度 Icon，不展示 1、2、3 排名编号；排序由热度值决定。"],
+              ["推荐话题", "维护话题名、浏览量、排序和聚合页目标；所有页面复用同一全局话题池。"],
+              ["参与话题", "维护话题名、参与量、排序和默认带入的发闪念话题；点击后必须能回填到发闪念弹层。"],
+              ["视觉对齐", "热门闪念、推荐话题、参与话题使用统一卡片内边距、标题字重和列表节奏；右侧运营列表主文本统一为 13px / 18px / 500，模块标题使用 700 字重，推荐话题列表不加分割线。"],
+              ["广告 Banner", "配置图片、标题、说明、广告标识、排序和站内目标页；外链形式后续单独定规则。"]
+            ]
+          }
+        ]
+      },
+      {
+        key: "states",
+        label: "状态流",
+        sections: [
+          {
+            title: "发布后状态",
+            rows: [
+              ["编辑中", "用户在弹层内输入，未发布前不进入内容流；当前不做草稿箱。"],
+              ["已提交", "点击发布后给出提交成功反馈，并进入待审核状态。"],
+              ["待审核", "内容进入人工审核清单；审核通过前默认不进入公开列表。"],
+              ["已发布", "审核通过后进入闪念流、话题聚合和可能的热门候选池。"],
+              ["未通过", "不进入公开列表；前期只保留简短原因口径，不设计复杂申诉流。"]
+            ]
+          },
+          {
+            title: "进入管理侧的状态口径",
+            points: [
+              "本页只确认管理侧需要识别的内容状态。",
+              "最小状态链路为：已提交 -> 待审核 -> 已发布 / 未通过 / 已隐藏。",
+              "只有已发布内容可以进入热门候选、右侧热门闪念和话题聚合。",
+              "正文超 600 字、媒体超过 6 个、短视频单文件超 50M、无正文且无媒体的内容应在发布前阻断，不进入审核。"
+            ]
+          }
+        ]
+      }
+    ];
+
+    function prototypeReviewUrl(dir, stateKey = "") {
+      const suffix = stateKey ? `?state=${encodeURIComponent(stateKey)}` : "";
+      return `../${dir}/index.html${suffix}`;
+    }
+
+    function renderPrototypeReviewLinks(items) {
+      return items.map(([label, dir]) => {
+        const active = dir === "c-end-flash-channel-v1";
+        return `
+          <a
+            class="prototype-review-link prototype-shell-link${active ? " is-active active" : ""}"
+            href="${prototypeReviewUrl(dir)}"
+            data-review-page-link
+          >${label}</a>
+        `;
+      }).join("");
+    }
+
+    function renderPrototypeStateLinks(items) {
+      return items.map(([stateKey, label]) => {
+        const active = stateKey === state;
+        return `
+          <a
+            class="prototype-review-link prototype-shell-link${active ? " is-active active" : ""}"
+            href="${prototypeReviewUrl("c-end-flash-channel-v1", stateKey)}"
+            data-review-state-link="${stateKey}"
+          >${label}</a>
+        `;
+      }).join("");
+    }
+
+    function renderPrototypeWalkthroughPane() {
+      return `
+        <section class="prototype-review-group prototype-shell-group" data-prototype-page-group>
+          <div class="prototype-review-label prototype-shell-label">页面</div>
+          <div class="prototype-review-links prototype-shell-links">
+            ${renderPrototypeReviewLinks(prototypeReviewPages)}
+          </div>
+        </section>
+        <section class="prototype-review-group prototype-shell-group" data-prototype-state-group>
+          <div class="prototype-review-label prototype-shell-label">闪念状态</div>
+          <div class="prototype-review-links prototype-shell-links">
+            ${renderPrototypeStateLinks(prototypeReviewStates)}
+          </div>
+        </section>
+      `;
+    }
+
+    function renderDevRulesAid() {
+      const root = document.getElementById("dev-rules-root");
+      if (!root) return;
+      root.innerHTML = `<button type="button" class="dev-rules-trigger" data-dev-rules-open data-review-drawer-open>走查规则</button>`;
+      const requestedReview = urlParams.get("review");
+      if (requestedReview === "rules" || requestedReview === "walkthrough") openDevRulesPanel(requestedReview);
+    }
+
+    function openDevRulesPanel(initialPanel = "walkthrough") {
+      const root = document.getElementById("dev-rules-root");
+      if (!root) return;
+      if (document.querySelector("[data-dev-rules-panel]")) {
+        setActiveReviewDrawerTab(initialPanel);
+        return;
+      }
+      const trigger = root.querySelector("[data-dev-rules-open]");
+      if (trigger) trigger.hidden = true;
+      const activePanel = initialPanel === "rules" ? "rules" : "walkthrough";
+      const requestedRuleTab = urlParams.get("rule");
+      const initialKey = devRuleTabs.some((tab) => tab.key === requestedRuleTab) ? requestedRuleTab : devRuleTabs[0].key;
+      const tabs = devRuleTabs.map((tab) => `
+        <button
+          type="button"
+          class="dev-rules-tab${tab.key === initialKey ? " is-active" : ""}"
+          data-dev-rules-tab="${tab.key}"
+          aria-selected="${tab.key === initialKey ? "true" : "false"}"
+        >${tab.label}</button>
+      `).join("");
+      const panes = devRuleTabs.map((tab) => `
+        <div class="dev-rule-pane" data-dev-rules-pane="${tab.key}" ${tab.key === initialKey ? "" : "hidden"}>
+          ${tab.sections.map(renderDevRuleBlock).join("")}
+        </div>
+      `).join("");
+      document.body.insertAdjacentHTML("beforeend", `
+        <div class="dev-rules-layer" data-dev-rules-layer data-review-drawer-layer>
+          <aside class="dev-rules-panel" data-dev-rules-panel data-review-drawer-panel role="complementary" aria-label="闪念原型走查与研发规则">
+            <div class="dev-rules-head">
+              <div class="dev-rules-title">
+                <strong>闪念走查规则</strong>
+                <span>原型状态切换、模块规则与运营维护口径</span>
+              </div>
+              <button type="button" class="dev-rules-close" data-dev-rules-close data-review-drawer-close aria-label="关闭走查规则">×</button>
+            </div>
+            <div class="dev-rules-primary-tabs" role="tablist" aria-label="闪念走查规则分区">
+              <button type="button" class="dev-rules-primary-tab${activePanel === "walkthrough" ? " is-active" : ""}" data-review-main-tab="walkthrough" aria-selected="${activePanel === "walkthrough" ? "true" : "false"}">原型走查</button>
+              <button type="button" class="dev-rules-primary-tab${activePanel === "rules" ? " is-active" : ""}" data-review-main-tab="rules" aria-selected="${activePanel === "rules" ? "true" : "false"}">研发规则</button>
+            </div>
+            <div class="dev-rules-body">
+              <section class="review-drawer-pane" data-review-pane="walkthrough" ${activePanel === "walkthrough" ? "" : "hidden"}>
+                ${renderPrototypeWalkthroughPane()}
+              </section>
+              <section class="review-drawer-pane" data-review-pane="rules" ${activePanel === "rules" ? "" : "hidden"}>
+                <div class="dev-rules-tabs" role="tablist" aria-label="闪念研发规则模块">
+                  ${tabs}
+                </div>
+                ${panes}
+              </section>
+            </div>
+          </aside>
+        </div>
+      `);
+    }
+
+    function renderDevRuleBlock(section) {
+      const rows = section.rows ? `
+        <div class="dev-rule-table">
+          ${section.rows.map((row) => `
+            <div class="dev-rule-row">
+              <strong>${row[0]}</strong>
+              <span>${row[1]}</span>
+            </div>
+          `).join("")}
+        </div>
+      ` : "";
+      const points = section.points ? `<ul>${section.points.map((point) => `<li>${point}</li>`).join("")}</ul>` : "";
+      return `
+        <section class="dev-rule-block" data-dev-rule-section>
+          <h3>${section.title}</h3>
+          ${rows}
+          ${points}
+        </section>
+      `;
+    }
+
+    function setActiveDevRuleTab(key) {
+      const panel = document.querySelector("[data-dev-rules-panel]");
+      if (!panel) return;
+      const nextKey = devRuleTabs.some((tab) => tab.key === key) ? key : devRuleTabs[0].key;
+      panel.querySelectorAll("[data-dev-rules-tab]").forEach((tab) => {
+        const isActive = tab.getAttribute("data-dev-rules-tab") === nextKey;
+        tab.classList.toggle("is-active", isActive);
+        tab.setAttribute("aria-selected", isActive ? "true" : "false");
+      });
+      panel.querySelectorAll("[data-dev-rules-pane]").forEach((pane) => {
+        pane.hidden = pane.getAttribute("data-dev-rules-pane") !== nextKey;
+      });
+    }
+
+    function setActiveReviewDrawerTab(key) {
+      const panel = document.querySelector("[data-dev-rules-panel]");
+      if (!panel) return;
+      const nextKey = key === "rules" ? "rules" : "walkthrough";
+      panel.querySelectorAll("[data-review-main-tab]").forEach((tab) => {
+        const isActive = tab.getAttribute("data-review-main-tab") === nextKey;
+        tab.classList.toggle("is-active", isActive);
+        tab.setAttribute("aria-selected", isActive ? "true" : "false");
+      });
+      panel.querySelectorAll("[data-review-pane]").forEach((pane) => {
+        pane.hidden = pane.getAttribute("data-review-pane") !== nextKey;
+      });
+    }
+
+    function closeDevRulesPanel() {
+      document.querySelector("[data-dev-rules-layer]")?.remove();
+      const trigger = document.querySelector("[data-dev-rules-open]");
+      if (trigger) trigger.hidden = false;
+    }
+
     function renderModals() {
       const modalRoot = document.getElementById("modal-root");
       if (state === "compose") {
@@ -2008,10 +2986,12 @@
               </div>
               <div class="compose-body">
                 <div class="compose-editor-shell" data-compose-editor-shell>
-                  <textarea data-compose-markdown maxlength="600" placeholder="写一条短经验、代码片段或工具发现。">今天的一个小发现：</textarea>
+                  <textarea data-compose-markdown maxlength="600" placeholder="写一条短经验或工具发现。">今天的一个小发现：</textarea>
                   <div class="compose-topic-row" data-compose-topic-row>
-                    <span>话题</span>
-                    ${requestedTopic ? `<span class="compose-topic-chip" data-compose-selected-topic># ${requestedTopic}</span>` : `<span class="compose-topic-chip" data-compose-selected-topic hidden># Vibe Coding</span>`}
+                    <span class="compose-topic-chip" data-compose-selected-topic hidden>${requestedTopic ? `# ${requestedTopic}` : "# Vibe Coding"}</span>
+                    ${composeRecommendedTopics.map((topic) => `
+                      <button type="button" class="compose-topic-suggestion${topic === requestedTopic ? " is-active" : ""}" data-topic-suggestion data-topic="${topic}"># ${topic}</button>
+                    `).join("")}
                   </div>
                   <div class="compose-editor-bar" data-compose-editor-bar>
                     <div class="compose-editor-tools" data-compose-editor-tools>
@@ -2022,20 +3002,46 @@
                         <button type="button" class="md-tool" data-md-command="quote" title="Quote" aria-label="Quote"><img data-icon src="${icon("Editor/double-quotes-l.svg")}" alt="" /></button>
                         <button type="button" class="md-tool" data-md-command="list" title="List" aria-label="List"><img data-icon src="${icon("Editor/list-unordered.svg")}" alt="" /></button>
                         <button type="button" class="md-tool" data-md-command="ordered-list" title="Ordered list" aria-label="Ordered list"><img data-icon src="${icon("Editor/list-ordered.svg")}" alt="" /></button>
-                        <button type="button" class="md-tool" data-md-command="topic" data-compose-topic-picker title="Topic" aria-label="Topic"><img data-icon src="${icon("Editor/hashtag.svg")}" alt="" /></button>
-                        <button type="button" class="md-tool" data-md-command="image" data-compose-image-upload title="Image" aria-label="Image"><img data-icon src="${icon("Media/image-add-line.svg")}" alt="" /></button>
-                        <button type="button" class="md-tool" data-md-command="video" data-compose-video-upload title="Short video" aria-label="Short video"><img data-icon src="${icon("Media/video-upload-line.svg")}" alt="" /></button>
-                        <input type="file" accept="image/*" multiple hidden data-compose-image-input />
-                        <input type="file" accept="video/mp4,video/webm,video/quicktime" hidden data-compose-video-input data-video-max-size-mb="50" />
+                        <span class="compose-topic-tool" data-compose-topic-tool>
+                          <button type="button" class="md-tool" data-md-command="topic" data-compose-topic-picker title="Topic" aria-label="Topic"><img data-icon src="${icon("Editor/hashtag.svg")}" alt="" /></button>
+                          <div class="topic-picker-panel" data-topic-picker-panel>
+                            <div class="topic-picker-query">#</div>
+                            <div class="topic-picker-list">
+                              ${composeTopicOptions.map(([topic, count]) => `
+                                <button type="button" class="topic-option" data-topic-option data-topic="${topic}">
+                                  <span># ${topic}</span>
+                                  <span class="topic-option-count">${count}</span>
+                                </button>
+                              `).join("")}
+                            </div>
+                          </div>
+                        </span>
                       </div>
                     </div>
                     <span class="compose-counter" data-compose-counter>0 / 600</span>
                   </div>
                 </div>
-                <div class="topic-picker-panel" data-topic-picker-panel>
-                  ${["Vibe Coding", "AI Coding 一周实践", "API 排错短记录", "MCP Server", "RAG 应用"].map((topic) => `
-                    <button type="button" class="topic-option" data-topic-option data-topic="${topic}"># ${topic}</button>
-                  `).join("")}
+                <div class="compose-media-section" data-compose-media-section>
+                  <div class="compose-media-head">
+                    <strong>媒体文件</strong>
+                    <span data-compose-media-count>2 / 6</span>
+                  </div>
+                  <div class="compose-media-strip" data-compose-media-sortable>
+                    <button type="button" class="compose-media-add" data-compose-media-upload aria-label="添加媒体文件">
+                      <img data-icon src="${icon("Media/image-add-line.svg")}" alt="" />
+                    </button>
+                    <div class="compose-media-item" draggable="true" data-compose-media-item data-media-kind="image" data-media-order="1">
+                      <img class="compose-media-preview" src="${asset("create-article-thumb-01.png")}" alt="" />
+                      <span class="compose-media-drag"><img data-icon src="${icon("Editor/draggable.svg")}" alt="" /></span>
+                      <span class="compose-media-type">1 / 6</span>
+                    </div>
+                    <div class="compose-media-item" draggable="true" data-compose-media-item data-media-kind="video" data-media-order="2">
+                      <img class="compose-media-preview" src="${asset("create-video-cover-source.png")}" alt="" />
+                      <span class="compose-media-drag"><img data-icon src="${icon("Editor/draggable.svg")}" alt="" /></span>
+                      <span class="compose-media-type">视频</span>
+                    </div>
+                    <input type="file" accept="image/*,video/mp4,video/webm,video/quicktime" multiple hidden data-compose-media-input data-media-max-count="6" data-video-max-size-mb="50" />
+                  </div>
                 </div>
                 <div class="modal-actions">
                   <button class="ghost-button" data-close-modal>取消</button>
@@ -2060,8 +3066,8 @@
               <div class="all-comments-body">
                 ${commentItems.map((comment, index) => renderCommentItem(comment, index, true)).join("")}
               </div>
-              <div class="all-comments-composer" data-all-comments-composer>
-                <textarea placeholder="写下你的评论或回复"></textarea>
+              <div class="all-comments-composer" data-all-comments-composer data-text-only-comment>
+                <textarea placeholder="输入评论或回复" maxlength="300"></textarea>
                 <button class="solid-button" data-all-comments-submit>发布</button>
               </div>
             </section>
@@ -2085,9 +3091,7 @@
         quote: "Quote",
         list: "List",
         "ordered-list": "Ordered list",
-        topic: "Topic",
-        image: "Image",
-        video: "Short video"
+        topic: "Topic"
       };
       toolbar.querySelectorAll("[data-md-command]").forEach((button) => {
         const command = button.getAttribute("data-md-command");
@@ -2108,17 +3112,16 @@
 
     function renderRail() {
       const hotItems = [
-        ["f005", "视频提示词更像分镜", "热度 312"],
-        ["f003", "RAG 召回链路三段检查", "热度 247"],
-        ["f001", "Cursor 多文件改动怎么拆", "热度 213"],
-        ["f002", "429 排错先看限流窗口", "热度 158"],
-        ["f006", "MCP 权限边界怎么写", "热度 126"]
+        ["f005", "视频提示词更像分镜", 312],
+        ["f003", "RAG 召回链路三段检查", 247],
+        ["f001", "Cursor 多文件改动怎么拆", 213],
+        ["f002", "429 排错先看限流窗口", 158],
+        ["f006", "MCP 权限边界怎么写", 126]
       ];
-      document.getElementById("hot-list").innerHTML = hotItems.map(([id, title, score], index) => `
+      document.getElementById("hot-list").innerHTML = hotItems.map(([id, title, score]) => `
         <button type="button" class="rank-row" data-hot-item data-hot-target="${id}">
-          <span class="rank">${index + 1}</span>
           <span class="row-title">${title}</span>
-          <span class="row-meta">${score}</span>
+          <span class="row-meta hot-row-score" aria-label="热度 ${score}"><img data-icon src="${icon("Weather/fire-line.svg")}" alt="" />${score}</span>
         </button>
       `).join("");
 
@@ -2145,8 +3148,7 @@
       quote: "\n> 关键判断\n",
       list: "\n- 要点一\n- 要点二\n",
       "ordered-list": "\n1. 第一步\n2. 第二步\n",
-      image: "\n![图片说明](image-url)\n",
-      video: "\n[短视频 50M 内](video-file)\n"
+      topic: ""
     };
 
     function updateComposeCounter() {
@@ -2177,11 +3179,60 @@
     function setSelectedTopic(topic) {
       const chip = document.querySelector("[data-compose-selected-topic]");
       if (!chip) return;
-      chip.hidden = false;
       chip.textContent = `# ${topic}`;
+      const suggestions = [...document.querySelectorAll("[data-topic-suggestion]")];
+      const matchedSuggestion = suggestions.some((node) => node.getAttribute("data-topic") === topic);
+      chip.hidden = matchedSuggestion;
+      suggestions.forEach((node) => {
+        node.classList.toggle("is-active", node.getAttribute("data-topic") === topic);
+      });
+    }
+
+    function openReplyComposer(button) {
+      const container = button.closest("[data-comment-item], [data-all-comment-item], [data-comment-reply-item]");
+      if (!container) return;
+      document.querySelectorAll("[data-comment-reply-composer]").forEach((node) => node.remove());
+      const targetName = button.getAttribute("data-reply-target") || "评论";
+      container.insertAdjacentHTML("beforeend", `
+        <div class="comment-composer comment-reply-composer" data-comment-reply-composer data-text-only-comment>
+          <input class="comment-input" type="text" placeholder="回复 ${targetName}" maxlength="300" />
+          <button type="button" class="comment-submit">发布</button>
+        </div>
+      `);
+      container.querySelector("[data-comment-reply-composer] input")?.focus();
     }
 
     document.addEventListener("click", (event) => {
+      if (event.target.closest("[data-dev-rules-open]")) {
+        event.preventDefault();
+        event.stopPropagation();
+        openDevRulesPanel();
+        return;
+      }
+
+      if (event.target.closest("[data-dev-rules-close]")) {
+        event.preventDefault();
+        event.stopPropagation();
+        closeDevRulesPanel();
+        return;
+      }
+
+      const reviewMainTab = event.target.closest("[data-review-main-tab]");
+      if (reviewMainTab) {
+        event.preventDefault();
+        event.stopPropagation();
+        setActiveReviewDrawerTab(reviewMainTab.getAttribute("data-review-main-tab"));
+        return;
+      }
+
+      const devRulesTab = event.target.closest("[data-dev-rules-tab]");
+      if (devRulesTab) {
+        event.preventDefault();
+        event.stopPropagation();
+        setActiveDevRuleTab(devRulesTab.getAttribute("data-dev-rules-tab"));
+        return;
+      }
+
       const hotItem = event.target.closest("[data-hot-item]");
       if (hotItem) {
         event.preventDefault();
@@ -2219,6 +3270,15 @@
         return;
       }
 
+      const topicSuggestion = event.target.closest("[data-topic-suggestion]");
+      if (topicSuggestion) {
+        event.preventDefault();
+        event.stopPropagation();
+        setSelectedTopic(topicSuggestion.getAttribute("data-topic") || topicSuggestion.textContent.replace(/^#\s*/, ""));
+        document.querySelector("[data-topic-picker-panel]")?.classList.remove("is-open");
+        return;
+      }
+
       const topicOption = event.target.closest("[data-topic-option]");
       if (topicOption) {
         event.preventDefault();
@@ -2236,17 +3296,18 @@
         return;
       }
 
-      if (event.target.closest("[data-compose-image-upload]")) {
+      if (event.target.closest("[data-compose-media-upload]")) {
         event.preventDefault();
         event.stopPropagation();
-        insertMarkdownSnippet("image");
+        document.querySelector("[data-compose-media-input]")?.click();
         return;
       }
 
-      if (event.target.closest("[data-compose-video-upload]")) {
+      const commentReplyButton = event.target.closest("[data-comment-reply]");
+      if (commentReplyButton) {
         event.preventDefault();
         event.stopPropagation();
-        insertMarkdownSnippet("video");
+        openReplyComposer(commentReplyButton);
         return;
       }
 
@@ -2281,12 +3342,20 @@
       if (event.target.closest("[data-compose-markdown]")) updateComposeCounter();
     });
 
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && document.querySelector("[data-dev-rules-panel]")) {
+        event.preventDefault();
+        closeDevRulesPanel();
+      }
+    });
+
     renderComposer();
     renderState();
     renderModals();
     renderRail();
+    renderDevRulesAid();
     updateComposeCounter();
   </script>
-  <script src="../_shared/c-end-prototype-interactions.js?v=20260616-subpath-routing-v2"></script>
+  <script src="../_shared/c-end-prototype-interactions.js?v=20260617-model-service-content-v1"></script>
 </body>
 </html>
