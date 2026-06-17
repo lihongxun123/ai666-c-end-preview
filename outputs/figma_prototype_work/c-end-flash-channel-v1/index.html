@@ -690,14 +690,23 @@
     }
 
     .action {
+      min-width: 28px;
+      min-height: 28px;
       display: inline-flex;
       align-items: center;
+      justify-content: center;
       gap: 6px;
       color: var(--muted);
       font-size: 13px;
       line-height: 18px;
       background: transparent;
-      padding: 3px 0;
+      padding: 5px 0;
+    }
+
+    .action[aria-label="分享"] {
+      width: 28px;
+      height: 28px;
+      padding: 0;
     }
 
     .action img {
@@ -711,7 +720,7 @@
       border: 0;
       border-radius: 0;
       background: transparent;
-      padding: 3px 0;
+      padding: 5px 0;
       font-weight: 760;
       position: relative;
     }
@@ -863,6 +872,21 @@
       white-space: nowrap;
     }
 
+    .comment-author-badge {
+      height: 18px;
+      padding: 0 6px;
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid #e5e5e5;
+      border-radius: 4px;
+      background: #f7f7f7;
+      color: #5f5f5f;
+      font-size: 11px;
+      line-height: 16px;
+      font-weight: 680;
+      white-space: nowrap;
+    }
+
     .comment-author-meta {
       margin-top: 2px;
       color: var(--weak);
@@ -922,6 +946,23 @@
     }
 
     .comment-reply {
+      min-width: 0;
+      display: grid;
+      grid-template-columns: 28px minmax(0, 1fr);
+      align-items: start;
+      gap: 8px;
+    }
+
+    .reply-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      object-fit: cover;
+      background: #f0f0f0;
+      flex: 0 0 auto;
+    }
+
+    .reply-main {
       min-width: 0;
       display: grid;
       gap: 6px;
@@ -1651,6 +1692,7 @@
 
     .small-link,
     .rail-more {
+      min-height: 28px;
       display: inline-flex;
       align-items: center;
       gap: 4px;
@@ -1694,6 +1736,7 @@
     .topic-row-rail,
     .activity-row {
       width: 100%;
+      min-height: 28px;
       appearance: none;
       border: 0;
       padding: 0;
@@ -2427,23 +2470,31 @@
       return icon(map[type]);
     }
 
-    function renderCommentItem(comment, index, all = false) {
+    function renderAuthorBadge(name, itemAuthor) {
+      return name === itemAuthor ? `<span class="comment-author-badge" data-comment-author-badge>作者</span>` : "";
+    }
+
+    function renderCommentItem(comment, index, all = false, itemAuthor = "") {
       const liked = index === 0 || comment.likes >= 5;
       const replies = comment.replies?.length ? `
         <div class="comment-replies" data-comment-replies>
           ${comment.replies.map((reply) => `
             <div class="comment-reply" data-comment-reply-item data-reply-to-comment="${reply.replyTo || comment.name}">
-              <div class="reply-line">
-                <span class="reply-author">${reply.name}</span>
-                <span class="reply-target">回复 @${reply.replyTo || comment.name}</span>
-                <span>${reply.time}</span>
-              </div>
-              <p class="reply-text">${reply.text}</p>
-              <div class="reply-actions">
-                <button class="comment-action comment-like ${reply.likes >= 2 ? "is-liked" : ""}" data-comment-like>
-                  <img data-icon src="${actionIcon("like", reply.likes >= 2)}" alt="" />赞 ${reply.likes}
-                </button>
-                <button class="comment-action" data-comment-reply data-reply-target="${reply.name}">回复</button>
+              <img class="reply-avatar" src="${reply.avatar}" alt="" />
+              <div class="reply-main">
+                <div class="reply-line">
+                  <span class="reply-author">${reply.name}</span>
+                  ${renderAuthorBadge(reply.name, itemAuthor)}
+                  <span class="reply-target">回复 @${reply.replyTo || comment.name}</span>
+                  <span>${reply.time}</span>
+                </div>
+                <p class="reply-text">${reply.text}</p>
+                <div class="reply-actions">
+                  <button class="comment-action comment-like ${reply.likes >= 2 ? "is-liked" : ""}" data-comment-like>
+                    <img data-icon src="${actionIcon("like", reply.likes >= 2)}" alt="" />${reply.likes}
+                  </button>
+                  <button class="comment-action" data-comment-reply data-reply-target="${reply.name}">回复</button>
+                </div>
               </div>
             </div>
           `).join("")}
@@ -2456,6 +2507,7 @@
             <div class="comment-author-main">
               <div class="comment-author-name">
                 <span>${comment.name}</span>
+                ${renderAuthorBadge(comment.name, itemAuthor)}
               </div>
               <div class="comment-author-meta">${comment.time}</div>
             </div>
@@ -2463,7 +2515,7 @@
           <div class="comment-text">${comment.text}</div>
           <div class="comment-actions">
             <button class="comment-action comment-like ${liked ? "is-liked" : ""}" data-comment-like>
-              <img data-icon src="${actionIcon("like", liked)}" alt="" />赞 ${comment.likes}
+              <img data-icon src="${actionIcon("like", liked)}" alt="" />${comment.likes}
             </button>
             <button class="comment-action" data-comment-reply data-reply-target="${comment.name}">回复</button>
           </div>
@@ -2490,7 +2542,7 @@
             <span class="comments-summary" data-summary-comment-count>已展示 ${visibleComments.length} 条摘要评论</span>
           </div>
           ${renderTextCommentComposer("输入评论", "评论", "data-inline-comment-composer")}
-          ${visibleComments.map((comment, index) => renderCommentItem(comment, index)).join("")}
+          ${visibleComments.map((comment, index) => renderCommentItem(comment, index, false, item.author)).join("")}
           <button class="comment-more" data-view-all-comments>查看全部 ${item.comments} 条评论</button>
         </section>
       `;
@@ -2655,6 +2707,38 @@
 
     const devRuleTabs = [
       {
+        key: "phase",
+        label: "6.17-6.18",
+        sections: [
+          {
+            title: "阶段沉淀总览",
+            rows: [
+              ["规则来源", "本页同样遵循 `AI666_C端6.17-6.18有效沉淀总表_V0.1.md`，先看跨页裁决，再看闪念专属规则。"],
+              ["页面框架", "顶部导航固定 72px，主画布 1280px；有右侧运营栏的一级频道默认 860px 内容区 + 24px 间距 + 396px 右侧运营区。"],
+              ["视觉收口", "不回流左侧黑条、顶部灰黑粗条、渐变标签、重边框、卡片套卡片、整块列表外框或胶囊误套。"],
+              ["业务闭环", "所有可见入口必须有目标页、目标状态或轻反馈；没有闭环的能力只能降级为人工配置入口或隐藏后置。"]
+            ]
+          },
+          {
+            title: "跨页业务边界",
+            points: [
+              "后台治理、审核命中、操作日志、API Key、Token、真实额度、余额、扣费、调用明细、在线调用和自动资格判断不进入 C端可见页面。",
+              "右侧运营栏、推荐话题、热门池、精选内容、公告、活动入口、灰度名单和无结果兜底先由运营人工配置，不在 C端表达自动算法或完整后台。",
+              "内容卡片首行展示内容类型或精选标签，主体承载标题和摘要，尾部元信息行展示话题、作者/来源时间和数据。",
+              "评论点赞只展示图标和数字；二级回复展示头像；只有内容作者本人显示低饱和“作者”标签。"
+            ]
+          },
+          {
+            title: "验证与清理",
+            points: [
+              "页面改动后必须同步页面内走查规则、页面 capture 和全量 `validate:c-end:current`。",
+              "页面截图是可再生成证据，不作为长期事实来源；长期口径以规范文档、验证 JSON、原型 HTML、页面脚本和版本状态文件为准。",
+              "公网发布走 `validate:c-end:current -> build:c-end:public-preview -> validate:c-end:public-preview -> 部署仓库推送 -> 线上抽检`。"
+            ]
+          }
+        ]
+      },
+      {
         key: "overview",
         label: "总览",
         sections: [
@@ -2727,18 +2811,19 @@
             title: "模块目的",
             points: [
               "用低成本评论验证闪念是否能引发经验补充、排错协作和话题讨论。",
-              "评论区聚焦内容回复，不展示成员身份、用户等级或关系标签。"
+              "评论区聚焦内容回复，不展示成员身份、用户等级或关系标签；仅作者本人评论或回复在昵称后展示作者标签。"
             ]
           },
           {
             title: "评论结构",
             rows: [
               ["一级评论", "直接回复某条闪念，展示评论者、头像、内容、时间、点赞数和回复入口。"],
-              ["二级回复", "回复某条一级评论；回复也可以再回复，但展示上归并到二级结构，不做无限楼层。"],
+              ["二级回复", "回复某条一级评论；回复用户也展示头像，回复可以再回复，但展示上归并到二级结构，不做无限楼层。"],
               ["摘要评论", "闪念卡片内默认展示 10 条摘要评论；超过 10 条时展示“查看全部 X 条评论”，点击后打开全部评论弹层。"],
               ["全部评论", "全部评论弹层展示该闪念下的完整评论列表和底部评论输入，不跳转独立详情页。"],
               ["评论输入", "评论和回复都只支持文字输入，按纯文本保存和展示；发布后进入该闪念的评论列表。"],
-              ["点击回复", "点击一级评论或二级回复的回复按钮后，在该评论下方展开文字回复框，输入后点击发布。"]
+              ["点击回复", "点击一级评论或二级回复的回复按钮后，在该评论下方展开文字回复框，输入后点击发布。"],
+              ["点赞表达", "评论点赞按钮只展示图标和数字，不显示“赞”字。"]
             ]
           }
         ]
@@ -3064,7 +3149,7 @@
                 <button class="modal-close" data-close-modal aria-label="关闭">×</button>
               </div>
               <div class="all-comments-body">
-                ${commentItems.map((comment, index) => renderCommentItem(comment, index, true)).join("")}
+                ${commentItems.map((comment, index) => renderCommentItem(comment, index, true, baseItems[0].author)).join("")}
               </div>
               <div class="all-comments-composer" data-all-comments-composer data-text-only-comment>
                 <textarea placeholder="输入评论或回复" maxlength="300"></textarea>

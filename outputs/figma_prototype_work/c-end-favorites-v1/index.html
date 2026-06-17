@@ -15,8 +15,8 @@
       --text: #111827;
       --muted: #6b7280;
       --subtle: #9ca3af;
-      --brand: #2563eb;
-      --brand-soft: #eff6ff;
+      --brand: #242424;
+      --brand-soft: #f6f6f6;
       --green: #059669;
       --green-soft: #ecfdf5;
       --amber: #b45309;
@@ -68,13 +68,13 @@
     }
 
     .nav-shell {
-      width: 1440px;
+      width: 1280px;
       height: 72px;
       margin: 0 auto;
       display: grid;
-      grid-template-columns: 198px 424px 1fr auto;
+      grid-template-columns: 220px 438px 350px 200px;
       align-items: center;
-      gap: 28px;
+      gap: 24px;
     }
 
     .brand {
@@ -210,11 +210,11 @@
     }
 
     .favorites-shell {
-      width: 1380px;
+      width: 1280px;
       margin: 28px auto 80px;
       display: grid;
-      grid-template-columns: 960px 380px;
-      gap: 40px;
+      grid-template-columns: 860px 396px;
+      gap: 24px;
       align-items: start;
     }
 
@@ -250,7 +250,7 @@
       height: 28px;
       padding: 0 10px;
       border-radius: 999px;
-      color: var(--brand);
+      color: #4f4f4f;
       background: var(--brand-soft);
       font-size: 13px;
       font-weight: 800;
@@ -458,6 +458,7 @@
       display: grid;
       grid-template-columns: 156px 1fr;
       transition: border-color 0.16s ease, transform 0.16s ease, box-shadow 0.16s ease;
+      cursor: pointer;
     }
 
     .favorite-card:hover {
@@ -588,6 +589,10 @@
 
     .text-btn.danger {
       color: var(--red);
+    }
+
+    .favorite-card.is-removed {
+      display: none;
     }
 
     .empty-card {
@@ -1042,6 +1047,13 @@
       return typeKey;
     }
 
+    function detailStateForItem(item) {
+      if (item.typeKey === "aigc") return "aigc";
+      if (item.typeKey === "model") return "model-case";
+      if (item.typeKey === "ai-plus") return "workflow";
+      return "article";
+    }
+
     function filterItems(config) {
       return items.filter((item) => {
         const typeOk = config.type === "all" || item.typeKey === config.type;
@@ -1084,7 +1096,7 @@
 
     function renderCard(item) {
       return `
-        <article class="favorite-card" data-favorite-card data-favorite-type="${item.typeKey}">
+        <article class="favorite-card" data-favorite-card data-favorite-type="${item.typeKey}" data-detail-state="${detailStateForItem(item)}" role="link" tabindex="0">
           <img class="cover" src="${assetBase}${item.cover}" alt="${item.title}" />
           <div class="card-body">
             <div class="meta-line">
@@ -1102,8 +1114,8 @@
               <span class="metric"><img data-icon src="${icon("Communication/chat-3-line.svg")}" alt="" />${item.comments}</span>
             </div>
             <div class="card-actions">
-              <button class="text-btn" type="button">查看内容<img data-icon src="${icon("Arrows/arrow-right-s-line.svg")}" alt="" /></button>
-              <button class="text-btn danger" type="button">取消收藏</button>
+              <button class="text-btn" type="button" data-open-favorite-detail data-action-target="detail-page">查看内容<img data-icon src="${icon("Arrows/arrow-right-s-line.svg")}" alt="" /></button>
+              <button class="text-btn danger" type="button" data-remove-favorite data-action-target="remove-from-current-list">取消收藏</button>
             </div>
           </div>
         </article>
@@ -1172,6 +1184,43 @@
         node.addEventListener("click", (event) => {
           event.preventDefault();
           window.location.href = new URL("../c-end-user-profile-v1/index.html", window.location.href).toString();
+        });
+      });
+
+      const openFavoriteDetail = (card) => {
+        const state = card?.getAttribute("data-detail-state") || "article";
+        const target = new URL(`../c-end-detail-page-v1/index.html?state=${state}`, window.location.href);
+        window.location.href = target.toString();
+      };
+
+      document.querySelectorAll("[data-open-favorite-detail]").forEach((node) => {
+        node.addEventListener("click", (event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          openFavoriteDetail(node.closest("[data-favorite-card]"));
+        });
+      });
+
+      document.querySelectorAll("[data-remove-favorite]").forEach((node) => {
+        node.addEventListener("click", (event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          const card = node.closest("[data-favorite-card]");
+          if (!card) return;
+          card.classList.add("is-removed");
+          card.setAttribute("data-removed", "true");
+        });
+      });
+
+      document.querySelectorAll("[data-favorite-card]").forEach((node) => {
+        node.addEventListener("click", (event) => {
+          if (event.target.closest("button")) return;
+          openFavoriteDetail(node);
+        });
+        node.addEventListener("keydown", (event) => {
+          if (event.key !== "Enter" && event.key !== " ") return;
+          event.preventDefault();
+          openFavoriteDetail(node);
         });
       });
     }

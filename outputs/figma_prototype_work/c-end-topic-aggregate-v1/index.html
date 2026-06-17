@@ -72,7 +72,7 @@
     }
 
     .nav-shell {
-      width: 1440px;
+      width: 1280px;
       height: 72px;
       margin: 0 auto;
       display: flex;
@@ -218,11 +218,11 @@
     }
 
     .topic-layout {
-      width: 1240px;
+      width: 1280px;
       min-height: 964px;
       margin: 24px auto 0;
       display: grid;
-      grid-template-columns: 820px 340px;
+      grid-template-columns: 860px 396px;
       gap: 24px;
       align-items: start;
     }
@@ -319,6 +319,21 @@
       align-items: center;
       gap: 10px;
       flex-wrap: wrap;
+    }
+
+    .topic-direction-row {
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .topic-direction-label {
+      color: #6b6b6b;
+      font-size: 13px;
+      line-height: 18px;
+      font-weight: 760;
     }
 
     .topic-chip {
@@ -488,65 +503,83 @@
       min-width: 0;
     }
 
+    .card-labels {
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    .card-labels[data-card-type-row] {
+      margin-top: 0;
+      margin-bottom: 10px;
+    }
+
+    .card-meta .card-labels {
+      margin-top: 0;
+      flex-wrap: nowrap;
+      overflow: hidden;
+    }
+
     .type-badge,
     .label {
       height: 22px;
-      padding: 0 9px 0 12px;
+      padding: 0 8px;
       display: inline-flex;
       align-items: center;
       position: relative;
       overflow: hidden;
-      border-radius: 0;
+      border-radius: 4px;
       font-size: 12px;
       line-height: 18px;
-      font-weight: 700;
+      font-weight: 580;
       flex: 0 0 auto;
-      border: 0;
-      background: linear-gradient(90deg, rgba(36, 36, 36, 0.12) 0%, rgba(36, 36, 36, 0.055) 58%, rgba(36, 36, 36, 0) 100%);
-      color: #3f3f3f;
+      border: 1px solid #e8e8e8;
+      background: #f7f7f7;
+      background-image: none;
+      color: #4f4f4f;
     }
 
     .type-badge::before,
     .label::before {
-      content: "";
-      position: absolute;
-      left: 0;
-      top: 0;
-      bottom: 0;
-      width: 4px;
-      background: #242424;
+      content: none;
+      display: none;
     }
 
     .type-article {
-      color: #3f3f3f;
-      background: linear-gradient(90deg, rgba(36, 36, 36, 0.12) 0%, rgba(36, 36, 36, 0.055) 58%, rgba(36, 36, 36, 0) 100%);
+      color: #4f4f4f;
+      background: #f7f7f7;
+      background-image: none;
     }
 
     .type-workflow,
     .type-model {
-      color: #3f3f3f;
-      background: linear-gradient(90deg, rgba(36, 36, 36, 0.12) 0%, rgba(36, 36, 36, 0.055) 58%, rgba(36, 36, 36, 0) 100%);
+      color: #4f4f4f;
+      background: #f7f7f7;
+      background-image: none;
     }
 
     .type-skill {
-      color: #3f3f3f;
-      background: linear-gradient(90deg, rgba(36, 36, 36, 0.12) 0%, rgba(36, 36, 36, 0.055) 58%, rgba(36, 36, 36, 0) 100%);
+      color: #4f4f4f;
+      background: #f7f7f7;
+      background-image: none;
     }
 
     .type-mcp,
     .type-aigc {
-      color: #3f3f3f;
-      background: linear-gradient(90deg, rgba(36, 36, 36, 0.12) 0%, rgba(36, 36, 36, 0.055) 58%, rgba(36, 36, 36, 0) 100%);
+      color: #4f4f4f;
+      background: #f7f7f7;
+      background-image: none;
     }
 
     .type-flash {
-      color: #3f3f3f;
-      background: linear-gradient(90deg, rgba(36, 36, 36, 0.12) 0%, rgba(36, 36, 36, 0.055) 58%, rgba(36, 36, 36, 0) 100%);
+      color: #4f4f4f;
+      background: #f7f7f7;
+      background-image: none;
     }
 
     .type-guide {
-      color: #3f3f3f;
-      background: linear-gradient(90deg, rgba(36, 36, 36, 0.12) 0%, rgba(36, 36, 36, 0.055) 58%, rgba(36, 36, 36, 0) 100%);
+      color: #4f4f4f;
+      background: #f7f7f7;
+      background-image: none;
     }
 
     .type-pick {
@@ -644,7 +677,7 @@
       padding: 0 8px;
       display: inline-flex;
       align-items: center;
-      border-radius: 5px;
+      border-radius: 4px;
       background: #fafafa;
       color: #4f4f4f;
       font-weight: 600;
@@ -1340,6 +1373,9 @@
         <div class="topic-meta-row">
           <span class="topic-chip primary">${topic.count}</span>
           <span class="topic-chip">${topic.heat}</span>
+        </div>
+        <div class="topic-direction-row">
+          <span class="topic-direction-label">话题方向</span>
           ${topic.chips.map((chip) => `<span class="topic-chip">${chip}</span>`).join("")}
         </div>
       `;
@@ -1356,13 +1392,13 @@
         return `
         <article class="content-card feed-item no-cover flash-card" data-topic-card data-feed-item data-flash-card data-no-detail="flash" data-content-type="闪念">
           <div class="item-main card-main">
-            <div class="item-title-row">
+            <div class="card-labels" data-card-type-row>
               <span class="type-badge type-${item.typeClass}">${item.type}</span>
             </div>
             <p class="summary card-desc flash-text">${item.text || item.desc || ""}</p>
             <div class="meta-line card-meta">
-              <div class="topics">
-                ${item.topics.slice(0, 2).map((topic) => `<span class="topic-chip topic-tag">${topic}</span>`).join("")}
+              <div class="topics card-labels" data-card-topic-author-row>
+              ${item.topics.slice(0, 2).map((topic) => `<span class="topic-chip topic-tag">${topic}</span>`).join("")}
                 <span class="author-time">@${item.author} · ${item.time}</span>
               </div>
               <div class="stats">
@@ -1378,15 +1414,17 @@
       return `
         <article class="content-card feed-item no-cover ${item.featured ? "featured" : ""}" data-topic-card data-feed-item data-content-type="${item.type}">
           <div class="item-main card-main">
-            <div class="item-title-row">
+            <div class="card-labels" data-card-type-row>
               <span class="type-badge type-${item.typeClass}">${item.type}</span>
               ${item.featured ? `<span class="type-badge type-pick">精选</span>` : ""}
+            </div>
+            <div class="item-title-row">
               <h2 class="card-title">${item.title}</h2>
             </div>
             <p class="summary card-desc">${item.desc}</p>
             <div class="meta-line card-meta">
-              <div class="topics">
-                ${item.topics.slice(0, 2).map((topic) => `<span class="topic-chip topic-tag">${topic}</span>`).join("")}
+              <div class="topics card-labels" data-card-topic-author-row>
+              ${item.topics.slice(0, 2).map((topic) => `<span class="topic-chip topic-tag">${topic}</span>`).join("")}
                 <span class="author-time">@${item.author} · ${item.time}</span>
               </div>
               <div class="stats">

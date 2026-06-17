@@ -72,7 +72,7 @@
     }
 
     .nav-shell {
-      width: 1440px;
+      width: 1280px;
       height: 72px;
       margin: 0 auto;
       display: flex;
@@ -218,11 +218,11 @@
     }
 
     .search-layout {
-      width: 1240px;
+      width: 1280px;
       min-height: 964px;
       margin: 24px auto 0;
       display: grid;
-      grid-template-columns: 820px 340px;
+      grid-template-columns: 860px 396px;
       gap: 24px;
       align-items: start;
     }
@@ -363,51 +363,77 @@
       min-width: 0;
     }
 
-    .result-meta-top {
+    .result-meta-top,
+    .result-kicker-row {
       display: flex;
       align-items: center;
       gap: 8px;
       margin-bottom: 8px;
+      min-width: 0;
+      flex-wrap: wrap;
+    }
+
+    .result-kicker-row {
+      margin: 10px 0 0;
+    }
+
+    .result-kicker-row[data-card-type-row] {
+      margin: 0 0 8px;
+    }
+
+    .topic-line.result-kicker-row {
+      flex-wrap: nowrap;
+      overflow: hidden;
     }
 
     .type-tag,
     .asset-tag {
       height: 22px;
       padding: 0 8px;
-      border-radius: 0 4px 4px 0;
+      border: 1px solid #e8e8e8;
+      border-radius: 4px;
+      background: #f7f7f7;
+      background-image: none;
+      color: #4f4f4f;
       font-size: 12px;
       line-height: 22px;
-      font-weight: 760;
+      font-weight: 580;
       white-space: nowrap;
     }
 
     .type-tag.content {
-      background: var(--brand-soft);
-      color: var(--brand-deep);
+      background: #f7f7f7;
+      background-image: none;
+      color: #4f4f4f;
     }
 
     .type-tag.topic {
-      background: var(--blue-soft);
-      color: var(--blue);
+      background: #f7f7f7;
+      background-image: none;
+      color: #4f4f4f;
     }
 
     .type-tag.model {
-      background: var(--purple-soft);
-      color: var(--purple);
+      background: #f7f7f7;
+      background-image: none;
+      color: #4f4f4f;
     }
 
     .type-tag.ai-plus {
-      background: var(--orange-soft);
-      color: var(--orange);
+      background: #f7f7f7;
+      background-image: none;
+      color: #4f4f4f;
     }
 
     .type-tag.flash {
       color: #4f4f4f;
-      background: linear-gradient(90deg, rgba(36, 36, 36, 0.12), rgba(36, 36, 36, 0.055), rgba(36, 36, 36, 0));
+      background: #f7f7f7;
+      background-image: none;
     }
 
     .asset-tag {
-      background: #f4f4f4;
+      background: #ffffff;
+      background-image: none;
       color: #6b6b6b;
     }
 
@@ -468,16 +494,19 @@
     .topic-chip {
       height: 22px;
       padding: 0 8px;
-      border-radius: 5px;
+      border-radius: 4px;
       color: #4f4f4f;
       background: #fff;
+      background-image: none;
       border: 1px solid #e2e2e2;
       font-size: 12px;
       line-height: 22px;
-      font-weight: 650;
+      font-weight: 500;
     }
 
     .byline {
+      min-width: 0;
+      flex: 1 1 auto;
       color: var(--muted);
       font-size: 12px;
       line-height: 18px;
@@ -556,6 +585,7 @@
     }
 
     .rail {
+      width: 396px;
       display: flex;
       flex-direction: column;
       gap: 16px;
@@ -659,12 +689,14 @@
       height: 22px;
       padding: 0 8px;
       align-items: center;
-      border-radius: 0 4px 4px 0;
-      background: linear-gradient(90deg, rgba(36, 36, 36, 0.12), rgba(36, 36, 36, 0.055), rgba(36, 36, 36, 0));
-      color: #242424;
+      border: 1px solid #e8e8e8;
+      border-radius: 4px;
+      background: #ffffff;
+      background-image: none;
+      color: #4f4f4f;
       font-size: 12px;
       line-height: 22px;
-      font-weight: 760;
+      font-weight: 580;
       margin-bottom: 8px;
     }
 
@@ -1174,13 +1206,13 @@
         return `
         <article class="result-card flash-result" data-result-card data-flash-card data-no-detail="flash" data-group="${item.group}" data-result-type="${item.type}">
           <div class="result-main">
-            <div class="result-title-row">
+            <div class="result-kicker-row" data-card-type-row>
               <span class="type-tag flash">${item.type}</span>
-              <span class="byline">${item.byline}</span>
             </div>
             <p class="result-desc flash-text">${item.text || item.desc || ""}</p>
-            <div class="topic-line">
+            <div class="topic-line result-kicker-row" data-card-topic-author-row>
               ${item.topics.map((topic) => `<span class="topic-chip">${topic}</span>`).join("")}
+              <span class="byline">${item.byline}</span>
             </div>
           </div>
           <div class="result-side">
@@ -1205,14 +1237,16 @@
       return `
         <article class="result-card ${item.featured ? "featured" : ""}" data-result-card data-group="${item.group}" data-result-type="${item.type}">
           <div class="result-main">
-            <div class="result-title-row">
+            <div class="result-kicker-row" data-card-type-row>
               <span class="type-tag ${typeIconClass(item)}">${item.type}</span>
+              ${asset}
+            </div>
+            <div class="result-title-row">
               <h2 class="result-title">${item.title}</h2>
             </div>
             <p class="result-desc">${item.desc}</p>
-            <div class="topic-line">
+            <div class="topic-line result-kicker-row" data-card-topic-author-row>
               ${item.topics.map((topic) => `<span class="topic-chip">${topic}</span>`).join("")}
-              ${asset}
               <span class="byline">${item.byline}</span>
             </div>
           </div>

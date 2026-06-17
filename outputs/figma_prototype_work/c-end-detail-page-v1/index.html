@@ -68,7 +68,7 @@
     }
 
     .nav-shell {
-      width: 1440px;
+      width: 1280px;
       height: 72px;
       margin: 0 auto;
       display: flex;
@@ -206,12 +206,12 @@
     }
 
     .detail-layout {
-      width: 1240px;
+      width: 1280px;
       min-height: 968px;
       margin: 24px auto 0;
       display: grid;
-      grid-template-columns: 820px 340px;
-      gap: 24px;
+      grid-template-columns: 852px 396px;
+      gap: 32px;
       align-items: start;
       position: relative;
     }
@@ -281,23 +281,17 @@
 
     .type-badge {
       position: relative;
-      padding: 0 12px 0 14px;
-      border: 0;
-      border-radius: 0 4px 4px 0;
-      background: linear-gradient(90deg, rgba(36, 36, 36, 0.12) 0%, rgba(36, 36, 36, 0.055) 52%, rgba(36, 36, 36, 0) 100%);
-      color: #343434;
+      padding: 0 8px;
+      border: 1px solid #e8e8e8;
+      border-radius: 4px;
+      background: #f7f7f7;
+      color: #4f4f4f;
       overflow: hidden;
     }
 
     .type-badge::before {
-      content: "";
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 4px;
-      height: 100%;
-      background: #242424;
-      border-radius: 0 1px 1px 0;
+      content: none;
+      display: none;
     }
 
     .topic,
@@ -329,21 +323,17 @@
 
     .small-badge {
       position: relative;
-      padding: 0 8px 0 11px;
-      border-radius: 0 4px 4px 0;
+      padding: 0 8px;
+      border: 1px solid #e8e8e8;
+      border-radius: 4px;
       color: #4f4f4f;
-      background: linear-gradient(90deg, rgba(118, 118, 118, 0.12), rgba(118, 118, 118, 0.04) 62%, rgba(118, 118, 118, 0));
+      background: #f7f7f7;
       overflow: hidden;
     }
 
     .small-badge::before {
-      content: "";
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 3px;
-      height: 100%;
-      background: #767676;
+      content: none;
+      display: none;
     }
 
     .title {
@@ -429,7 +419,7 @@
 
     .quick-dock {
       position: fixed;
-      left: calc((100vw - 1240px) / 2 - 78px);
+      left: calc((100vw - 1280px) / 2 - 78px);
       top: 132px;
       z-index: 12;
       width: 56px;
@@ -437,12 +427,12 @@
       flex-direction: column;
       align-items: center;
       gap: 14px;
-      padding: 10px 0;
+      padding: 0;
       border-radius: 999px;
-      background: rgba(255, 255, 255, 0.78);
-      border: 1px solid var(--line-strong);
-      box-shadow: 0 14px 34px rgba(0, 0, 0, 0.08);
-      backdrop-filter: blur(14px);
+      background: transparent;
+      border: 0;
+      box-shadow: none;
+      backdrop-filter: none;
     }
 
     .quick-action {
@@ -454,15 +444,21 @@
       align-items: center;
       justify-content: center;
       color: var(--icon-ink);
-      border: 1px solid var(--line-strong);
+      border: 0;
       background: #fff;
       box-shadow: 0 8px 18px rgba(0, 0, 0, 0.06);
     }
 
     .quick-action.primary {
       color: var(--text);
-      border-color: var(--text);
-      background: #fff;
+      border-color: transparent;
+      background: #f2f2f2;
+    }
+
+    .quick-action.is-active {
+      color: var(--brand-deep);
+      background: var(--brand-soft);
+      box-shadow: 0 10px 24px rgba(22, 184, 166, 0.14);
     }
 
     .quick-action .icon-img {
@@ -480,11 +476,38 @@
       padding: 0 5px;
       border-radius: 999px;
       background: #f2f2f2;
-      border: 1px solid #dedede;
+      border: 0;
       color: var(--muted);
       font-size: 11px;
       line-height: 17px;
       font-weight: 760;
+    }
+
+    .action-toast {
+      position: fixed;
+      left: 50%;
+      bottom: 28px;
+      z-index: 1600;
+      transform: translateX(-50%);
+      min-width: 260px;
+      max-width: 520px;
+      min-height: 42px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      padding: 0 18px;
+      border: 1px solid rgba(16, 24, 40, 0.10);
+      background: rgba(16, 24, 40, 0.92);
+      color: #fff;
+      box-shadow: 0 16px 40px rgba(16, 24, 40, 0.20);
+      font-size: 13px;
+      line-height: 18px;
+      font-weight: 720;
+    }
+
+    .action-toast.visible {
+      display: inline-flex;
     }
 
     .media {
@@ -651,6 +674,20 @@
       font-weight: 560;
     }
 
+    .comment-author-badge {
+      height: 18px;
+      padding: 0 6px;
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid #e5e5e5;
+      border-radius: 4px;
+      background: #f7f7f7;
+      color: #5f5f5f;
+      font-size: 11px;
+      line-height: 16px;
+      font-weight: 680;
+    }
+
     .comment-text {
       margin: 8px 0 0 36px;
       color: var(--body-text);
@@ -707,9 +744,37 @@
     .reply {
       margin: 10px 0 0 36px;
       padding: 9px 10px;
-      border-left: 2px solid #d8d8d8;
-      background: #fff;
+      display: grid;
+      grid-template-columns: 24px minmax(0, 1fr);
+      align-items: start;
+      gap: 8px;
+      border: 1px solid #eeeeee;
+      background: #fafafa;
       border-radius: 6px;
+      color: var(--body-text);
+      font-size: 12px;
+      line-height: 18px;
+    }
+
+    .reply .meta-avatar {
+      width: 24px;
+      height: 24px;
+    }
+
+    .reply-head {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      min-width: 0;
+    }
+
+    .reply-author {
+      color: var(--text);
+      font-weight: 760;
+    }
+
+    .reply-text {
+      margin: 4px 0 0;
       color: var(--body-text);
       font-size: 12px;
       line-height: 18px;
@@ -779,10 +844,19 @@
       mask: url("../../../resources/icons/remixicon/svg/Arrows/arrow-right-line.svg") center / contain no-repeat;
     }
 
+    [data-right-module="toc"] .rail-icon-link {
+      display: none;
+    }
+
     .default-rail {
       display: flex;
       flex-direction: column;
       gap: 12px;
+    }
+
+    .author-card {
+      position: relative;
+      padding-right: 108px;
     }
 
     .author-card .author-top {
@@ -838,22 +912,25 @@
     }
 
     .author-actions {
-      margin-top: 14px;
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 8px;
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      margin-top: 0;
+      display: flex;
+      align-items: center;
     }
 
     .follow-btn {
-      width: 100%;
-      height: 34px;
-      border-radius: 8px;
-      background: #fff;
-      border: 1px solid var(--text);
-      color: var(--text);
+      width: auto;
+      height: 30px;
+      padding: 0 12px;
+      border-radius: 4px;
+      background: #242424;
+      border: 1px solid #242424;
+      color: #fff;
       font-size: 13px;
       line-height: 18px;
-      font-weight: 760;
+      font-weight: 700;
     }
 
     .message-btn {
@@ -862,7 +939,7 @@
       border-radius: 8px;
       background: #fafafa;
       border: 1px solid var(--line-strong);
-      color: var(--body-text);
+      color: var(--text);
       font-size: 13px;
       line-height: 18px;
       font-weight: 760;
@@ -898,9 +975,9 @@
 
     .toc-item {
       min-height: 32px;
-      padding: 7px 10px 7px 12px;
-      border-left: 3px solid transparent;
-      border-radius: 7px;
+      padding: 7px 10px;
+      border-left: 0;
+      border-radius: 0;
       color: var(--body-text);
       font-size: 13px;
       line-height: 18px;
@@ -910,8 +987,8 @@
 
     .toc-item.active {
       color: var(--text);
-      border-left-color: var(--brand);
-      background: rgba(36, 36, 36, 0.06);
+      border-left-color: transparent;
+      background: #f7f7f7;
     }
 
     .related-list,
@@ -924,7 +1001,7 @@
 
     .related-item {
       padding-bottom: 10px;
-      border-bottom: 1px solid #eeeeee;
+      border-bottom: 0;
       color: var(--body-text);
       font-size: 13px;
       line-height: 20px;
@@ -1043,6 +1120,78 @@
       display: flex;
     }
 
+    body[data-state="model-case"] [data-code],
+    body[data-state="api-note"] [data-code],
+    body[data-state="model-case"] [data-asset-module],
+    body[data-state="api-note"] [data-asset-module] {
+      display: none;
+    }
+
+    .article-extra {
+      display: none;
+      margin-top: 22px;
+    }
+
+    body[data-state="model-case"] .article-extra,
+    body[data-state="api-note"] .article-extra {
+      display: block;
+    }
+
+    .article-extra-section {
+      margin-top: 28px;
+    }
+
+    .article-extra-section h3 {
+      margin: 0 0 10px;
+      color: var(--text);
+      font-size: 18px;
+      line-height: 26px;
+      font-weight: 780;
+      letter-spacing: 0;
+    }
+
+    .article-extra-section p {
+      margin: 0 0 10px;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 28px;
+      font-weight: 460;
+    }
+
+    .article-extra-code {
+      margin: 12px 0 0;
+      padding: 14px 16px;
+      border-radius: 6px;
+      background: #f7f7f7;
+      color: #2b2b2b;
+      border: 1px solid #e8e8e8;
+      font-size: 13px;
+      line-height: 22px;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+
+    .article-evidence-figure {
+      margin: 16px 0 4px;
+    }
+
+    .article-evidence-figure img {
+      display: block;
+      width: 100%;
+      border-radius: 6px;
+      border: 1px solid #e8e8e8;
+      background: #f7f7f7;
+    }
+
+    .article-evidence-figure figcaption {
+      margin-top: 8px;
+      color: var(--subtle);
+      font-size: 13px;
+      line-height: 22px;
+      font-weight: 500;
+    }
+
     .unavailable-card {
       width: 460px;
       padding: 34px;
@@ -1141,19 +1290,19 @@
 
     <main class="detail-layout" data-detail-layout>
       <aside class="quick-dock" data-left-actions data-actions>
-        <button class="quick-action primary" aria-label="点赞" title="点赞">
+        <button class="quick-action primary" aria-label="点赞" title="点赞" data-like-action data-action-target="detail-feedback" aria-pressed="false">
           <img class="icon-img" src="../../../resources/icons/remixicon/svg/Health & Medical/heart-line.svg" alt="" />
           <span class="quick-badge" data-quick-likes>128</span>
         </button>
-        <button class="quick-action" aria-label="评论" title="评论">
+        <button class="quick-action" aria-label="评论" title="评论" data-detail-state-link="comments" data-action-target="detail-comments-panel">
           <img class="icon-img" src="../../../resources/icons/remixicon/svg/Communication/chat-3-line.svg" alt="" />
           <span class="quick-badge" data-quick-comments>42</span>
         </button>
-        <button class="quick-action" aria-label="收藏" title="收藏">
+        <button class="quick-action" aria-label="收藏" title="收藏" data-favorite-action data-action-target="favorites-default" aria-pressed="false">
           <img class="icon-img" src="../../../resources/icons/remixicon/svg/Business/bookmark-line.svg" alt="" />
           <span class="quick-badge" data-quick-favorites>316</span>
         </button>
-        <button class="quick-action" aria-label="转发" title="转发">
+        <button class="quick-action" aria-label="转发" title="转发" data-share-action data-action-target="share-link">
           <img class="icon-img" src="../../../resources/icons/remixicon/svg/System/share-forward-line.svg" alt="" />
         </button>
       </aside>
@@ -1207,6 +1356,7 @@
             <h2 data-body-title>正文说明</h2>
             <p data-body-a>先把目标拆成可验证的小任务，再让 AI 负责生成候选实现，最后用测试和人工审查把风险收口。</p>
             <p data-body-b>这类内容的价值不是炫技，而是让团队知道什么时候可以复用，什么时候必须停下来人工判断。</p>
+            <div class="article-extra" data-article-extra></div>
             <div class="code-block" data-code>npm test
 git diff --check
 node scripts/validate-detail-fields.mjs</div>
@@ -1244,11 +1394,20 @@ node scripts/validate-detail-fields.mjs</div>
                   <img class="meta-avatar" src="../_assets/figma/detail-comment-devon-avatar-source.png" alt="" />
                   <span>Devon</span>
                   <span class="comment-time">18 分钟前</span>
-                  <span class="small-badge">作者回复</span>
                 </div>
                 <p class="comment-text">这个流程适合先从接口测试用例开始试，失败成本最低。</p>
                 <div class="comment-actions"><span class="comment-action comment-like" aria-label="点赞 12">12</span><span class="comment-action comment-reply" aria-label="回复"></span></div>
-                <div class="reply">多元拾光官方：是的，首批样例会优先放低风险流程。</div>
+                <div class="reply" data-comment-reply-item>
+                  <img class="meta-avatar" src="../_assets/figma/detail-author-jianbing-avatar-source.png" alt="" />
+                  <div class="reply-main">
+                    <div class="reply-head">
+                      <span class="reply-author">多元拾光官方</span>
+                      <span class="comment-author-badge" data-comment-author-badge>作者</span>
+                      <span class="comment-time">刚刚</span>
+                    </div>
+                    <p class="reply-text">是的，首批样例会优先放低风险流程。</p>
+                  </div>
+                </div>
               </article>
               <article class="comment-item">
                 <div class="comment-head">
@@ -1274,7 +1433,7 @@ node scripts/validate-detail-fields.mjs</div>
       <aside class="rail" data-right-rail>
         <div class="default-rail">
           <section class="rail-card author-card" data-right-module="author">
-            <div class="author-top">
+            <div class="author-top" data-author-profile-entry role="link" tabindex="0">
               <img class="avatar" src="../_assets/figma/detail-author-jianbing-avatar-source.png" alt="" />
               <div>
                 <div class="author-name" data-rail-author>多元拾光官方</div>
@@ -1296,19 +1455,18 @@ node scripts/validate-detail-fields.mjs</div>
               </div>
             </div>
             <div class="author-actions">
-              <button class="follow-btn">关注作者</button>
+              <button class="follow-btn" type="button" data-follow-action data-action-target="author-followed" aria-pressed="false">关注作者</button>
             </div>
           </section>
 
           <section class="rail-card" data-right-module="toc">
             <div class="rail-head">
               <div class="rail-title">目录</div>
-              <div class="rail-link rail-icon-link" aria-label="收起">收起</div>
             </div>
-            <div class="toc-list">
+            <div class="toc-list" data-toc-list>
               <div class="toc-item active" data-toc-item>正文说明</div>
               <div class="toc-item" data-toc-item data-toc-module>教程案例要点</div>
-              <div class="toc-item" data-toc-item>边界说明</div>
+              <div class="toc-item" data-toc-item data-toc-boundary>边界说明</div>
             </div>
           </section>
 
@@ -1318,9 +1476,9 @@ node scripts/validate-detail-fields.mjs</div>
               <div class="rail-link rail-icon-link" aria-label="查看更多">更多</div>
             </div>
             <div class="related-list">
-              <div class="related-item" data-related-a>接口文档转测试用例的工作流</div>
-              <div class="related-item" data-related-b>代码审查 Skill 最小结构</div>
-              <div class="related-item" data-related-c>GitHub MCP 使用边界</div>
+              <div class="related-item" data-related-a data-related-target role="link" tabindex="0">接口文档转测试用例的工作流</div>
+              <div class="related-item" data-related-b data-related-target role="link" tabindex="0">代码审查 Skill 最小结构</div>
+              <div class="related-item" data-related-c data-related-target role="link" tabindex="0">GitHub MCP 使用边界</div>
             </div>
           </section>
 
@@ -1474,6 +1632,141 @@ node scripts/validate-detail-fields.mjs</div>
         related: ["gpt-4.1 与 gpt-5.2 API 迁移清单", "知识库问答如何选择 Embedding 与主模型", "成本敏感任务何时改用 mini/nano"],
         railTopics: ["模型选型", "API迁移", "长上下文", "工具调用"]
       },
+      "model-case": {
+        type: "模型案例",
+        topics: ["模型服务", "场景案例"],
+        title: "用 Embedding 做社区内容召回：从问题找到证据片段",
+        summary: "一次脱敏实测：用 text-embedding-3-large 先找证据片段，再决定后续内容怎么写，避免直接让模型凭感觉下结论。",
+        reads: "2.1k 阅读",
+        comments: "24 评论",
+        likes: "128 点赞",
+        favorites: "63 收藏",
+        author: "多元拾光模型服务",
+        updated: "2026-06-17 更新",
+        media: false,
+        bodyTitle: "先说结论",
+        bodyA: "这次我不想直接问模型“该选哪个模型”，因为这样很容易得到一段看起来完整、但没有证据来源的回答。更稳的做法是先把几段脱敏资料向量化，再用问题去召回相关片段，看哪些内容真的能支撑判断。",
+        bodyB: "这轮实测里，text-embedding-3-large 没有负责写最终答案，它只负责把问题和资料放到同一个语义空间里比较相似度。最后可发布的结论仍然要由人检查：片段是否过期、是否完整、是否真的能支撑正文。",
+        toc: ["先说结论", "输入材料", "运行过程截图", "召回结果", "提示写法", "复用边界", "使用前确认"],
+        extraSections: [
+          {
+            title: "输入材料",
+            paragraphs: [
+              "输入是 6 段已经脱敏的社区运营资料，内容围绕模型服务首批案例、用户收藏原因、复用提示词和新手选型问题。问题也故意写得很具体：首批案例素材优先选择什么模型，才能让新用户看懂并愿意收藏？",
+              "这里没有使用真实用户隐私、账户余额、密钥、请求头或完整调用日志。公开文章只保留任务、脱敏片段摘要和结果判断，原始运行文件继续留在内部证据库里，不直接展示给普通读者。"
+            ]
+          },
+          {
+            title: "运行过程截图",
+            paragraphs: [
+              "下面这张图是根据本轮实测结果重新整理的脱敏过程图。它不是原始后台日志，也不是账户控制台截图，只展示读者需要理解的部分：输入是什么、调用了哪个模型、返回了哪些召回片段，以及哪里需要人工复核。",
+              "这个素材比单纯写一段“我们做了实测”更可信，因为读者能看到任务链路：脱敏输入先进入 Embedding，返回向量后再做片段排序，最后才进入人工判断。"
+            ],
+            image: {
+              src: "../_assets/figma/model-case-embedding-run-screenshot.svg",
+              alt: "text-embedding-3-large 脱敏运行过程截图",
+              caption: "脱敏运行过程图：只保留输入摘要、调用摘要、召回排名和人工复核提醒，不展示密钥、请求头、账户余额或完整原始日志。"
+            }
+          },
+          {
+            title: "召回结果",
+            paragraphs: [
+              "本轮调用成功返回 6 组 3072 维向量，输入消耗 128 tokens。按相似度排序后，前三个片段分别指向“新用户按任务理解模型”“案例包含流程和成本提示”“带复用提示词的案例更容易引发追问”。这三个片段和问题是对得上的，但它们还不能直接变成最终结论。",
+              "我会把这次结果理解成一个编辑判断：Embedding 帮我缩小了阅读范围，让我知道应该优先写“用户按任务选模型”的案例，而不是继续堆模型列表。真正发布前，还要再检查价格口径、模型可用性和案例里的表述边界。"
+            ]
+          },
+          {
+            title: "提示写法",
+            paragraphs: [
+              "这个场景的提示词不要写成“帮我总结全部资料”。更稳的写法是先说明任务边界：只找能支撑判断的片段，不生成最终结论；再说明输出格式：返回片段编号、命中理由和需要人工确认的地方。",
+              "如果后面接主模型生成文章，也应该把 Embedding 召回片段作为输入依据，而不是让主模型凭标题直接发挥。这样能降低空泛结论，也更方便编辑回查素材来源。"
+            ],
+            code: "请只根据召回片段回答：\n1. 哪些片段能支持这个判断？\n2. 每个片段支持了什么？\n3. 哪些地方仍需要人工确认？"
+          },
+          {
+            title: "复用边界",
+            paragraphs: [
+              "这套方法适合做知识库检索、案例素材筛选、客服问答召回和 RAG 前置证据整理。它不适合直接生成最终答案，也不能把相似度分数当成正确率。召回命中只说明“这段资料和问题更像”，不说明它一定事实正确。",
+              "如果你也要复用，建议先准备 10 到 30 条脱敏资料和 5 个真实问题，先看小样本能否召回到人能理解的片段。小样本都对不上时，不要急着扩大资料库；问题往往出在切分太粗、问题太宽，或者资料本身没有足够信息。",
+              "发布到社区时，把召回片段改写成可读摘要，不要贴内部表格。读者需要知道这套方法能解决什么问题、还有什么不确定，而不是看到只有编辑自己能看懂的运行记录。"
+            ]
+          },
+          {
+            title: "使用前确认",
+            paragraphs: [
+              "确认资料已经脱敏；确认问题足够具体；确认召回结果能回到原文；确认不会把相似度分数当成正确率；确认最终正文没有越过召回片段做推断。Embedding 适合做检索底座，不适合直接生成结论。",
+              "我会把这篇内容定位成“案例素材怎么先找证据”，而不是“Embedding 一定能提高召回效果”。前者是可复用的工作方法，后者需要更完整的评测集和人工标注，不能靠一次调用截图来证明。"
+            ]
+          }
+        ],
+        code: "内容类型: model-case\n关联模型: text-embedding-3-large\n来源页面: 模型服务详情页的案例集合",
+        moduleTitle: "案例正文要点",
+        fields: [["内容来源", "创作中心文章模板 + 可选模型关联"], ["正文结构", "问题、模型、过程、提示写法、结果节选、复用边界"], ["回流位置", "模型详情页、话题聚合、搜索结果、作者主页"]],
+        boundary: "边界：本页只展示用户可读内容，不展示密钥、账户、调用日志、后台审核字段或内部素材目录；证据材料只转写成可公开的过程、提示词和结果节选。",
+        related: ["gpt-4.1 代码审查案例怎么写正文", "Whisper 转写案例如何放音频素材", "模型关联字段什么时候可以留空"],
+        railTopics: ["模型服务", "API经验", "RAG", "创作中心"]
+      },
+      "api-note": {
+        type: "API 经验",
+        topics: ["模型服务", "接口排查"],
+        title: "从一次失败调用判断：该换模型，还是先改提示词",
+        summary: "面向技术用户的 API 经验详情页，重点放在问题现象、排查路径、替代选择和使用前确认，而不是展示后台日志。",
+        reads: "1.5k 阅读",
+        comments: "18 评论",
+        likes: "86 点赞",
+        favorites: "42 收藏",
+        author: "多元拾光模型服务",
+        updated: "2026-06-17 更新",
+        media: false,
+        bodyTitle: "先说结论",
+        bodyA: "API 经验不应该写成平台公告。用户关心的是：我遇到了什么现象，先检查什么，什么时候应该换模型，什么时候只是输入、参数或材料质量的问题。",
+        bodyB: "如果这篇内容关联了站内模型，它可以进入模型详情页的相关内容；如果没有关联模型，也可以作为普通技术文章发布，只通过话题、搜索和作者主页被发现。",
+        toc: ["先说结论", "问题现象", "排查路径", "提示写法", "结果摘要和复用边界", "使用前确认"],
+        extraSections: [
+          {
+            title: "问题现象",
+            paragraphs: [
+              "一次失败调用里，用户最容易马上怀疑模型不可用。但真实排查时，第一步通常不是换模型，而是先确认输入、参数和材料质量。比如同一个任务，如果提示词没有交代输出格式，或者输入材料太长又没有切分，失败原因就不一定在模型。",
+              "这类经验帖的价值，是把排查顺序讲清楚：先看现象，再看输入，再看替代模型，而不是把日志或配置截图直接贴给用户。"
+            ]
+          },
+          {
+            title: "排查路径",
+            paragraphs: [
+              "先把任务改成最小可验证输入，只保留一段材料和一个明确问题。第二步固定输出格式，避免模型自由发挥。第三步换一个成本较低或响应更稳定的模型做对照。如果对照模型能正常输出，才继续判断是模型能力差异、上下文长度问题，还是原提示词太模糊。",
+              "对普通用户来说，不需要看到完整请求头、账户余额或原始日志。他们需要的是能照着做的检查顺序，以及什么时候该停下来找人工确认。"
+            ]
+          },
+          {
+            title: "提示写法",
+            paragraphs: [
+              "提示词建议先说任务，再说输入范围，最后说输出格式。不要把“帮我分析一下”作为唯一指令，也不要同时要求模型完成检索、判断、写作和改写。任务越混杂，越难判断失败原因。"
+            ],
+            code: "请只根据下面这段输入判断：\n1. 任务是否能完成？\n2. 如果不能完成，最可能缺少什么信息？\n3. 请给出最小可修改建议。"
+          },
+          {
+            title: "结果摘要和复用边界",
+            paragraphs: [
+              "这次排查的结论是：失败不一定意味着要换模型。先改提示词和输入范围，往往能更快找到问题。如果仍然失败，再比较同类模型的输出稳定性和成本。",
+              "这套方法适合接入前判断、失败排查和模型迁移，不适合替代正式压测，也不能承诺某个模型在所有任务里都更稳。价格、可用性和最终接入口径仍以站内实际服务为准。",
+              "如果要把这篇经验变成公开文章，正文里应该只保留现象、判断过程、替代方案和复用提醒。失败请求的完整细节、账户相关信息和原始排查记录都不应该作为截图或附件展示给普通用户。"
+            ]
+          },
+          {
+            title: "使用前确认",
+            paragraphs: [
+              "确认没有公开鉴权信息；确认输入材料不包含用户隐私；确认结论只来自可公开的现象和结果摘要；确认文章写的是排查方法，而不是完整调用日志。",
+              "如果你只是想记录一次失败，可以先发闪念；如果已经有清晰现象、处理过程和复用边界，再整理成长文章。这样不会把临时排查笔记包装成正式教程，也能让读者先判断自己的问题是否相同，减少无效换模型和重复试错，先改提示词再换模型。正式复用前还要人工复核上下游影响。"
+            ]
+          }
+        ],
+        code: "内容类型: api-note\n关联模型: 可选\n公开内容: 排查路径、提示写法、结果摘要",
+        moduleTitle: "API 经验要点",
+        fields: [["适用场景", "接入前判断、失败排查、模型迁移"], ["正文结构", "现象、输入、处理路径、结果、复用边界"], ["回流位置", "模型详情页、API 话题、搜索结果"]],
+        boundary: "边界：不展示完整请求头、鉴权信息、账户余额、真实订单或原始日志；价格和可用性只提示以站内实际服务为准。",
+        related: ["Embedding 不直接生成回答，该怎么解释", "低成本模型适合哪些批处理任务", "模型别名和聚合入口怎么避免误用"],
+        railTopics: ["接口排查", "模型迁移", "低成本调用", "API经验"]
+      },
       workflow: {
         type: "工作流",
         topics: ["工作流自动化", "测试调试"],
@@ -1589,8 +1882,62 @@ node scripts/validate-detail-fields.mjs</div>
     setText("[data-body-a]", current.bodyA || base.bodyA);
     setText("[data-body-b]", current.bodyB || base.bodyB);
     setText("[data-code]", current.code || base.code);
+    const extraContainer = document.querySelector("[data-article-extra]");
+    if (extraContainer) {
+      extraContainer.replaceChildren();
+      (current.extraSections || []).forEach((section) => {
+        const block = document.createElement("section");
+        block.className = "article-extra-section";
+        const heading = document.createElement("h3");
+        heading.textContent = section.title;
+        block.appendChild(heading);
+        (section.paragraphs || []).forEach((paragraph) => {
+          const p = document.createElement("p");
+          p.textContent = paragraph;
+          block.appendChild(p);
+        });
+        if (section.code) {
+          const pre = document.createElement("pre");
+          pre.className = "article-extra-code";
+          pre.textContent = section.code;
+          block.appendChild(pre);
+        }
+        if (section.image) {
+          const figure = document.createElement("figure");
+          figure.className = "article-evidence-figure";
+          figure.setAttribute("data-article-evidence-figure", "");
+          const image = document.createElement("img");
+          image.src = section.image.src;
+          image.alt = section.image.alt || "";
+          image.setAttribute("data-article-evidence-image", "");
+          figure.appendChild(image);
+          if (section.image.caption) {
+            const caption = document.createElement("figcaption");
+            caption.textContent = section.image.caption;
+            figure.appendChild(caption);
+          }
+          block.appendChild(figure);
+        }
+        extraContainer.appendChild(block);
+      });
+    }
     setText("[data-module-title]", current.moduleTitle);
-    setText("[data-toc-module]", current.moduleTitle);
+    const tocList = document.querySelector("[data-toc-list]");
+    if (tocList) {
+      const tocItems = current.toc || [
+        current.bodyTitle || base.bodyTitle,
+        current.moduleTitle || base.moduleTitle,
+        "边界说明"
+      ];
+      tocList.replaceChildren();
+      tocItems.forEach((item, index) => {
+        const node = document.createElement("div");
+        node.className = `toc-item${index === 0 ? " active" : ""}`;
+        node.setAttribute("data-toc-item", "");
+        node.textContent = item;
+        tocList.appendChild(node);
+      });
+    }
     setText("[data-field-label-a]", current.fields[0][0]);
     setText("[data-field-a]", current.fields[0][1]);
     setText("[data-field-label-b]", current.fields[1][0]);
@@ -1631,6 +1978,94 @@ node scripts/validate-detail-fields.mjs</div>
     if (queryState === "no-comments") {
       setText("[data-comment-placeholder]", "成为第一位评论的人");
     }
+
+    function showActionToast(message) {
+      let toast = document.querySelector("[data-action-toast]");
+      if (!toast) {
+        toast = document.createElement("div");
+        toast.className = "action-toast";
+        toast.setAttribute("data-action-toast", "");
+        document.body.appendChild(toast);
+      }
+      toast.textContent = message;
+      toast.classList.add("visible");
+      window.clearTimeout(showActionToast.timer);
+      showActionToast.timer = window.setTimeout(() => toast.classList.remove("visible"), 1600);
+    }
+
+    function goDetailState(state) {
+      const url = new URL(window.location.href);
+      url.searchParams.set("state", state);
+      window.location.href = url.toString();
+    }
+
+    function bindActionDestinations() {
+      document.querySelectorAll("[data-detail-state-link]").forEach((node) => {
+        node.addEventListener("click", (event) => {
+          event.preventDefault();
+          goDetailState(node.getAttribute("data-detail-state-link"));
+        });
+      });
+
+      document.querySelectorAll("[data-like-action]").forEach((node) => {
+        node.addEventListener("click", (event) => {
+          event.preventDefault();
+          node.classList.add("is-active");
+          node.setAttribute("aria-pressed", "true");
+          showActionToast("已记录点赞，仍留在当前详情页继续阅读");
+        });
+      });
+
+      document.querySelectorAll("[data-favorite-action]").forEach((node) => {
+        node.addEventListener("click", (event) => {
+          event.preventDefault();
+          node.classList.add("is-active");
+          node.setAttribute("aria-pressed", "true");
+          showActionToast("已加入默认收藏夹，可从个人主页进入收藏夹回看");
+        });
+      });
+
+      document.querySelectorAll("[data-share-action]").forEach((node) => {
+        node.addEventListener("click", (event) => {
+          event.preventDefault();
+          showActionToast("已生成分享入口，原型不写入剪贴板");
+        });
+      });
+
+      document.querySelectorAll("[data-follow-action]").forEach((node) => {
+        node.addEventListener("click", (event) => {
+          event.preventDefault();
+          node.classList.add("is-active");
+          node.setAttribute("aria-pressed", "true");
+          node.textContent = "已关注";
+          showActionToast("已关注作者，可在用户主页的关注列表查看");
+        });
+      });
+
+      document.querySelectorAll("[data-author-profile-entry]").forEach((node) => {
+        const openAuthor = (event) => {
+          event.preventDefault();
+          window.location.href = new URL("../c-end-user-profile-v1/index.html?state=other", window.location.href).toString();
+        };
+        node.addEventListener("click", openAuthor);
+        node.addEventListener("keydown", (event) => {
+          if (event.key === "Enter" || event.key === " ") openAuthor(event);
+        });
+      });
+
+      document.querySelectorAll("[data-related-target]").forEach((node) => {
+        const openRelated = (event) => {
+          event.preventDefault();
+          goDetailState("article");
+        };
+        node.addEventListener("click", openRelated);
+        node.addEventListener("keydown", (event) => {
+          if (event.key === "Enter" || event.key === " ") openRelated(event);
+        });
+      });
+    }
+
+    bindActionDestinations();
   </script>
   <script src="../_shared/c-end-prototype-interactions.js?v=20260617-model-service-content-v1"></script>
 </body>

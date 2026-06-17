@@ -861,7 +861,7 @@
                 全部话题列表
               </div>
               <h1 class="square-title">话题广场</h1>
-              <p class="square-desc">按 AI 做事场景聚合全部话题，先帮助用户找到稳定入口，再点进单个话题查看聚合内容。</p>
+              <p class="square-desc">按 AI 做事场景浏览话题，点击话题进入单话题聚合页继续看内容。</p>
             </div>
             <div class="square-summary" data-square-summary>
               <div class="summary-num" data-summary-count>42</div>
@@ -896,8 +896,8 @@
         </section>
 
         <section class="rail-card ad-card" data-right-module="ad-banner">
-          <div class="ad-title">API 灰度话题共创</div>
-          <div class="ad-sub">围绕模型接入、调用排错和成本优化征集真实案例。</div>
+          <div class="ad-title">模型接入经验征集</div>
+          <div class="ad-sub">分享接入过程、调用排错和成本优化做法，沉淀到模型服务内容。</div>
         </section>
       </aside>
     </main>
@@ -917,11 +917,11 @@
       apps: iconBase + "System/apps-2-line.svg"
     };
 
-    const categories = ["全部话题", "AI Coding", "模型与 API", "AIGC", "工作流", "Skill/MCP", "教程案例"];
+    const categories = ["全部话题", "模型与 API", "AI Coding", "工作流", "AIGC"];
     const sortTabs = ["热度", "最新活跃"];
 
     const topics = [
-      { name: "#Vibe Coding", category: "AI Coding", desc: "围绕 AI 辅助编码、任务拆解、仓库协作和验收边界的实践沉淀。", content: "326", today: "18", followers: "2.1k", badge: "hot", badgeText: "高活跃", tags: ["代码生成", "任务拆解", "验收"], heat: 98, fresh: 82, followed: true },
+      { name: "#Vibe Coding", category: "AI Coding", desc: "围绕 AI 辅助编码、任务拆解、仓库协作和验收边界的实践沉淀。", content: "326", today: "18", followers: "2.1k", badge: "hot", badgeText: "高活跃", tags: ["代码生成", "任务拆解", "验收"], heat: 98, fresh: 82 },
       { name: "#Agent", category: "工作流", desc: "聚合 Agent 架构、工具调用、自动化任务和人机协作边界。", content: "241", today: "12", followers: "1.8k", badge: "hot", badgeText: "高活跃", tags: ["自动化", "工具调用", "RAG"], heat: 94, fresh: 76 },
       { name: "#RAG 应用", category: "模型与 API", desc: "知识库、向量检索、企业问答和检索增强生成落地经验。", content: "198", today: "9", followers: "1.6k", badge: "new", badgeText: "持续增长", tags: ["知识库", "检索", "企业问答"], heat: 88, fresh: 91 },
       { name: "#模型接入", category: "模型与 API", desc: "模型平台选择、API 接入方式、上下文限制、成本估算和失败重试。", content: "176", today: "15", followers: "1.5k", badge: "hot", badgeText: "高活跃", tags: ["API", "成本", "限流"], heat: 90, fresh: 88 },
@@ -929,7 +929,7 @@
       { name: "#Prompt 工程", category: "AIGC", desc: "Prompt 结构、变量模板、参数对比和复用边界。", content: "149", today: "10", followers: "1.2k", badge: "new", badgeText: "持续增长", tags: ["提示词", "模板", "参数"], heat: 79, fresh: 87 },
       { name: "#工作流自动化", category: "工作流", desc: "把重复任务拆成可复用流程，沉淀工具链、输入输出和限制。", content: "138", today: "8", followers: "1.1k", badge: "hot", badgeText: "高活跃", tags: ["流程", "自动化", "提效"], heat: 84, fresh: 74 },
       { name: "#GitHub MCP", category: "Skill/MCP", desc: "MCP Server、权限边界、仓库操作和工具连接实践。", content: "112", today: "6", followers: "982", badge: "new", badgeText: "增长中", tags: ["MCP", "GitHub", "权限"], heat: 72, fresh: 83 },
-      { name: "#代码审查", category: "AI Coding", desc: "AI 辅助 review、风险识别、测试补齐和变更解释。", content: "96", today: "4", followers: "814", badge: "quiet", badgeText: "稳定", tags: ["Review", "测试", "质量"], heat: 68, fresh: 62, followed: true },
+      { name: "#代码审查", category: "AI Coding", desc: "AI 辅助 review、风险识别、测试补齐和变更解释。", content: "96", today: "4", followers: "814", badge: "quiet", badgeText: "稳定", tags: ["Review", "测试", "质量"], heat: 68, fresh: 62 },
       { name: "#教程案例", category: "教程案例", desc: "把可复现的 AI 工具使用路径写成步骤、限制和验收样例。", content: "88", today: "5", followers: "706", badge: "quiet", badgeText: "案例向", tags: ["教程", "复现", "说明"], heat: 64, fresh: 66 },
       { name: "#API 排错", category: "模型与 API", desc: "请求失败、鉴权、限流、日志、重试和可观测性经验。", content: "82", today: "9", followers: "681", badge: "new", badgeText: "持续增长", tags: ["排错", "限流", "日志"], heat: 74, fresh: 89 },
       { name: "#Skill 发布", category: "Skill/MCP", desc: "Skill 文件、License、话题、图标和审核状态的发布经验。", content: "64", today: "3", followers: "512", badge: "quiet", badgeText: "稳定", tags: ["Skill", "发布", "规范"], heat: 56, fresh: 58 }
@@ -944,8 +944,7 @@
       "skill-mcp": { category: "Skill/MCP", sort: "热度", count: "5", items: topics.filter((item) => item.category === "Skill/MCP") },
       tutorial: { category: "教程案例", sort: "热度", count: "4", items: topics.filter((item) => item.category === "教程案例") },
       newest: { category: "全部话题", sort: "最新活跃", count: "42", items: [...topics].sort((a, b) => b.fresh - a.fresh) },
-      followed: { category: "全部话题", sort: "热度", count: "2", items: topics.filter((item) => item.followed), followedOnly: true },
-      empty: { category: "教程案例", sort: "最新活跃", count: "0", items: [], empty: true },
+      empty: { category: "AIGC", sort: "最新活跃", count: "0", items: [], empty: true },
       loading: { category: "全部话题", sort: "热度", count: "42", loading: true },
       failed: { category: "全部话题", sort: "热度", count: "42", failed: true }
     };
@@ -972,7 +971,6 @@
     }
 
     function badgeClass(item) {
-      if (item.followed) return "followed";
       return item.badge || "quiet";
     }
 
@@ -996,7 +994,7 @@
                 <div class="topic-name"><img data-icon src="${icons.topic}" alt="" />${item.name}</div>
                 <p class="topic-desc">${item.desc}</p>
               </div>
-              <span class="topic-badge ${badgeClass(item)}">${item.followed ? "已关注" : item.badgeText}</span>
+              <span class="topic-badge ${badgeClass(item)}">${item.badgeText}</span>
             </div>
             <div class="topic-chips">
               ${item.tags.map((tag) => `<span class="chip">${tag}</span>`).join("")}

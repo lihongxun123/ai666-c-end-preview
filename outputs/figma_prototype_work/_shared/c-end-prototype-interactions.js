@@ -37,6 +37,8 @@
     ["Embedding", "724"]
   ];
   const STANDARD_TOPIC_ICON_SRC = "../../../resources/icons/remixicon/svg/Editor/hashtag.svg";
+  const SEARCH_HISTORY_TERMS = ["\u63d0\u793a\u8bcd\u4f18\u5316"];
+  const SEARCH_HOT_TERMS = ["\u63d0\u793a\u8bcd\u4f18\u5316", "Claude", "image2", "GPT", "seeddance 2", "codex"];
 
   const REVIEW_PAGES = [
     ["首页", "c-end-home-aggregate-feed-v1"],
@@ -158,6 +160,8 @@
       ["image-text", "图文"],
       ["video", "视频"],
       ["model", "模型服务"],
+      ["model-case", "模型案例"],
+      ["api-note", "API经验"],
       ["workflow", "工作流"],
       ["skill", "Skill"],
       ["mcp", "MCP"],
@@ -221,6 +225,7 @@
       logic: [
         "首页不是详情页，也不是发布页；卡片点击进入详情，闪念卡片不进入独立详情。",
         "推荐话题名称进入话题聚合页，右侧箭头进入话题广场。",
+        "动作去向闭环：右侧公告条目进入公告详情，公告更多进入公告列表，推荐话题进入话题聚合或话题广场，活动入口只给当前版本轻反馈，赞助位进入对应内容频道。",
         "操作区统一 icon + 数字，已点赞/已收藏不用外层背景。"
       ],
       ops: [
@@ -230,6 +235,10 @@
       acceptance: [
         "首页不新增顶部 Banner、左侧导航、快速发帖或后台配置说明。",
         "右侧运营位主文本字号和字重一致，推荐话题不加标题/列表分割线。",
+        "内容类型、话题和活动状态使用中性微型 token，不出现渐变、左色条或独立 # 前缀格。",
+        "活动入口条目使用左侧标题/元信息、右侧状态 token 的两列结构，状态不放在列表首列。",
+        "Feed 内容卡片首行展示内容类型，尾部元信息行展示话题、作者时间与数据，话题不在其他行重复出现。",
+        "Feed hover 不新增左侧竖条，列表内容左边界与同组 tab 文案左边界对齐。",
         "横向溢出为 0，页面结构保持当前首页聚合流。"
       ]
     },
@@ -242,11 +251,11 @@
       fields: [
         "信息对象：闪念正文、媒体附件、话题、作者、时间、评论、回复、点赞、分享、热度分。",
         "发闪念正文最多 600 字，媒体最多 6 个，图片和视频同属媒体字段，短视频限制作为发布规则隐藏处理。",
-        "评论只支持纯文字；卡片内摘要评论默认展示 10 条，全部评论展示完整列表。"
+        "评论只支持纯文字；卡片内摘要评论默认展示 10 条，全部评论展示完整列表；点赞按钮只显示图标和数字，不出现“赞”字。"
       ],
       logic: [
         "热门态按近 7 天热度分排序，C端只展示热度分和统计窗口，不展示内部公式。",
-        "评论支持回复闪念和回复评论，视觉上按二级楼层承载。",
+        "评论支持回复闪念和回复评论，视觉上按二级楼层承载；二级回复必须展示回复用户头像，作者本人评论或回复在昵称后展示低饱和“作者”标签。",
         "参与话题进入发闪念并带入话题；推荐话题仍进入话题聚合页。"
       ],
       ops: [
@@ -271,8 +280,10 @@
       ],
       logic: [
         "模板点击切换体验上下文，输入区只表达用户可理解字段。",
+        "动作去向闭环：目标模板和开始体验进入对应体验态或结果态；右侧精选模板进入体验态，案例复用进入结果态；任务返还只进入任务返还说明态，不自动发奖。",
         "点数不足只展示用户可读提醒，不展示余额、扣费、接口错误或真实支付链路。",
-        "任务返还是 7 月运营承接能力，不在原型里表达自动积分发放。"
+        "任务返还是 7 月运营承接能力，不在原型里表达自动积分发放。",
+        "闭环裁决：体验模板浏览、开始体验和结果态保留；任务返还只做人工配置入口；真实在线生成平台、真实余额、真实扣费、自动发奖和任务防刷隐藏后置。"
       ],
       ops: [
         "体验模板、案例复用、任务返还文案和右侧体验点由运营人工维护。",
@@ -280,6 +291,7 @@
       ],
       acceptance: [
         "页面不出现 workflow/API 灰度承接文案。",
+        "页面不出现真实余额、真实额度、真实扣费、自动任务发奖或完整任务中心表达。",
         "状态 token、按钮、右侧栏保持黑白灰 hairline 视觉。",
         "生成成功、点数不足和任务返还状态都能单独走查。"
       ]
@@ -298,49 +310,56 @@
         "状态：首批模型、文本、图像、音频、视频、API、模型详情、案例与经验内容详情、供应商筛选、悬停、空态、加载、失败。"
       ],
       logic: [
-        "模型卡片是聚合入口，整卡进入模型服务频道内的专属详情态；案例与 API 经验生成贴在模型服务频道内进入内容详情态。",
-        "模型服务专属详情先展示模型介绍、适合/不适合场景、使用前确认、内容看点、案例与经验生成贴和下一步入口；内容详情态必须反链回模型详情。",
+        "模型卡片是聚合入口，整卡进入模型服务频道内的专属详情态；案例与 API 经验生成贴按内容类型进入统一详情页的 model-case / api-note 模板，模型服务频道内的 content 态只作为富内容试排态保留。",
+        "模型服务专属详情先展示模型介绍、适合/不适合场景、使用前确认、内容看点、案例与经验生成贴和下一步入口；模型服务相关内容必须保留可选模型关联，关联后反链回模型详情，未关联时仍按普通内容发布。",
         "类型筛选和供应商筛选只改变列表结果，不新增比较页、API 管理页、余额页或真实调用页。",
         "图像、视频、音频生成类案例优先回流到 AIGC 创意广场，模型详情只做能力说明、提示词样例和结果反链。",
-        "Embedding、转写、聚合入口优先承接 API 用户经验和 AI+ 工作流内容。"
+        "Embedding、转写、聚合入口优先承接 API 用户经验和 AI+ 工作流内容。",
+        "闭环裁决：首批 15 模型目录、筛选、模型详情、案例和经验详情保留闭环；API 体验/灰度入口、热门服务和选型参考只做人工承接或内容入口；在线调用、API 控制台、真实额度、余额、调用日志和自动资格判断隐藏后置。"
       ],
       ops: [
         "模型对象库来自中转站 pricing 清单，刷新后由产品人工校对前台分类、供应商归组和内容生产顺序。",
         "前台列表先隐藏非首批模型；官方介绍先由脚本按模板生成初稿，再由运营人工复核来源、边界、成本口径和关联案例。",
         "运营先补首批模型的官方介绍、场景案例生成贴和 API 用户经验生成贴，再补 AIGC 作品反链和长尾模型介绍骨架。",
-        "推荐话题、热门模型服务、选型路径和广告位由运营人工维护；API 灰度名单和回访状态属于运营表，不在 C端卡片展示。"
+        "R1-R3 精修稿在页面内容位只展示脱敏标题、输入摘要、结果摘要和人工复核点；真实调用证据目录保留在版本文档，不直接展示给 C端用户。",
+        "推荐话题、热门模型服务、选型参考和广告位由运营人工维护；API 灰度名单和回访状态属于运营表，不在 C端卡片展示。"
       ],
       acceptance: [
         "筛选计数与当前首批 15 个前台模型口径一致；109 条全量对象库仍保留为后续放量基础。",
-        "模型卡片作者统一显示多元拾光官方，不展示中转站清单编号、类型字段、计费口径或接口类型。",
+        "模型列表使用 2 列自然高度卡片；模型卡片能力标签和作者统一放在底部同一元信息行：左侧最多展示 3 个标签，右侧为 @多元拾光官方；不使用固定高度或绝对定位制造中部留白；不展示中转站清单编号、左上角类型/属性行、计费口径、接口类型、官方介绍或案例集合入口。",
         "首批 15 个模型详情页都能显示模型介绍、适合/不适合、使用前确认、内容看点、2 个案例与经验生成贴和下一步入口；内部生产状态不作为 C端详情主体内容。",
         "每个首批模型的场景案例贴和 API 经验贴都能打开内容详情，详情包含输入材料、生成结果摘要、人工复核点、使用模型和回到模型详情的反链。",
-        "卡片无彩色 accent、无持久多按钮堆叠，不展示真实密钥、实时价格、账户额度、跑分或自动可用性。",
-        "右侧栏包含 API 灰度申请、推荐话题、热门模型服务、选型路径和广告位，并按闪念右栏的轻模块样式展示，不套外部 panel 框体；筛选空态、加载、失败态有用户可读反馈。"
+        "卡片无彩色 accent、无顶部粗条、无渐变标签、无持久多按钮堆叠，不展示真实密钥、实时价格、账户额度、跑分、API 控制台、在线调用或自动可用性。",
+        "二级 tab 保持图标 + 文本的无外框下划线样式；供应商筛选必须提供全部渠道回退。",
+        "右侧栏包含 API 体验申请、推荐话题、热门模型服务、选型参考和图片广告位；选型参考只是内容入口，不表达独立选型系统；筛选空态、加载、失败态有用户可读反馈。"
       ]
     },
     "c-end-ai-plus-channel-v1": {
       title: "AI+ 资产频道",
       purpose: [
         "聚合工作流、Skill、MCP 和教程案例，让用户发现可复用 AI 资产。",
-        "验证专业资产卡片、分类筛选、关注空态和右侧创作入口。"
+        "当前精选是资产筛选口径，不是内容专题或合集对象；右侧入门路径只提供轻量消费引导。"
       ],
       fields: [
-        "信息对象：AI+ 资源、类型、作者/来源、能力标签、话题、收藏/热度/使用量、创作入口。",
-        "状态：精选、最新、热门、关注、工作流、Skill、MCP、教程案例、关注空态、加载、失败。"
+        "信息对象：AI+ 资源、类型、作者/来源、能力标签、话题、收藏/热度/使用量、创作入口、入门路径入口。",
+        "状态：精选、最新、热门、关注、工作流、Skill、MCP、教程案例、关注空态、加载、失败；不展示资源合集、内容专题或可收藏合集。"
       ],
       logic: [
         "卡片点击进入详情，列表内不放复制步骤、安装步骤或持久详情按钮。",
         "关注空态只引导发现和关注，不自动推荐关注关系。",
-        "右侧创作入口进入创作服务对应资产发布路径。"
+        "右侧创作入口进入创作服务对应资产发布路径；入门路径进入已有教程或资产详情，不产生独立合集页。",
+        "闭环裁决：资源列表、精选/最新/热门/关注筛选、类型切换和资源详情入口保留；入门路径、创作入口、热门实战和推荐话题只做人工配置入口；合集创建、维护、收藏、订阅、追更、在线运行、一键安装、权限检测和收益分成隐藏后置。"
       ],
       ops: [
-        "精选资源、热门实战、精选专题、推荐话题和广告位由运营人工维护。",
-        "6-7 月先人工维护资产池和专题，不表达自动排序算法。"
+        "精选资源、热门实战、入门路径、推荐话题和广告位由运营人工维护。",
+        "6-7 月先人工维护资产池和轻入口，不表达自动排序算法，也不表达合集创建、维护、收藏或订阅闭环。"
       ],
       acceptance: [
         "资源卡片保持 AI Asset Card 轻变体。",
-        "右侧创作、热门、专题和话题模块字号字重一致。",
+        "二级 tab 和三级类型筛选不套外框，不使用胶囊 active 背景。",
+        "资源卡片标签和话题 token 不出现渐变、左色条或独立 # 前缀格。",
+        "右侧创作、热门、入门路径和话题模块字号字重一致。",
+        "页面不出现资源合集、新手合集、精选专题、内容专题、合集收藏、合集订阅或追更等合集心智文案。",
         "关注空态、加载、失败态可走查。"
       ]
     },
@@ -357,7 +376,8 @@
       logic: [
         "分类 Tab 只筛选当前搜索结果，不改变全局频道导航。",
         "命中词高亮使用中性弱底，不使用蓝/青强调。",
-        "话题结果进入话题聚合页，其他内容结果进入详情页。"
+        "话题结果进入话题聚合页，其他内容结果进入详情页。",
+        "闭环裁决：搜索提交、结果类型切换、结果点击、无结果、加载和失败态保留；热词、置顶结果和兜底结果只做人工配置；全文搜索、语义搜索、作者搜索、推荐算法、内部召回原因和后台权重隐藏后置。"
       ],
       ops: [
         "推荐搜索、推荐话题、广告位和无结果推荐内容由运营人工维护。",
@@ -365,6 +385,9 @@
       ],
       acceptance: [
         "结果列表与首页内容流视觉一致。",
+        "页面不出现全文搜索、语义搜索、作者搜索、推荐算法或内部召回原因承诺。",
+        "搜索结果卡片内类型、附件和话题标签都使用中性 token，不出现渐变或伪前缀块。",
+        "搜索结果卡片首行展示类型和资源属性标签，尾部元信息行展示话题和来源时间，标题和摘要保持主体阅读位置。",
         "无结果、加载和失败态都有明确下一步入口。",
         "右侧推荐话题遵循全局话题跳转规则。"
       ]
@@ -372,26 +395,29 @@
     "c-end-topic-square-v1": {
       title: "话题广场",
       purpose: [
-        "提供全局话题发现和筛选入口，让用户从主题进入内容消费和创作参与。",
-        "验证话题分类、活跃排序、已关注和空态。"
+        "提供全局话题发现和筛选入口，让用户从主题进入单话题聚合页。",
+        "验证全部话题、少量运营维护分类、热度/最新活跃排序和空态，不做已关注话题列表。"
       ],
       fields: [
-        "信息对象：话题、分类、浏览量/内容量、关注状态、话题说明、右侧推荐话题/活动/广告。",
-        "状态：全部话题、AI Coding、模型与API、AIGC、工作流、Skill/MCP、教程案例、最新活跃、已关注、空态、加载、失败。"
+        "信息对象：话题、分类、内容量、今日新增、关注数、活跃标签、话题说明、右侧热议/增长话题和经验征集入口。",
+        "状态：全部话题、模型与API、AI Coding、工作流、AIGC、最新活跃、空态、加载、失败；内容不足分类先隐藏，不展示已关注话题列表。"
       ],
       logic: [
-        "话题卡片进入话题聚合页；关注只改变关注状态，不引入完整用户等级体系。",
-        "分类和排序只服务发现，不表现后台话题管理。",
-        "话题指标同一模块内保持统一口径。"
+        "话题卡片进入话题聚合页；话题广场只负责发现，不承接关注管理。",
+        "分类是运营维护的固定筛选，不是用户自定义分类，也不表达后台话题管理。",
+        "右侧模型接入经验征集只是运营入口，可回流模型服务内容，不表达独立 API 灰度共创系统。",
+        "闭环裁决：全部话题、固定分类、热度/最新排序和话题卡点击进入聚合页保留；分类 Tab 只做人工维护筛选；已关注话题列表、我的话题中心、话题自动生成、API 灰度话题共创和完整话题治理后台隐藏后置。"
       ],
       ops: [
-        "话题分类、推荐话题、活动入口、广告位和展示顺序由运营人工维护。",
-        "6-7 月优先维护 P0 内容相关话题，降低冷启动空洞。"
+        "话题分类、热议话题、增长话题、经验征集入口和展示顺序由运营人工维护。",
+        "6-7 月优先维护 P0 内容相关话题；无内容分类先隐藏或走空态，不强行铺满分类。"
       ],
       acceptance: [
         "话题页不出现后台分类管理视觉。",
         "推荐话题箭头进入话题广场，话题名进入聚合页。",
-        "已关注、空态、加载和失败状态可走查。"
+        "分类 tabs 仅保留当前内容足够支撑的少量分类。",
+        "页面不出现已关注话题列表、我的话题中心、API 灰度话题共创、浏览路径、话题自动生成、话题治理后台或独立活动系统文案。",
+        "空态、加载和失败状态可走查。"
       ]
     },
     "c-end-topic-aggregate-v1": {
@@ -401,13 +427,15 @@
         "承接推荐话题、内容话题 token 和话题广场卡片跳转。"
       ],
       fields: [
-        "信息对象：话题标题、说明、统计、关注状态、内容流、相关话题、右侧精选/活动/广告。",
+        "信息对象：话题标题、说明、内容统计、新增统计、话题方向标签、关注状态、内容流、相关话题、右侧精选/活动/广告。",
         "状态：推荐、已关注、最新、无内容、加载、失败、不可用、登录关注。"
       ],
       logic: [
         "话题聚合页是话题消费页，不是话题管理页。",
+        "头部统计只展示内容数和新增状态；话题方向标签单独成行，不和统计混排。",
         "关注动作只表达关注状态；登录关注态给出登录引导，不展示权限系统。",
-        "内容卡片点击进入详情，闪念不进入独立详情。"
+        "内容卡片点击进入详情，闪念不进入独立详情。",
+        "闭环裁决：单话题内容列表、推荐/最新切换、关注按钮、内容点击、空态和不可用态保留；话题方向、相关话题和精选内容只做人工配置；我的关注话题入口、话题贡献榜、话题活动系统和复杂排序权重展示隐藏后置。"
       ],
       ops: [
         "话题说明、精选内容、相关话题、活动入口和广告位由运营人工维护。",
@@ -415,7 +443,9 @@
       ],
       acceptance: [
         "话题指标口径统一，不混用浏览量/内容量/热度。",
+        "话题内容卡片首行展示内容类型和精选标签，尾部元信息行展示话题、作者时间与数据，话题不重复展示。",
         "无内容、不可用、登录关注状态有用户可读反馈。",
+        "页面不出现我的关注话题入口、话题贡献榜、话题活动系统或复杂排序权重。",
         "右侧运营位与其他频道对齐。"
       ]
     },
@@ -423,18 +453,23 @@
       title: "内容详情页",
       purpose: [
         "承接内容深度阅读、互动、收藏和相关推荐，是内容消费闭环的核心页。",
-        "验证评论面板、无评论、未登录、不可见、加载失败、权限不足和不同内容类型；模型对象详情由模型服务频道内的专属详情态承接。"
+        "验证评论面板、无评论、未登录、不可见、加载失败、权限不足和不同内容类型；模型对象详情由模型服务频道内的专属详情态承接，模型案例和 API 经验作为统一内容详情模板承接。"
       ],
       fields: [
         "信息对象：标题、正文、作者、时间、内容类型、话题、阅读/评论/点赞/收藏/分享、评论、相关推荐、右侧作者/目录/话题/广告。",
-        "状态：默认、评论面板、无评论、未登录、不可见、加载失败、权限不足、文章、图文、视频、工作流、Skill、MCP、AIGC、闪念。",
+        "状态：默认、评论面板、无评论、未登录、不可见、加载失败、权限不足、文章、图文、视频、模型案例、API经验、工作流、Skill、MCP、AIGC、闪念。",
         "模型相关内容在本页只作为单篇官方介绍、案例、作品说明或用户经验出现，不再承担单模型聚合详情。"
       ],
       logic: [
-        "评论只支持纯文字输入；回复按二级楼层承载，不做无限嵌套。",
+        "评论只支持纯文字输入；回复按二级楼层承载，不做无限嵌套；二级回复必须展示回复用户头像，作者本人评论或回复在昵称后展示低饱和“作者”标签。",
         "已点赞和已收藏使用填充图标 + 深色文本，不加外层背景。",
         "相关推荐卡片进入详情，推荐话题进入话题聚合页。",
-        "单篇模型内容必须反链到模型服务专属详情，让用户回到模型对象、案例集合和 API 经验的聚合入口。"
+        "动作去向闭环：点赞留在当前详情页给轻反馈；评论进入评论面板态；收藏加入默认收藏夹；转发只生成分享反馈；作者头像/名称进入作者公开主页；关注作者切换已关注反馈。",
+        "单篇模型内容通过可选关联模型反链到模型服务专属详情；未关联模型时仍按普通内容进入首页、搜索、话题和作者主页。",
+        "模型案例和 API 经验的右侧目录必须来自正文 Markdown 标题，不使用“正文说明、案例要点”这类低信息量占位目录。",
+        "正文区域按 Markdown 渲染结果呈现，段落和小标题之间不默认加分割线；只有用户正文里输入分割线时才显示分隔。",
+        "实测案例正文需要至少包含一张脱敏过程图、结果图或生成素材图，图片只展示用户理解任务所需的信息，不展示密钥、请求头、余额或完整原始日志。",
+        "闭环裁决：内容阅读、收藏、关注作者、评论入口、相关推荐和相关话题保留闭环；作者卡、目录、相关推荐和右侧栏只做人工配置或内容数据承接；打赏、收益、等级权益、真实 API 凭证、内部审核和复杂评论治理隐藏后置。"
       ],
       ops: [
         "相关推荐、推荐话题、广告位和作者侧重点由运营人工维护。",
@@ -443,9 +478,15 @@
       ],
       acceptance: [
         "评论输入后有发布按钮，回复点击后出现当前评论下的回复框。",
+        "评论点赞按钮只显示图标和数字，不出现“赞”字；作者标签只用于内容作者本人，不扩展成等级、关系或成员身份标签。",
         "二级回复外部无框体。",
+        "左侧互动按钮必须具备明确动作目标：评论到评论面板，收藏到默认收藏夹，转发只给原型反馈，关注作者不跳出详情页。",
+        "作者卡片头像/名称、相关推荐和推荐话题具备可点击去向。",
+        "左侧快捷操作栏外层和图标按钮默认无边框，只用轻背景和图标表达可点击。",
         "C端不展示审核命中、治理状态或实现备注。",
-        "模型相关内容不展示真实密钥、余额、调用日志、消费清单、在线调用入口或实时价格承诺。"
+        "模型相关内容不展示真实密钥、余额、调用日志、消费清单、在线调用入口、API 控制台或实时价格承诺。",
+        "模型案例目录至少覆盖结论、输入、过程/图片、结果、提示写法、复用边界和使用前确认等正文标题。",
+        "模型案例正文不能只有文字说明，必须有脱敏过程截图、结果截图或生成素材图作为可信度证据。"
       ]
     },
     "c-end-user-profile-v1": {
@@ -461,7 +502,9 @@
       logic: [
         "主页 hero 可以展示昵称，不强制加 @；主页内容卡片仍按内容流作者规则呈现。",
         "关注只表达关注/已关注关系，不引入推荐关注、等级、积分或私信。",
-        "手机号使用验证码绑定/解绑，微信使用扫码绑定/解绑。"
+        "手机号使用验证码绑定/解绑，微信使用扫码绑定/解绑。",
+        "动作去向闭环：资料编辑进入编辑弹层；收藏夹入口进入收藏夹页；关注/粉丝进入关系列表；作者工作台进入创作管理态；内容卡片进入统一详情页；关系列表行进入作者公开主页。",
+        "闭环裁决：主页、资料编辑、绑定入口、关注/粉丝列表和内容列表保留；资料完善和绑定提示只做轻路径；私信、推荐关注、等级、积分权益、复杂资料审核和公开关系分组隐藏后置。"
       ],
       ops: [
         "资料完善提示、作者工作台入口、无内容推荐和成长提示由运营人工维护。",
@@ -469,7 +512,9 @@
       ],
       acceptance: [
         "已关注状态不用外层背景。",
+        "主页内容卡片、关注/粉丝列表行和关键按钮必须具备明确动作目标，不出现只能看不能点的关系入口。",
         "资料编辑和绑定状态不展示敏感完整字段。",
+        "页面不出现私信、推荐关注、用户等级、积分权益或公开关系分组。",
         "关注/粉丝列表和无内容态可走查。"
       ]
     },
@@ -486,7 +531,9 @@
       logic: [
         "筛选只改变收藏列表，不创建复杂文件夹层级。",
         "收藏状态使用填充图标 + 深色文本，不加外层背景。",
-        "收藏内容点击进入对应详情或目标页。"
+        "收藏内容点击进入对应详情或目标页。",
+        "动作去向闭环：收藏卡片整卡和查看内容进入统一详情页；取消收藏只从当前原型列表移除；返回主页进入用户主页；类型/标签筛选只改变当前列表。",
+        "闭环裁决：收藏列表、类型/标签筛选、收藏内容点击和空态保留；推荐分类和标签只做内容元数据筛选；多收藏夹、公开收藏夹、批量管理、收藏夹订阅和内部行为标签隐藏后置。"
       ],
       ops: [
         "空态推荐、默认标签和类型筛选文案由运营人工维护。",
@@ -494,6 +541,8 @@
       ],
       acceptance: [
         "收藏列表不出现后台管理按钮。",
+        "每张收藏卡片必须具备详情目标和取消收藏动作目标。",
+        "页面不出现多收藏夹、公开收藏夹、批量管理、收藏夹订阅或内部行为标签。",
         "空态有返回内容消费或发现入口。",
         "API 标签筛选能单独走查。"
       ]
@@ -505,13 +554,17 @@
         "验证轻创作、文章、图文/视频、Skill/MCP 的发布入口和状态流。"
       ],
       fields: [
-        "信息对象：作品、草稿、审核状态、发布路径、Markdown/正文、媒体字段、Skill/MCP 来源、数据概览。",
+        "信息对象：作品、草稿、审核状态、发布路径、Markdown/正文、媒体字段、可选关联模型、Skill/MCP 来源、数据概览。",
         "状态：首页、内容管理、草稿箱、数据概览、创作规范、闪念编辑、文章编辑、图文编辑、视频编辑、Skill 路径、Skill GitHub、Skill 自定义、MCP 路径、MCP GitHub、MCP 自定义、审核中、未通过、已发布。"
       ],
       logic: [
         "发布字段按对象分离，媒体作为独立字段，不和正文混排成不可控展示。",
+        "文章编辑器复用闪念式输入体验：Markdown 正文、工具条、计数和媒体入口放在同一写作壳内，避免和用户的轻发布习惯割裂。",
+        "关联模型是文章发布的可选字段；关联后内容可进入对应模型详情的案例/经验列表，未关联时仍按普通内容进入首页、搜索、话题和作者主页。",
+        "动作去向闭环：发布类型选择进入对应编辑态，保存草稿只给轻反馈并保留草稿回查入口，提交进入审核中，未通过回查进入修改后重提，已发布回到内容管理。",
         "审核中、未通过、已发布只表达用户可见状态，不暴露审核命中或操作日志。",
-        "作者工作台是轻版能力，不扩展完整运营后台。"
+        "作者工作台是轻版能力，不扩展完整运营后台。",
+        "闭环裁决：作者工作台、发布类型选择、草稿保存、提交、未通过回查和基础数据保留；投稿入口、样板内容和发布提示只做人工配置；收益中心、排行榜、复杂趋势、完整审核后台、内部命中词和后台审核供应商隐藏后置。"
       ],
       ops: [
         "创作规范、状态提示、推荐发布路径和右侧提示由运营人工维护。",
@@ -519,7 +572,10 @@
       ],
       acceptance: [
         "编辑态字段清晰，发布后状态能进入对应管理列表。",
+        "文章编辑态具备类似闪念的 Markdown 写作壳、工具条、计数和媒体入口。",
+        "模型关联字段必须标记为可选，并说明不关联也可以正常发布。",
         "未通过态只给用户可执行修改方向。",
+        "页面不出现收益中心、排行榜、完整审核后台、内部命中词或后台审核供应商。",
         "创作服务保持工作台效率，但不出现 B端管理系统口吻。"
       ]
     },
@@ -536,7 +592,9 @@
       logic: [
         "公告是用户阅读页，不展示后台发布流程、审核状态或配置字段。",
         "公告详情只承接阅读和返回，不放多余运营按钮。",
-        "失败态给用户可读反馈和重试/返回入口。"
+        "动作去向闭环：公告列表条目进入详情，详情返回公告列表，空态返回公告列表，失败态提供重试和返回入口。",
+        "失败态给用户可读反馈和重试/返回入口。",
+        "闭环裁决：公告列表、公告详情、空态和失败态保留；灰度说明、反馈公告和规则告知只做人工发布；多分类公告、公告评论、站内信推送、公告后台排序和操作者展示隐藏后置。"
       ],
       ops: [
         "公告标题、正文、排序、置顶和展示周期由运营人工维护。",
@@ -544,10 +602,49 @@
       ],
       acceptance: [
         "公告列表不后台化，不出现系统日志或配置说明。",
+        "页面不出现多分类公告、公告评论、站内信推送、公告后台排序或操作者展示。",
         "空态、加载和失败态可走查。",
         "公告详情正文排版保持阅读优先。"
       ]
     }
+  };
+
+  const GLOBAL_PHASE_RULES = {
+    purpose: [
+      "6.17-6.18 阶段沉淀：当前 C端 v1.0 已从单页修补收口为设计系统、动作闭环、业务隐藏边界、评论视觉和公网发布治理的组合约束。",
+      "后续页面优化先遵循 `AI666_C端6.17-6.18有效沉淀总表_V0.1.md`，再进入具体页面字段和状态。"
+    ],
+    fields: [
+      "全局字段口径：顶部导航固定 72px，主画布 1280px；一级频道默认 860px 内容区 + 24px 间距 + 396px 右侧运营区；详情页为 852px 正文 + 32px 间距 + 396px 右栏。",
+      "内容卡片字段层级：首行展示内容类型或精选标签，主体承载标题和摘要，尾部元信息行展示话题、作者/来源时间和数据。",
+      "评论字段口径：点赞只展示图标 + 数字；二级回复展示头像；只有内容作者本人显示低饱和“作者”标签。"
+    ],
+    logic: [
+      "所有 C端可见入口必须有用户可理解的目标页、目标状态或轻反馈；没有闭环的能力只能降级为人工配置入口或隐藏后置。",
+      "后台治理、审核命中、操作日志、API Key、Token、真实额度、余额、扣费、调用明细、在线调用和自动资格判断不进入 C端可见页面。",
+      "模型服务前台只展示首批可运营模型；模型列表是入口，官方介绍、案例、API 经验、作品反链和使用前确认由详情页承接。"
+    ],
+    ops: [
+      "右侧运营栏、推荐话题、热门池、精选内容、公告、活动入口、灰度名单和无结果兜底先由运营人工配置，不在 C端表达自动算法或完整后台。",
+      "真实调用证据、素材目录和人工复核记录保留在版本文档或验证产物中，C端只展示脱敏摘要、结果片段和用户可理解的复用边界。",
+      "页面截图是可再生成证据，不作为长期事实来源；长期口径以规范文档、验证 JSON、原型 HTML、页面脚本和版本状态文件为准。"
+    ],
+    acceptance: [
+      "阶段沉淀验收：页面不得回流左侧黑条、顶部灰黑粗条、渐变标签、重边框、卡片套卡片、整块列表外框、目录装饰竖条或 999px 胶囊误套。",
+      "全局设计系统：顶部导航固定为 72px；主画布统一为 1280px；一级模块默认使用 860px 内容区 + 24px 间距 + 396px 右侧运营区；公告为 1280px 全宽；详情页为 852px 正文 + 32px 间距 + 396px 右栏；创作工作台收口到 1280px 画布。",
+      "组件几何验收：入口 icon 必须在容器内居中；元信息、热度、评论、点赞、收藏等 icon + 数字组合必须 inline-flex 对齐；Tab、输入框、按钮、右侧栏和广告位不得出现错位、过矮或胶囊化误套。",
+      "交互细节验收：顶部全局搜索在所有 C端页面点击/聚焦必须展开同一套建议层；搜索建议层与输入框同宽贴合；创作中心 hover 弹层和创作页 hover 卡片必须使用中性色、无重阴影。",
+      "视觉减重验收：右侧栏标题和条目不默认使用分割线；模型/资源卡不使用顶部灰黑粗条；广告位不使用左侧黑条；搜索、公告等列表页不套整块细线外框；详情目录和相关推荐不使用装饰竖条、圆角块或条目底线。"
+    ]
+  };
+
+  const DEFAULT_PAGE_RULES = {
+    title: "页面走查规则",
+    purpose: ["确认页面目的、字段状态、产品规则、运营维护和验收口径。"],
+    fields: ["按当前页面对象逐项确认字段、状态和入口。"],
+    logic: ["只表达 C端用户可见逻辑，不展示后台实现说明。"],
+    ops: ["可运营维护项先用配置文件承接。"],
+    acceptance: ["页面无横向溢出，状态和跳转可走查。"]
   };
 
   const RULE_SECTION_LABELS = {
@@ -557,6 +654,18 @@
     ops: "运营维护",
     acceptance: "验收口径"
   };
+
+  function mergePhaseRules(pageRules) {
+    const merged = { ...pageRules };
+    Object.keys(RULE_SECTION_LABELS).forEach((key) => {
+      const globalItems = GLOBAL_PHASE_RULES[key] || [];
+      const pageItems = pageRules[key] || [];
+      merged[key] = key === "acceptance"
+        ? [...pageItems, ...globalItems]
+        : [...globalItems, ...pageItems];
+    });
+    return merged;
+  }
 
   const TAB_STATE = {
     "c-end-home-aggregate-feed-v1": { "推荐": "default", "关注": "following", "最新": "latest", "热门": "hot" },
@@ -580,15 +689,12 @@
     },
     "c-end-topic-square-v1": {
       "全部话题": "default",
-      "AI Coding": "ai-coding",
       "模型与API": "model-api",
-      "AIGC": "aigc",
+      "AI Coding": "ai-coding",
       "工作流": "workflow",
-      "Skill/MCP": "skill-mcp",
-      "教程案例": "tutorial",
+      "AIGC": "aigc",
       "热度": "default",
-      "最新活跃": "newest",
-      "已关注": "followed"
+      "最新活跃": "newest"
     },
     "c-end-topic-aggregate-v1": { "推荐": "default", "最新": "latest" }
   };
@@ -694,13 +800,13 @@
       }
 
       html.prototype-preview:not(.prototype-creation-workbench) .nav-shell {
-        width: 1440px !important;
-        max-width: 1440px !important;
+        width: 1280px !important;
+        max-width: 1280px !important;
         height: 72px !important;
         margin-left: auto !important;
         margin-right: auto !important;
         display: grid !important;
-        grid-template-columns: 220px 438px 430px 280px !important;
+        grid-template-columns: 220px 438px 350px 200px !important;
         gap: 24px !important;
         align-items: center !important;
       }
@@ -961,15 +1067,15 @@
         height: 58px !important;
         min-height: 58px !important;
         margin: 0 0 16px !important;
-        padding: 0 20px !important;
-        border: 1px solid var(--line, #e6ebf2) !important;
-        border-radius: 8px !important;
-        background: rgba(255, 255, 255, 0.96) !important;
-        box-shadow: 0 12px 28px rgba(22, 32, 54, 0.06) !important;
+        padding: 0 !important;
+        border: 0 !important;
+        border-radius: 0 !important;
+        background: transparent !important;
+        box-shadow: none !important;
         display: flex !important;
         align-items: center !important;
         justify-content: space-between !important;
-        overflow: hidden !important;
+        overflow: visible !important;
       }
 
       html.prototype-channel-page [data-tabs],
@@ -977,12 +1083,12 @@
         height: 58px !important;
         display: flex !important;
         align-items: center !important;
-        gap: 4px !important;
+        gap: 24px !important;
       }
 
       html.prototype-channel-page [data-tab] {
         height: 58px !important;
-        padding: 0 12px !important;
+        padding: 0 !important;
         border: 0 !important;
         border-radius: 0 !important;
         background: transparent !important;
@@ -990,25 +1096,26 @@
         position: relative !important;
         display: inline-flex !important;
         align-items: center !important;
-        color: #667085 !important;
+        color: #5f5f5f !important;
         font-size: 15px !important;
         line-height: 20px !important;
-        font-weight: 650 !important;
+        font-weight: 560 !important;
       }
 
       html.prototype-channel-page [data-tab].active {
-        color: #0f766e !important;
+        color: #242424 !important;
+        font-weight: 620 !important;
       }
 
       html.prototype-channel-page [data-tab].active::after {
         content: "" !important;
         position: absolute !important;
-        left: 12px !important;
-        right: 12px !important;
+        left: 0 !important;
+        right: 0 !important;
         bottom: 0 !important;
-        height: 3px !important;
-        border-radius: 3px 3px 0 0 !important;
-        background: #16b8a6 !important;
+        height: 1px !important;
+        border-radius: 0 !important;
+        background: #242424 !important;
       }
 
       html.prototype-channel-page .new-pill,
@@ -1027,15 +1134,20 @@
       html.prototype-preview.prototype-canvas-standard [data-search-layout],
       html.prototype-preview.prototype-canvas-standard [data-topic-layout],
       html.prototype-preview.prototype-canvas-standard [data-detail-layout],
-      html.prototype-preview.prototype-canvas-standard [data-layout] {
-        width: 1240px !important;
-        max-width: 1240px !important;
+      html.prototype-preview.prototype-canvas-standard [data-layout],
+      html.prototype-preview.prototype-canvas-standard .search-layout,
+      html.prototype-preview.prototype-canvas-standard .topic-layout,
+      html.prototype-preview.prototype-canvas-standard .topic-square-layout,
+      html.prototype-preview.prototype-canvas-standard .detail-layout,
+      html.prototype-preview.prototype-canvas-standard .favorites-shell {
+        width: 1280px !important;
+        max-width: 1280px !important;
         margin-left: auto !important;
         margin-right: auto !important;
         padding-left: 0 !important;
         padding-right: 0 !important;
         display: grid !important;
-        grid-template-columns: 820px 340px !important;
+        grid-template-columns: 860px 396px !important;
         column-gap: 24px !important;
         gap: 24px !important;
         align-items: start !important;
@@ -1044,16 +1156,18 @@
       html.prototype-preview.prototype-canvas-standard [data-main-panel],
       html.prototype-preview.prototype-canvas-standard [data-main-list],
       html.prototype-preview.prototype-canvas-standard .main-panel,
-      html.prototype-preview.prototype-canvas-standard .feed {
-        width: 820px !important;
+      html.prototype-preview.prototype-canvas-standard .feed,
+      html.prototype-preview.prototype-canvas-standard .results-panel,
+      html.prototype-preview.prototype-canvas-standard .main-stack {
+        width: 860px !important;
         min-width: 0 !important;
-        max-width: 820px !important;
+        max-width: 860px !important;
       }
 
       html.prototype-preview.prototype-dir-c-end-announcement-list-v1 [data-announcement-layout],
       html.prototype-preview.prototype-dir-c-end-announcement-list-v1 .announcement-layout {
-        width: 1440px !important;
-        max-width: 1440px !important;
+        width: 1280px !important;
+        max-width: 1280px !important;
         margin-left: auto !important;
         margin-right: auto !important;
         display: block !important;
@@ -1064,16 +1178,31 @@
 
       html.prototype-preview.prototype-dir-c-end-announcement-list-v1 [data-main-panel],
       html.prototype-preview.prototype-dir-c-end-announcement-list-v1 .panel {
-        width: 1440px !important;
+        width: 1280px !important;
         min-width: 0 !important;
-        max-width: 1440px !important;
+        max-width: 1280px !important;
       }
 
       html.prototype-preview.prototype-canvas-standard [data-right-rail],
       html.prototype-preview.prototype-canvas-standard .right-rail {
-        width: 340px !important;
-        min-width: 340px !important;
-        max-width: 340px !important;
+        width: 396px !important;
+        min-width: 396px !important;
+        max-width: 396px !important;
+      }
+
+      html.prototype-preview.prototype-dir-c-end-detail-page-v1 .detail-layout,
+      html.prototype-preview.prototype-dir-c-end-detail-page-v1 [data-detail-layout] {
+        width: 1280px !important;
+        max-width: 1280px !important;
+        grid-template-columns: 852px 396px !important;
+        column-gap: 32px !important;
+        gap: 32px !important;
+      }
+
+      html.prototype-preview.prototype-dir-c-end-detail-page-v1 .content-panel,
+      html.prototype-preview.prototype-dir-c-end-detail-page-v1 [data-main-panel] {
+        width: 852px !important;
+        max-width: 852px !important;
       }
 
       html.prototype-preview.prototype-canvas-standard .works-grid,
@@ -1098,12 +1227,34 @@
       }
 
       html.prototype-preview.prototype-creation-workbench [data-work-shell] {
-        width: 1240px !important;
-        max-width: 1240px !important;
+        width: 1280px !important;
+        max-width: 1280px !important;
         margin-left: auto !important;
         margin-right: auto !important;
-        grid-template-columns: 220px 672px 300px !important;
+        grid-template-columns: 216px 696px 320px !important;
         gap: 24px !important;
+      }
+
+      html.prototype-preview.prototype-creation-workbench [data-workspace],
+      html.prototype-preview.prototype-creation-workbench .workspace {
+        width: 1280px !important;
+        max-width: 1280px !important;
+        min-width: 0 !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+        grid-template-columns: 216px minmax(0, 696px) 320px !important;
+        gap: 24px !important;
+      }
+
+      html.prototype-preview.prototype-creation-workbench [data-workspace].no-right-rail,
+      html.prototype-preview.prototype-creation-workbench .workspace.no-right-rail {
+        grid-template-columns: 216px minmax(0, 1040px) !important;
+      }
+
+      html.prototype-preview.prototype-creation-workbench .workspace.no-right-rail .main {
+        width: 1040px !important;
+        max-width: 1040px !important;
+        min-width: 0 !important;
       }
 
       .nav-item,
@@ -1330,10 +1481,10 @@
         z-index: 1500;
         width: 384px;
         padding: 12px;
-        border: 1px solid rgba(18, 107, 255, 0.16);
-        border-radius: 12px;
+        border: 1px solid #efefef;
+        border-radius: 8px;
         background: rgba(255, 255, 255, 0.98);
-        box-shadow: 0 18px 46px rgba(15, 23, 42, 0.16);
+        box-shadow: none;
         display: none;
       }
 
@@ -1348,21 +1499,165 @@
       }
 
       .prototype-creator-item {
-        border: 1px solid #e4ebf5;
-        border-radius: 8px;
+        border: 1px solid #f1f1f1;
+        border-radius: 6px;
         padding: 10px;
-        background: #f8fbff;
-        color: #1f2a44;
+        background: #ffffff;
+        color: #4f4f4f;
         font-size: 13px;
         line-height: 18px;
         cursor: pointer;
+        box-shadow: none;
+      }
+
+      .prototype-creator-item:hover {
+        border-color: #e8e8e8;
+        background: #fafafa;
       }
 
       .prototype-creator-item strong {
         display: block;
         margin-bottom: 2px;
         font-size: 13px;
-        color: #0f766e;
+        color: #242424;
+      }
+
+      .search-clear {
+        width: 24px;
+        height: 24px;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        border: 0;
+        border-radius: 999px;
+        background: #f2f2f2;
+        color: #6b6b6b;
+        font-size: 18px;
+        line-height: 1;
+        cursor: pointer;
+        flex: 0 0 auto;
+      }
+
+      body.has-search-value .search-clear {
+        display: inline-flex;
+      }
+
+      .search-dropdown {
+        position: absolute;
+        left: -1px;
+        top: 40px;
+        z-index: 1600;
+        width: calc(100% + 2px);
+        min-height: 220px;
+        display: none;
+        padding: 18px 24px 22px;
+        box-sizing: border-box;
+        border: 1px solid #242424;
+        border-top: 0;
+        border-radius: 0;
+        background: rgba(255, 255, 255, 0.98);
+        box-shadow: none;
+        cursor: default;
+      }
+
+      body.search-open .search-dropdown {
+        display: block;
+      }
+
+      .search-section + .search-section {
+        margin-top: 18px;
+      }
+
+      .search-section-head {
+        min-height: 22px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        color: #6b6b6b;
+        font-size: 12px;
+        line-height: 18px;
+      }
+
+      .history-list {
+        min-height: 28px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .history-chip {
+        height: 28px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 0 12px;
+        border: 1px solid #e8e8e8;
+        border-radius: 6px;
+        background: #ffffff;
+        color: #4f4f4f;
+        font-size: 12px;
+        line-height: 18px;
+        font-weight: 500;
+        text-decoration: none;
+      }
+
+      .history-chip::before {
+        content: "#";
+        color: #8a8a8a;
+        font-weight: 500;
+      }
+
+      .history-chip:hover {
+        border-color: #dedede;
+        background: #fafafa;
+        color: #242424;
+      }
+
+      .history-delete-button {
+        width: 26px;
+        height: 26px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 0;
+        background: transparent;
+        color: #6b6b6b;
+        font-size: 0;
+        line-height: 0;
+        cursor: pointer;
+      }
+
+      .history-delete-button::after {
+        content: "";
+        width: 14px;
+        height: 14px;
+        display: block;
+        opacity: 0.72;
+        background: url("../../../resources/icons/remixicon/svg/System/delete-bin-line.svg") center / contain no-repeat;
+      }
+
+      .hot-list {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        column-gap: 32px;
+        row-gap: 10px;
+      }
+
+      .hot-item {
+        min-height: 24px;
+        display: inline-flex;
+        align-items: center;
+        color: #242424;
+        font-size: 13px;
+        line-height: 20px;
+        font-weight: 600;
+        text-decoration: none;
+      }
+
+      .hot-item:hover {
+        color: #000000;
       }
 
       .prototype-topic-more {
@@ -1515,14 +1810,15 @@
       .prototype-topic-chip-unified {
         display: inline-flex !important;
         align-items: center !important;
-        height: 24px !important;
-        min-height: 24px !important;
+        height: 22px !important;
+        min-height: 22px !important;
         padding: 0 8px !important;
-        border: 0 !important;
-        border-radius: 999px !important;
-        background: #f4f7fb !important;
-        color: #667085 !important;
-        font: 650 12px/18px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+        border: 1px solid #e2e2e2 !important;
+        border-radius: 4px !important;
+        background: #ffffff !important;
+        background-image: none !important;
+        color: #4b4b4b !important;
+        font: 500 12px/20px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
         letter-spacing: 0 !important;
         white-space: nowrap !important;
         box-shadow: none !important;
@@ -1620,14 +1916,14 @@
       }
 
       html.prototype-preview.prototype-ai666-home-skin.prototype-has-topbar .topbar .nav-shell {
-        width: 1440px !important;
-        max-width: 1440px !important;
+        width: 1280px !important;
+        max-width: 1280px !important;
         height: 72px !important;
         margin-left: auto !important;
         margin-right: auto !important;
         display: grid !important;
-        grid-template-columns: 220px 438px 430px 280px !important;
-        column-gap: 26px !important;
+        grid-template-columns: 220px 438px 350px 200px !important;
+        column-gap: 24px !important;
         align-items: center !important;
       }
 
@@ -1751,12 +2047,14 @@
       }
 
       html.prototype-preview.prototype-ai666-home-skin .top-search {
+        position: relative !important;
         height: 38px !important;
         border: 1px solid #efefef !important;
-        border-radius: 999px !important;
-        background: #fafafa !important;
+        border-radius: 8px !important;
+        background: #ffffff !important;
         box-shadow: none !important;
         color: #242424 !important;
+        z-index: 1400 !important;
       }
 
       html.prototype-preview.prototype-ai666-home-skin .top-search input,
@@ -1764,6 +2062,20 @@
         color: #777777 !important;
         font-size: 14px !important;
         font-weight: 400 !important;
+      }
+
+      html.prototype-preview.prototype-ai666-home-skin body.search-open .top-search.interactive-search {
+        border-color: #242424 !important;
+        border-bottom-color: transparent !important;
+        border-radius: 0 !important;
+        background: #ffffff !important;
+      }
+
+      html.prototype-preview.prototype-ai666-home-skin .search-dropdown {
+        border-color: #242424 !important;
+        border-radius: 0 !important;
+        background: rgba(255, 255, 255, 0.98) !important;
+        box-shadow: none !important;
       }
 
       html.prototype-preview.prototype-ai666-home-skin .top-actions {
@@ -1777,7 +2089,7 @@
       html.prototype-preview.prototype-ai666-home-skin .top-action {
         min-height: 36px !important;
         border: 1px solid transparent !important;
-        border-radius: 999px !important;
+        border-radius: 6px !important;
         background: transparent !important;
         box-shadow: none !important;
         color: #242424 !important;
@@ -1794,12 +2106,36 @@
         background: #fafafa !important;
       }
 
+      html.prototype-preview.prototype-ai666-home-skin .prototype-creator-popover {
+        border-color: #efefef !important;
+        border-radius: 8px !important;
+        background: rgba(255, 255, 255, 0.98) !important;
+        box-shadow: none !important;
+      }
+
+      html.prototype-preview.prototype-ai666-home-skin .prototype-creator-item {
+        border-color: #f1f1f1 !important;
+        border-radius: 6px !important;
+        background: #ffffff !important;
+        color: #4f4f4f !important;
+        box-shadow: none !important;
+      }
+
+      html.prototype-preview.prototype-ai666-home-skin .prototype-creator-item:hover {
+        border-color: #e8e8e8 !important;
+        background: #fafafa !important;
+      }
+
+      html.prototype-preview.prototype-ai666-home-skin .prototype-creator-item strong {
+        color: #242424 !important;
+      }
+
       html.prototype-preview.prototype-ai666-home-skin .icon-btn,
       html.prototype-preview.prototype-ai666-home-skin .icon-button,
       html.prototype-preview.prototype-ai666-home-skin .icon-action,
       html.prototype-preview.prototype-ai666-home-skin .quick-action {
         border: 0 !important;
-        border-radius: 999px !important;
+        border-radius: 8px !important;
         background: transparent !important;
         box-shadow: none !important;
         color: #3f3f3f !important;
@@ -1832,8 +2168,29 @@
       html.prototype-preview.prototype-ai666-home-skin [data-search-layout],
       html.prototype-preview.prototype-ai666-home-skin [data-topic-layout],
       html.prototype-preview.prototype-ai666-home-skin [data-detail-layout],
-      html.prototype-preview.prototype-ai666-home-skin [data-layout] {
+      html.prototype-preview.prototype-ai666-home-skin [data-layout],
+      html.prototype-preview.prototype-ai666-home-skin .search-layout,
+      html.prototype-preview.prototype-ai666-home-skin .topic-layout,
+      html.prototype-preview.prototype-ai666-home-skin .topic-square-layout,
+      html.prototype-preview.prototype-ai666-home-skin .detail-layout,
+      html.prototype-preview.prototype-ai666-home-skin .favorites-shell {
+        column-gap: 24px !important;
+        gap: 24px !important;
+      }
+
+      html.prototype-preview.prototype-ai666-home-skin.prototype-dir-c-end-detail-page-v1 .detail-layout,
+      html.prototype-preview.prototype-ai666-home-skin.prototype-dir-c-end-detail-page-v1 [data-detail-layout] {
         column-gap: 32px !important;
+        gap: 32px !important;
+      }
+
+      html.prototype-preview.prototype-ai666-home-skin.prototype-canvas-standard body [data-main-layout].layout {
+        width: 1280px !important;
+        max-width: 1280px !important;
+        display: grid !important;
+        grid-template-columns: 860px 396px !important;
+        column-gap: 24px !important;
+        gap: 24px !important;
       }
 
       html.prototype-preview.prototype-ai666-home-skin [data-right-rail],
@@ -1869,6 +2226,15 @@
         font-weight: 700 !important;
       }
 
+      html.prototype-preview.prototype-ai666-home-skin .rail-head,
+      html.prototype-preview.prototype-ai666-home-skin [data-topic-rail-standard] .rail-head {
+        min-height: 22px !important;
+        height: auto !important;
+        padding: 0 !important;
+        margin: 0 0 14px !important;
+        border-bottom: 0 !important;
+      }
+
       html.prototype-preview.prototype-ai666-home-skin .rail-more,
       html.prototype-preview.prototype-ai666-home-skin .rail-link,
       html.prototype-preview.prototype-ai666-home-skin .small-link,
@@ -1878,7 +2244,7 @@
         padding: 0 !important;
         overflow: hidden !important;
         border: 0 !important;
-        border-radius: 999px !important;
+        border-radius: 4px !important;
         background: transparent !important;
         color: transparent !important;
         font-size: 0 !important;
@@ -1924,7 +2290,7 @@
       html.prototype-preview.prototype-ai666-home-skin .rail-row + .rail-row,
       html.prototype-preview.prototype-ai666-home-skin .term-item + .term-item,
       html.prototype-preview.prototype-ai666-home-skin .topic-item + .topic-item {
-        border-top: 1px solid #f5f5f5 !important;
+        border-top: 0 !important;
       }
 
       html.prototype-preview.prototype-ai666-home-skin .rail-sub,
@@ -2002,6 +2368,7 @@
       html.prototype-preview.prototype-ai666-home-skin .mode-card:hover {
         border-color: #dddddd !important;
         background: #fcfcfc !important;
+        box-shadow: none !important;
         transform: translateY(-1px);
       }
 
@@ -2042,6 +2409,14 @@
         box-shadow: none !important;
       }
 
+      html.prototype-preview.prototype-ai666-home-skin .feed-item::before,
+      html.prototype-preview.prototype-ai666-home-skin [data-feed-item]::before,
+      html.prototype-preview.prototype-ai666-home-skin .content-card::before,
+      html.prototype-preview.prototype-ai666-home-skin [data-topic-card]::before,
+      html.prototype-preview.prototype-ai666-home-skin [data-result-card]::before,
+      html.prototype-preview.prototype-ai666-home-skin .result-card::before,
+      html.prototype-preview.prototype-ai666-home-skin [data-flash-card]::before,
+      html.prototype-preview.prototype-ai666-home-skin .flash-card::before,
       html.prototype-preview.prototype-ai666-home-skin .service-card::before,
       html.prototype-preview.prototype-ai666-home-skin [data-service-card]::before,
       html.prototype-preview.prototype-ai666-home-skin .resource-card::before,
@@ -2050,11 +2425,8 @@
       html.prototype-preview.prototype-ai666-home-skin [data-work-card]::before,
       html.prototype-preview.prototype-ai666-home-skin .template-card::before,
       html.prototype-preview.prototype-ai666-home-skin .goal-card::before {
-        height: 2px !important;
-        border-radius: 0 !important;
-        background: #242424 !important;
-        background-image: none !important;
-        opacity: 0.42 !important;
+        content: none !important;
+        display: none !important;
       }
 
       html.prototype-preview.prototype-ai666-home-skin .goal-card.active,
@@ -2160,9 +2532,44 @@
         font-weight: 620 !important;
       }
 
+      html.prototype-preview.prototype-ai666-home-skin .tabs-card,
+      html.prototype-preview.prototype-ai666-home-skin .tabs-panel,
+      html.prototype-preview.prototype-ai666-home-skin .type-panel,
+      html.prototype-preview.prototype-ai666-home-skin [data-tabs-bar],
+      html.prototype-preview.prototype-ai666-home-skin [data-type-bar],
+      html.prototype-preview.prototype-ai666-home-skin [data-filter-bar],
+      html.prototype-preview.prototype-ai666-home-skin [data-filter-panel] {
+        border: 0 !important;
+        border-radius: 0 !important;
+        background: transparent !important;
+        background-image: none !important;
+        box-shadow: none !important;
+      }
+
+      html.prototype-preview.prototype-ai666-home-skin .type-tab,
+      html.prototype-preview.prototype-ai666-home-skin [data-type-tab],
+      html.prototype-preview.prototype-ai666-home-skin [data-type-filter],
+      html.prototype-preview.prototype-ai666-home-skin .type-pill {
+        position: relative !important;
+        border: 0 !important;
+        border-radius: 0 !important;
+        background: transparent !important;
+        background-image: none !important;
+        box-shadow: none !important;
+        color: #6f6f6f !important;
+      }
+
       html.prototype-preview.prototype-ai666-home-skin .type-tab.active,
       html.prototype-preview.prototype-ai666-home-skin [data-type-tab].active,
-      html.prototype-preview.prototype-ai666-home-skin [data-type-filter].active,
+      html.prototype-preview.prototype-ai666-home-skin [data-type-filter].active {
+        border-color: transparent !important;
+        background: transparent !important;
+        background-image: none !important;
+        color: #242424 !important;
+        box-shadow: none !important;
+        font-weight: 620 !important;
+      }
+
       html.prototype-preview.prototype-ai666-home-skin .supplier-option.active {
         border-color: #dcdcdc !important;
         background: #f8f8f8 !important;
@@ -2200,13 +2607,14 @@
       html.prototype-preview.prototype-ai666-home-skin button[data-content-type] {
         position: relative !important;
         min-height: 22px !important;
-        padding: 2px 10px 2px 12px !important;
-        overflow: hidden !important;
-        border: 0 !important;
-        border-radius: 0 4px 4px 0 !important;
-        background: linear-gradient(90deg, rgba(36, 36, 36, 0.12) 0%, rgba(36, 36, 36, 0.055) 58%, rgba(36, 36, 36, 0) 100%) !important;
+        padding: 1px 8px !important;
+        overflow: visible !important;
+        border: 1px solid #e8e8e8 !important;
+        border-radius: 4px !important;
+        background: #f7f7f7 !important;
+        background-image: none !important;
         box-shadow: none !important;
-        color: #3f3f3f !important;
+        color: #4f4f4f !important;
         font-size: 12px !important;
         font-weight: 580 !important;
         line-height: 18px !important;
@@ -2219,13 +2627,8 @@
       html.prototype-preview.prototype-ai666-home-skin i[data-content-type]::before,
       html.prototype-preview.prototype-ai666-home-skin em[data-content-type]::before,
       html.prototype-preview.prototype-ai666-home-skin button[data-content-type]::before {
-        content: "" !important;
-        position: absolute !important;
-        left: 0 !important;
-        top: 0 !important;
-        bottom: 0 !important;
-        width: 4px !important;
-        background: #242424 !important;
+        content: none !important;
+        display: none !important;
       }
 
       html.prototype-preview.prototype-ai666-home-skin .topic-chip,
@@ -2237,11 +2640,12 @@
         display: inline-flex !important;
         align-items: center !important;
         min-height: 22px !important;
-        padding: 0 8px 0 0 !important;
-        gap: 7px !important;
+        padding: 0 8px !important;
+        gap: 6px !important;
         border: 1px solid #e2e2e2 !important;
-        border-radius: 5px !important;
+        border-radius: 4px !important;
         background: #ffffff !important;
+        background-image: none !important;
         box-shadow: none !important;
         color: #4b4b4b !important;
         font-size: 12px !important;
@@ -2255,19 +2659,8 @@
       html.prototype-preview.prototype-ai666-home-skin .topic-pill::before,
       html.prototype-preview.prototype-ai666-home-skin [data-topic-chip]::before,
       html.prototype-preview.prototype-ai666-home-skin [data-favorite-tag]::before {
-        content: "#" !important;
-        position: static !important;
-        width: 20px !important;
-        align-self: stretch !important;
-        display: grid !important;
-        place-items: center !important;
-        flex: 0 0 20px !important;
-        border-right: 1px solid #dfdfdf !important;
-        background: #f2f2f2 !important;
-        color: #242424 !important;
-        font-size: 12px !important;
-        font-weight: 650 !important;
-        line-height: 20px !important;
+        content: none !important;
+        display: none !important;
       }
 
       html.prototype-preview.prototype-ai666-home-skin .pill,
@@ -2277,12 +2670,21 @@
       html.prototype-preview.prototype-ai666-home-skin .state-chip,
       html.prototype-preview.prototype-ai666-home-skin .activity-status {
         border: 1px solid #ebebeb !important;
-        border-radius: 999px !important;
-        background: #fafafa !important;
+        border-radius: 4px !important;
+        background: #ffffff !important;
+        background-image: none !important;
         box-shadow: none !important;
         color: #555555 !important;
         font-size: 12px !important;
         font-weight: 560 !important;
+        line-height: 18px !important;
+      }
+
+      html.prototype-preview.prototype-ai666-home-skin .activity-status::before,
+      html.prototype-preview.prototype-ai666-home-skin .status-running::before,
+      html.prototype-preview.prototype-ai666-home-skin .status-register::before {
+        content: none !important;
+        display: none !important;
       }
 
       html.prototype-preview.prototype-ai666-home-skin .pill.active,
@@ -2294,7 +2696,24 @@
       html.prototype-preview.prototype-ai666-home-skin .badge.green,
       html.prototype-preview.prototype-ai666-home-skin .badge.blue {
         border-color: #d9d9d9 !important;
-        background: linear-gradient(90deg, #f2f2f2 0%, #ffffff 100%) !important;
+        background: #f8f8f8 !important;
+        background-image: none !important;
+        color: #242424 !important;
+      }
+
+      html.prototype-preview.prototype-ai666-home-skin .action.liked,
+      html.prototype-preview.prototype-ai666-home-skin .comment-action.is-liked,
+      html.prototype-preview.prototype-ai666-home-skin .quick-action.primary {
+        border-color: transparent !important;
+        background: transparent !important;
+        background-image: none !important;
+        color: #242424 !important;
+        box-shadow: none !important;
+      }
+
+      html.prototype-preview.prototype-ai666-home-skin .action.liked *,
+      html.prototype-preview.prototype-ai666-home-skin .comment-action.is-liked *,
+      html.prototype-preview.prototype-ai666-home-skin .quick-action.primary * {
         color: #242424 !important;
       }
 
@@ -2370,7 +2789,7 @@
       html.prototype-preview.prototype-ai666-home-skin .ad-banner,
       html.prototype-preview.prototype-ai666-home-skin [data-right-module="ad-banner"] {
         border: 1px solid #f1f1f1 !important;
-        border-left: 4px solid #242424 !important;
+        border-left: 1px solid #f1f1f1 !important;
         border-radius: 6px !important;
         background: linear-gradient(90deg, #f6f6f6 0%, #ffffff 76%) !important;
         box-shadow: none !important;
@@ -2419,6 +2838,66 @@
         object-fit: cover !important;
       }
 
+      html.prototype-preview.prototype-ai666-home-skin.prototype-dir-c-end-search-results-v1 .results-panel,
+      html.prototype-preview.prototype-ai666-home-skin.prototype-dir-c-end-announcement-list-v1 .panel {
+        border: 0 !important;
+        border-radius: 0 !important;
+        background: transparent !important;
+        box-shadow: none !important;
+        overflow: visible !important;
+      }
+
+      html.prototype-preview.prototype-ai666-home-skin.prototype-dir-c-end-search-results-v1 .rail-title,
+      html.prototype-preview.prototype-ai666-home-skin.prototype-dir-c-end-topic-aggregate-v1 .rail-title,
+      html.prototype-preview.prototype-ai666-home-skin.prototype-dir-c-end-topic-aggregate-v1 .rail-head .rail-title {
+        color: #242424 !important;
+        font-size: 15px !important;
+        line-height: 22px !important;
+        font-weight: 620 !important;
+      }
+
+      html.prototype-preview.prototype-ai666-home-skin.prototype-dir-c-end-search-results-v1 .term-name,
+      html.prototype-preview.prototype-ai666-home-skin.prototype-dir-c-end-search-results-v1 .topic-name,
+      html.prototype-preview.prototype-ai666-home-skin.prototype-dir-c-end-topic-aggregate-v1 .related-item,
+      html.prototype-preview.prototype-ai666-home-skin.prototype-dir-c-end-topic-aggregate-v1 .featured-item,
+      html.prototype-preview.prototype-ai666-home-skin.prototype-dir-c-end-topic-aggregate-v1 .activity-item {
+        color: #4f4f4f !important;
+        font-size: 13px !important;
+        line-height: 20px !important;
+        font-weight: 400 !important;
+      }
+
+      html.prototype-preview.prototype-ai666-home-skin.prototype-dir-c-end-search-results-v1 [data-right-module="recommended-topic"] .topic-list,
+      html.prototype-preview.prototype-ai666-home-skin.prototype-dir-c-end-search-results-v1 [data-right-module="recommended-topic"] .prototype-topic-list {
+        padding-top: 12px !important;
+      }
+
+      html.prototype-preview.prototype-ai666-home-skin.prototype-dir-c-end-topic-square-v1 [data-right-rail] .rail-item,
+      html.prototype-preview.prototype-ai666-home-skin.prototype-dir-c-end-topic-square-v1 [data-right-module] .rail-item {
+        padding: 0 !important;
+        border: 0 !important;
+        border-radius: 0 !important;
+        background: transparent !important;
+        box-shadow: none !important;
+      }
+
+      html.prototype-preview.prototype-ai666-home-skin.prototype-dir-c-end-detail-page-v1 .related-item {
+        padding-bottom: 0 !important;
+        border-bottom: 0 !important;
+      }
+
+      html.prototype-preview.prototype-ai666-home-skin.prototype-dir-c-end-detail-page-v1 .toc-item,
+      html.prototype-preview.prototype-ai666-home-skin.prototype-dir-c-end-detail-page-v1 .toc-item.active {
+        padding-left: 0 !important;
+        border-left: 0 !important;
+        border-radius: 0 !important;
+        background: transparent !important;
+      }
+
+      html.prototype-preview.prototype-ai666-home-skin.prototype-dir-c-end-detail-page-v1 [data-right-module="toc"] .rail-icon-link {
+        display: none !important;
+      }
+
       html.prototype-preview.prototype-ai666-home-skin .left-nav,
       html.prototype-preview.prototype-ai666-home-skin .side-nav {
         border-right: 1px solid #f2f2f2 !important;
@@ -2456,6 +2935,108 @@
         background: #242424 !important;
       }
 
+      html.prototype-preview.prototype-ai666-home-skin .topbar .top-actions .icon-btn,
+      html.prototype-preview.prototype-ai666-home-skin .topbar .top-actions .icon-button {
+        border: 0 !important;
+        border-radius: 8px !important;
+        background: transparent !important;
+        box-shadow: none !important;
+      }
+
+      html.prototype-preview.prototype-ai666-home-skin .topbar .top-actions .avatar {
+        border: 1px solid #f2f2f2 !important;
+        box-shadow: none !important;
+      }
+
+      html.prototype-preview.prototype-ai666-home-skin .topic-card,
+      html.prototype-preview.prototype-ai666-home-skin [data-topic-square-card],
+      html.prototype-preview.prototype-ai666-home-skin .profile-card,
+      html.prototype-preview.prototype-ai666-home-skin [data-profile-card],
+      html.prototype-preview.prototype-ai666-home-skin .quick-card,
+      html.prototype-preview.prototype-ai666-home-skin .profile-quick-card,
+      html.prototype-preview.prototype-ai666-home-skin .relation-card,
+      html.prototype-preview.prototype-ai666-home-skin .state-panel,
+      html.prototype-preview.prototype-ai666-home-skin .main-panel,
+      html.prototype-preview.prototype-ai666-home-skin .content-panel,
+      html.prototype-preview.prototype-ai666-home-skin .unavailable-card,
+      html.prototype-preview.prototype-ai666-home-skin .asset-module,
+      html.prototype-preview.prototype-ai666-home-skin .stat-row,
+      html.prototype-preview.prototype-ai666-home-skin .result-preview,
+      html.prototype-preview.prototype-ai666-home-skin .code-block,
+      html.prototype-preview.prototype-ai666-home-skin .callout {
+        border-radius: 6px !important;
+        box-shadow: none !important;
+      }
+
+      html.prototype-preview.prototype-ai666-home-skin .quick-dock {
+        border-radius: 8px !important;
+        background: #ffffff !important;
+        box-shadow: none !important;
+        backdrop-filter: none !important;
+      }
+
+      html.prototype-preview.prototype-ai666-home-skin .quick-action,
+      html.prototype-preview.prototype-ai666-home-skin .quick-badge,
+      html.prototype-preview.prototype-ai666-home-skin .type-tab,
+      html.prototype-preview.prototype-ai666-home-skin .type-pill,
+      html.prototype-preview.prototype-ai666-home-skin .filter-pill,
+      html.prototype-preview.prototype-ai666-home-skin .eyebrow,
+      html.prototype-preview.prototype-ai666-home-skin .asset-tag,
+      html.prototype-preview.prototype-ai666-home-skin .follow-button,
+      html.prototype-preview.prototype-ai666-home-skin .quick-icon,
+      html.prototype-preview.prototype-ai666-home-skin .rail-title small,
+      html.prototype-preview.prototype-ai666-home-skin .ad-badge,
+      html.prototype-preview.prototype-ai666-home-skin .dot {
+        border-radius: 4px !important;
+        box-shadow: none !important;
+      }
+
+      html.prototype-preview.prototype-ai666-home-skin .preview-line,
+      html.prototype-preview.prototype-ai666-home-skin .skeleton-block {
+        border-radius: 2px !important;
+      }
+
+      html.prototype-preview.prototype-ai666-home-skin .profile-avatar-large,
+      html.prototype-preview.prototype-ai666-home-skin .relation-avatar,
+      html.prototype-preview.prototype-ai666-home-skin .modal-avatar {
+        box-shadow: none !important;
+      }
+
+      html.prototype-preview.prototype-ai666-home-skin .profile-name,
+      html.prototype-preview.prototype-ai666-home-skin .author-name,
+      html.prototype-preview.prototype-ai666-home-skin .panel-title strong,
+      html.prototype-preview.prototype-ai666-home-skin .rail-head strong,
+      html.prototype-preview.prototype-ai666-home-skin .rail-main,
+      html.prototype-preview.prototype-ai666-home-skin .rail-main span,
+      html.prototype-preview.prototype-ai666-home-skin .summary-num,
+      html.prototype-preview.prototype-ai666-home-skin .topic-name,
+      html.prototype-preview.prototype-ai666-home-skin .topic-kicker,
+      html.prototype-preview.prototype-ai666-home-skin .filter-label,
+      html.prototype-preview.prototype-ai666-home-skin .ad-label,
+      html.prototype-preview.prototype-ai666-home-skin .ad-badge,
+      html.prototype-preview.prototype-ai666-home-skin .eyebrow,
+      html.prototype-preview.prototype-ai666-home-skin .num,
+      html.prototype-preview.prototype-ai666-home-skin .follow-button,
+      html.prototype-preview.prototype-ai666-home-skin .source-metric span,
+      html.prototype-preview.prototype-ai666-home-skin .goal-card strong,
+      html.prototype-preview.prototype-ai666-home-skin .publish-card strong,
+      html.prototype-preview.prototype-ai666-home-skin .stat strong,
+      html.prototype-preview.prototype-ai666-home-skin .author-stat strong,
+      html.prototype-preview.prototype-ai666-home-skin .topic-stat strong {
+        font-weight: 700 !important;
+      }
+
+      html.prototype-preview.prototype-ai666-home-skin .filter-label,
+      html.prototype-preview.prototype-ai666-home-skin .ad-badge {
+        line-height: 18px !important;
+      }
+
+      html.prototype-preview.prototype-ai666-home-skin .reply,
+      html.prototype-preview.prototype-ai666-home-skin .toc-item,
+      html.prototype-preview.prototype-ai666-home-skin .toc-item.active {
+        border-left-width: 0 !important;
+      }
+
       html.prototype-preview.prototype-ai666-home-skin .prototype-shell-link.active,
       html.prototype-preview.prototype-ai666-home-skin .prototype-shell-close {
         border-color: #242424 !important;
@@ -2486,7 +3067,6 @@
     const navShell = document.querySelector(".nav-shell");
     if (!navShell) return;
     const active = activePrimaryLabel(currentDir());
-    const isHome = currentDir() === "c-end-home-aggregate-feed-v1";
     const navItems = Object.keys(PAGE_DIRS).map((label) => (
       `<span class="nav-item${label === active ? " active" : ""}">${label}</span>`
     )).join("");
@@ -2501,9 +3081,9 @@
       <nav class="primary-nav" aria-label="一级导航" data-primary-nav>
         ${navItems}
       </nav>
-      <label class="top-search" data-top-search${isHome ? " data-interactive-search" : ""}>
+      <label class="top-search" data-top-search data-interactive-search>
         <img src="../../../resources/icons/remixicon/svg/System/search-line.svg" alt="" />
-        <input type="text" value="" placeholder="搜索内容、话题、模型服务、工作流"${isHome ? " data-interactive-search-input" : ""} />
+        <input type="text" value="" placeholder="搜索内容、话题、模型服务、工作流" data-interactive-search-input />
       </label>
       <div class="top-actions">
         <button class="creator-btn" type="button" data-creator-button>
@@ -2539,6 +3119,121 @@
           navigate(dir);
         }
       });
+    });
+  }
+
+  function bindGlobalSearchPopover() {
+    const resultUrl = (term) => {
+      const keyword = (term || "").trim();
+      const url = new URL(pageUrl("c-end-search-results-v1", "default"), window.location.href);
+      if (keyword) url.searchParams.set("keyword", keyword);
+      return url.href;
+    };
+    const openResults = (term) => {
+      const keyword = (term || "").trim();
+      if (!keyword) return;
+      window.location.href = resultUrl(keyword);
+    };
+    const setSearchOpen = (open) => {
+      document.body.classList.toggle("search-open", open);
+    };
+    const syncInputState = (input) => {
+      document.body.classList.toggle("has-search-value", Boolean(input?.value.trim()));
+    };
+
+    document.querySelectorAll("[data-top-search], .top-search").forEach((topSearch) => {
+      const input = topSearch.querySelector("input");
+      if (!input) return;
+
+      topSearch.classList.add("interactive-search");
+      topSearch.setAttribute("data-interactive-search", "true");
+      input.setAttribute("data-interactive-search-input", "true");
+
+      if (!topSearch.querySelector("[data-search-clear]")) {
+        const clearButton = document.createElement("button");
+        clearButton.type = "button";
+        clearButton.className = "search-clear";
+        clearButton.setAttribute("data-search-clear", "true");
+        clearButton.setAttribute("aria-label", "\u6e05\u7a7a\u641c\u7d22");
+        clearButton.textContent = "\u00d7";
+        input.insertAdjacentElement("afterend", clearButton);
+      }
+
+      if (!topSearch.querySelector("[data-search-dropdown]")) {
+        const dropdown = document.createElement("div");
+        dropdown.className = "search-dropdown";
+        dropdown.setAttribute("data-search-dropdown", "true");
+        dropdown.setAttribute("data-global-search-popover", "true");
+        dropdown.innerHTML = `
+          <div class="search-section">
+            <div class="search-section-head">
+              <span>\u5386\u53f2\u8bb0\u5f55</span>
+              <button class="history-delete-button" type="button" data-clear-history aria-label="\u6e05\u7a7a\u5386\u53f2"></button>
+            </div>
+            <div class="history-list">
+              ${SEARCH_HISTORY_TERMS.map((term) => `<a class="history-chip" href="${resultUrl(term)}" data-search-term data-global-search-term data-search-history-chip>${term}</a>`).join("")}
+            </div>
+          </div>
+          <div class="search-section">
+            <div class="search-section-head">\u70ed\u95e8\u63a8\u8350</div>
+            <div class="hot-list">
+              ${SEARCH_HOT_TERMS.map((term) => `<a class="hot-item" href="${resultUrl(term)}" data-search-term data-global-search-term data-search-hot-item>${term}</a>`).join("")}
+            </div>
+          </div>
+        `;
+        topSearch.appendChild(dropdown);
+      }
+
+      if (topSearch.getAttribute("data-global-search-bound") === "true") return;
+      topSearch.setAttribute("data-global-search-bound", "true");
+
+      const clearButton = topSearch.querySelector("[data-search-clear]");
+      topSearch.addEventListener("pointerdown", (event) => {
+        if (event.target.closest("[data-search-term], [data-global-search-term]")) return;
+        setSearchOpen(true);
+      }, true);
+      topSearch.addEventListener("click", (event) => {
+        if (event.target.closest("[data-search-term], [data-global-search-term]")) return;
+        event.preventDefault();
+        setSearchOpen(true);
+        input.focus();
+      });
+      input.addEventListener("focus", () => {
+        setSearchOpen(true);
+        syncInputState(input);
+      });
+      input.addEventListener("input", () => syncInputState(input));
+      input.addEventListener("keydown", (event) => {
+        if (event.key !== "Enter") return;
+        event.preventDefault();
+        openResults(input.value);
+      });
+      clearButton?.addEventListener("click", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        input.value = "";
+        input.focus();
+        syncInputState(input);
+      });
+      topSearch.querySelector("[data-clear-history]")?.addEventListener("click", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        topSearch.querySelectorAll("[data-search-history-chip]").forEach((node) => node.remove());
+      });
+      topSearch.querySelectorAll("[data-search-term], [data-global-search-term]").forEach((node) => {
+        node.addEventListener("click", (event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          openResults(node.textContent || "");
+        });
+      });
+    });
+
+    if (document.body.getAttribute("data-global-search-outside-bound") === "true") return;
+    document.body.setAttribute("data-global-search-outside-bound", "true");
+    document.addEventListener("pointerdown", (event) => {
+      if (event.target.closest("[data-top-search], .top-search")) return;
+      setSearchOpen(false);
     });
   }
 
@@ -2588,6 +3283,20 @@
       if (event.target.closest("[data-topic-more]")) {
         event.preventDefault();
         navigate("c-end-topic-square-v1", "default");
+        return;
+      }
+
+      const announcementLink = event.target.closest("[data-announcement-link]");
+      if (announcementLink) {
+        event.preventDefault();
+        const targetState = announcementLink.getAttribute("data-state-target") || "detail";
+        navigate("c-end-announcement-list-v1", targetState);
+        return;
+      }
+
+      if (event.target.closest("[data-activity-entry]")) {
+        event.preventDefault();
+        showToast("活动入口当前只做运营轻反馈，完整活动页未进入 C端 V1.0。");
         return;
       }
 
@@ -2665,6 +3374,17 @@
     document.addEventListener("keydown", (event) => {
       if (event.target.closest("[data-prototype-shell]")) return;
       if (event.key !== "Enter" && event.key !== " ") return;
+      const announcementLink = event.target.closest("[data-announcement-link]");
+      if (announcementLink) {
+        event.preventDefault();
+        navigate("c-end-announcement-list-v1", announcementLink.getAttribute("data-state-target") || "detail");
+        return;
+      }
+      if (event.target.closest("[data-activity-entry]")) {
+        event.preventDefault();
+        showToast("活动入口当前只做运营轻反馈，完整活动页未进入 C端 V1.0。");
+        return;
+      }
       if (!event.target.closest("[data-topic-rail], .topic-tag, [data-topic-chip], .prototype-topic-chip-unified")) return;
       event.preventDefault();
       navigate("c-end-topic-aggregate-v1", "default");
@@ -2911,7 +3631,8 @@
   }
 
   function setPrototypeRuleTab(shell, nextKey) {
-    const key = PAGE_RULES[currentDir()]?.[nextKey]?.length ? nextKey : "purpose";
+    const currentRules = mergePhaseRules(PAGE_RULES[currentDir()] || DEFAULT_PAGE_RULES);
+    const key = currentRules[nextKey]?.length ? nextKey : "purpose";
     shell.querySelectorAll("[data-prototype-rule-tab]").forEach((tab) => {
       const active = tab.getAttribute("data-prototype-rule-tab") === key;
       tab.classList.toggle("is-active", active);
@@ -2929,14 +3650,8 @@
 
     const dir = currentDir();
     const states = STATE_LABELS[dir] || [];
-    const rules = PAGE_RULES[dir] || {
-      title: "页面走查规则",
-      purpose: ["确认页面目的、字段状态、产品规则、运营维护和验收口径。"],
-      fields: ["按当前页面对象逐项确认字段、状态和入口。"],
-      logic: ["只表达 C端用户可见逻辑，不展示后台实现说明。"],
-      ops: ["可运营维护项先用配置文件承接。"],
-      acceptance: ["页面无横向溢出，状态和跳转可走查。"]
-    };
+    const pageRules = PAGE_RULES[dir] || DEFAULT_PAGE_RULES;
+    const rules = mergePhaseRules(pageRules);
     const params = new URLSearchParams(window.location.search);
     const activeState = params.get("state") || states[0]?.[0] || "";
     const requestedReview = params.get("review");
@@ -3025,6 +3740,7 @@
     normalizeTopbar();
     bindStickyShadow();
     bindPrimaryNavigation();
+    bindGlobalSearchPopover();
     bindPageEntrances();
     bindStateTabs();
     syncActiveStateControls();

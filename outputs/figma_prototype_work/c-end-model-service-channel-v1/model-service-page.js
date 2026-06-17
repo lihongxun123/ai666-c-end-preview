@@ -1,8 +1,10 @@
 (function () {
   const icon = (name) => `../../../resources/icons/remixicon/svg/${name}`;
+  const figmaAsset = (name) => `../_assets/figma/${name}`;
   const params = new URLSearchParams(window.location.search);
   const state = params.get("state") || "default";
   const stage = document.querySelector("[data-stage]");
+  document.body.setAttribute("data-model-service-state", state);
   const allModels = window.MODEL_SERVICE_MODELS || [];
   const sourceMeta = window.MODEL_SERVICE_META || { counts: { all: allModels.length } };
   const firstBatchModelIds = [
@@ -63,9 +65,21 @@
   }
 
   function providerOptionVisible(provider) {
+    if (provider === "all") return true;
     if (provider === "xai") return false;
     if (provider === "unknown") return visibleProviderKeys.has("unknown");
     return visibleProviderKeys.has(provider);
+  }
+
+  function setActiveProvider(provider = "") {
+    document.querySelectorAll("[data-provider-option]").forEach((button) => {
+      button.classList.toggle("active", button.dataset.providerOption === provider);
+    });
+  }
+
+  function setProviderLabel(text = "全部渠道") {
+    const label = document.querySelector("[data-provider-label]");
+    if (label) label.textContent = text;
   }
 
   function syncProviderOptions() {
@@ -102,6 +116,18 @@
     return url.href;
   }
 
+  function contentTemplateState(postId) {
+    return postId === "api" ? "api-note" : "model-case";
+  }
+
+  function canonicalContentDetailHref(item, postId) {
+    const url = new URL("../c-end-detail-page-v1/index.html", window.location.href);
+    url.searchParams.set("state", contentTemplateState(postId));
+    url.searchParams.set("model", item.model);
+    url.searchParams.set("source", "model-service");
+    return url.href;
+  }
+
   function listHref(type = "all") {
     const url = new URL(window.location.href);
     url.searchParams.set("state", type === "all" ? "default" : type);
@@ -115,6 +141,7 @@
   }
 
   function filterByProvider(provider) {
+    if (provider === "all") return models;
     return models.filter((item) => {
       if (provider === "xai") return item.providerKey === "grok";
       if (provider === "unknown") return item.providerKey === "unknown";
@@ -755,8 +782,170 @@
     }
   };
 
+  const R1_PUBLISH_POST_COPY = {
+    "text-embedding-3-large": {
+      caseTitle: "用 Embedding 做社区内容召回：从问题找到证据片段",
+      caseInput: "输入 5 段脱敏运营资料和一个新用户问题，先向量化，再按相似度召回最相关片段。",
+      caseOutput: "页面展示召回片段、相似度和人工复核点，强调 Embedding 负责检索，不直接生成最终答案。",
+      apiTitle: "Embedding 不直接回答：RAG 链路里它到底负责什么",
+      apiInput: "记录切分粒度、召回命中、误召回、后续生成模型选择和人工复核动作。",
+      apiOutput: "沉淀 API 经验：先评估召回质量，再接入 GPT/Claude/Gemini 生成或人工整理，不能承诺固定准确率。"
+    },
+    "gemini-2.5-pro": {
+      caseTitle: "用 gemini-2.5-pro 把产品计划抽成字段表",
+      caseInput: "输入一段脱敏产品计划文本，要求抽取目标用户、模块、风险、缺失字段和复核项。",
+      caseOutput: "输出字段表、置信度说明和人工复核清单，适合产品/运营把长资料变成可检查结构。",
+      apiTitle: "Gemini 适合多源抽取，还是长文档总结？",
+      apiInput: "记录输入类型、字段缺失、输出表格稳定性和人工修订量。",
+      apiOutput: "沉淀经验：多源抽取先定义字段，再让模型补结构；关键事实仍要人工回查原文。"
+    },
+    "claude-sonnet-4-6": {
+      caseTitle: "用 Claude Sonnet 4.6 总结模型服务发布计划",
+      caseInput: "输入一段模型服务频道计划，要求压成摘要、结构化要点、风险和下一步。",
+      caseOutput: "输出可二次编辑的总结稿，适合把长文档变成评审材料、周报初稿和运营任务。",
+      apiTitle: "Claude Sonnet 适合日常长文档，还是要升级到 Opus？",
+      apiInput: "记录文档长度、拆分方式、输出稳定性、人工修订量和是否需要更高质量审读。",
+      apiOutput: "沉淀选型经验：日常整理先用 Sonnet，质量优先或复杂审读再升级，并保留人工判断。"
+    },
+    "gpt-4.1": {
+      caseTitle: "用 gpt-4.1 找出 CSV 解析里的末行丢失问题",
+      caseInput: "输入一段 CSV 解析函数和异常描述，要求定位问题、评估风险、给最小修复和测试用例。",
+      caseOutput: "输出问题摘要、风险等级、最小修复建议和测试用例，适合开发者快速形成审查清单。",
+      apiTitle: "gpt-4.1 做代码审查时，和 mini 模型怎么分工？",
+      apiInput: "记录同类代码审查在高能力模型和轻量模型上的输出差异、人工修订量和风险等级。",
+      apiOutput: "沉淀经验：低风险重复检查可先用 mini，涉及数据丢失、权限、支付或隐私时升级到 gpt-4.1。"
+    },
+    "whisper-1": {
+      caseTitle: "用 whisper-1 把测试音频转成可整理文本",
+      caseInput: "输入本地合成的授权测试音频，生成转写文本，再标注需要人工校对的地方。",
+      caseOutput: "输出转写文本、摘要和复核点，适合会议纪要、字幕和访谈整理前的第一步。",
+      apiTitle: "Whisper 只负责转写：为什么还要人工校对？",
+      apiInput: "记录音频格式、语言、时长、噪声、转写文本、人工修正点和是否需要后续摘要模型。",
+      apiOutput: "沉淀 API 经验：转写不是最终稿，重要纪要、字幕和访谈稿都要人工校对；需要摘要时再接文本模型。"
+    }
+  };
+
+  const R1_LONG_POST_BODY = {
+    "text-embedding-3-large": {
+      case: {
+        sourceNote: "实测增强试排稿 V0.3；证据来自本地 embeddings run、脱敏运营资料片段和召回结果摘要。",
+        process: [
+          "准备 5 段脱敏运营资料，内容只保留任务方向、用户反馈和案例复用线索。",
+          "把 5 段资料和 1 个用户问题一起送入 embeddings 链路，目标是先找证据片段，不让模型直接写最终答案。",
+          "记录返回摘要：本轮生成 6 条向量，维度为 3072，命中 3 条相关片段；再由人工判断这些片段能否支撑内容选题。",
+          "把召回片段改写成 C端能读懂的案例，不展示向量原始值、完整 JSON 或内部 run 路径。"
+        ],
+        prompt: "给定 5 段脱敏社区运营资料和一个问题：首批案例素材应该优先选择什么任务？请返回最相关的资料片段、相似度排序，并基于片段给出可复核判断。不要生成最终宣传文案。",
+        outputExcerpt: [
+          "rag_doc_b / score=0.4051：新用户更想按任务类型选模型，而不是按供应商列表翻模型。",
+          "rag_doc_a / score=0.3355：带前后对比和成本提醒的案例更容易被收藏。",
+          "rag_doc_c / score=0.2160：带可复用提示词的案例比泛泛发布说明更容易带来追问。"
+        ],
+        evidence: [
+          { label: "请求类型", value: "embeddings；目标模型 text-embedding-3-large" },
+          { label: "结果摘要", value: "embeddingCount=6，embeddingDimensions=3072，prompt_tokens=128" },
+          { label: "输出证据", value: "保留 3 条脱敏召回片段和相似度分数，不展示向量原始值" },
+          { label: "截图素材", value: "当前未保存 API 控制台过程截图；已保存脱敏结果 JSON，公开前需补过程截图或脱敏调用图" }
+        ],
+        body: [
+          "很多人第一次做知识库，会把问题想成：我需要一个能回答所有问题的模型。但真正开始做时，最先遇到的通常不是回答质量，而是证据在哪里。资料一多，用户的问题和资料之间会隔一层：用户说的是任务，资料里写的是片段、反馈和记录。回答之前，系统得先找到可能相关的证据。",
+          "这次实测把 text-embedding-3-large 放在很靠前的位置。它不是用来写答案的，也不是用来总结文章的。它做的事情更底层：把资料片段和用户问题转成可比较的向量，再按相似度找出可能相关的片段。换句话说，它负责把一堆材料里可能有用的部分先捞出来。",
+          "输入材料是 5 段脱敏社区运营资料。测试问题很具体：首批案例素材应该优先选择什么任务？返回结果里，排第一的片段说新用户更想按任务类型选模型，而不是按供应商列表翻模型；第二条片段说有前后对比和成本提醒的案例更容易被收藏；第三条片段说带可复用提示词的案例更容易带来后续追问。",
+          "这些片段的价值不在于分数看起来漂亮，而在于它们能解释一个运营判断：首批案例不要只写模型名，也不要只写模型能做什么。更值得先做的是用户能看懂、能照着试、能明白为什么选这个模型的任务型案例。比如检索、代码审查、音频转写、长文档摘要，它们都有明确输入、输出和人工复核点。",
+          "这类实测内容应该把过程写清楚。第一步是准备脱敏资料，确保没有用户隐私、账号、价格日志和请求头。第二步是写一个真实问题，不要用抽象问题测试召回。第三步是记录命中片段和分数，但不要把分数包装成准确率。第四步才是把片段整理成用户可读的判断。这样读者知道这篇内容不是凭空写的，也知道结果的边界在哪里。",
+          "对用户来说，这个案例最有价值的提醒是：Embedding 适合做检索底座，不适合直接生成结论。它可以告诉你哪些资料可能相关，但不能保证资料本身是最新的，也不能判断某段资料是不是足以支持最终发布。召回命中不是事实正确，召回片段也不一定完整。资料切分方式、问题写法、相似度阈值和人工复核都会影响结果。",
+          "如果你正在做社区知识库、站内搜索、案例推荐或客服问答，可以先准备 10 到 30 条脱敏资料，写 5 个真实用户问题，看召回片段是否对得上，再决定要不要接后续生成模型。不要一上来就追求大规模资料库。小样本里召回不准，大规模后只会更难排查。先把提示词、召回片段和人工判断留痕，后续才有素材可以变成可信案例。",
+          "真正要长期复用这条链路，还要定期回看召回失败的样本。哪些问题没有找到资料，哪些资料被误召回，哪些结论需要补充人工判断，都应该进入下一轮资料整理。这样案例才不是一次性的展示，而是能持续改进知识库质量的工作方式。"
+        ],
+        reuse: ["知识库、站内搜索、FAQ、RAG 和内容推荐的 API 用户。"],
+        boundary: ["不要把 Embedding 写成聊天模型。", "不展示向量原始值。", "不承诺固定召回准确率。", "公开前需要补脱敏过程截图或调用过程图。"]
+      }
+    },
+    "gpt-4.1": {
+      case: {
+        sourceNote: "实测增强试排稿 V0.3；证据来自本地 chat_completions run、脱敏代码片段和代码审查输出。",
+        process: [
+          "准备一个可复现的脱敏代码问题：CSV 解析函数在文件末尾无换行时丢失最后一行。",
+          "把函数、异常现象和期望输出一起作为输入，让模型只做根因定位、风险判断、最小修复和测试用例。",
+          "记录模型输出：问题指向 slice(0, -1) 无条件移除最后一项，并给出只在末尾空行时 pop 的修复方式。",
+          "人工复核代码片段和测试场景，确认这只是审查建议，不是自动合并到生产代码。"
+        ],
+        prompt: "请审查这段脱敏 CSV 解析函数。已知问题：当 CSV 文件末尾没有换行符时，最后一行会丢失。请输出问题摘要、风险等级、最小修复建议和至少 4 个测试用例。不要重写整个模块。",
+        outputExcerpt: [
+          "问题摘要：parseRows 在解析末尾无换行 CSV 时会丢失最后一行。",
+          "根因：slice(0, -1) 无条件删除最后一项；末尾无换行时最后一项是有效数据。",
+          "修复：先 split，再只在最后一行为空字符串时移除。",
+          "测试：覆盖末尾有换行、末尾无换行、单行无换行和空文件。"
+        ],
+        codeExcerpt: {
+          label: "模型输出里的最小修复节选",
+          code: "export function parseRows(text) {\n  const lines = text.split('\\n');\n  if (lines[lines.length - 1] === '') {\n    lines.pop();\n  }\n  return lines.map((line) => line.split(','));\n}"
+        },
+        evidence: [
+          { label: "请求类型", value: "chat_completions；目标模型 gpt-4.1" },
+          { label: "用量摘要", value: "prompt_tokens=217，completion_tokens=542，total_tokens=759" },
+          { label: "输出证据", value: "保留问题摘要、风险等级、最小修复和测试用例节选" },
+          { label: "截图素材", value: "当前未保存 IDE 或 API 控制台截图；公开前建议补一张脱敏代码输入与输出截图" }
+        ],
+        body: [
+          "代码审查最怕泛泛而谈。真正能帮到开发者的案例，最好从一个能复现的问题开始。这次输入不是一整个项目，也不是模糊的“帮我优化代码”，而是一段脱敏的 CSV 解析函数，加上一句明确异常：文件末尾没有换行符时，最后一行会丢失。",
+          "gpt-4.1 的输出先把问题压到一个很具体的位置：slice(0, -1)。这段写法会无条件删除 split 后的最后一项。如果 CSV 末尾有换行，最后一项通常是空字符串，删掉看起来没问题；但如果 CSV 末尾没有换行，最后一项就是有效数据，删除它就会造成数据丢失。",
+          "这个判断是可复核的。你可以用两段输入对比：a,b 换行 c,d 换行，和 a,b 换行 c,d。前者 split 后最后可能多出一个空项；后者最后一项就是 c,d。模型没有把问题说成风格优化，也没有建议重写整个解析器，而是把根因落在边界条件上。",
+          "模型给出的最小修复思路也比较清楚：先按换行切分，再只在最后一行为空字符串时移除。这个修复不改变正常行的解析方式，只处理末尾空行。它还补了测试样例：末尾有换行、末尾无换行、单行无换行、空文件。这样输出就不只是指出问题，而是把复现条件和回归测试也补上了。",
+          "这类内容如果要写成社区案例，可信度来自三个东西：第一，有明确输入和异常现象；第二，有模型输出节选，能看到它到底抓住了哪个点；第三，有人工复核边界，说明这不是自动合并的生产修复。缺少这三项，文章写得再长也像泛泛的代码助手宣传。",
+          "这个案例适合工程用户，因为它能说明模型在代码审查里的合理用法。不是把生产代码交给模型自动改，也不是让模型重写整个模块，而是让模型围绕明确的问题做定位、解释和最小修复建议。最后是否采用，仍然要由开发者跑测试、看边界样例并走代码评审。",
+          "如果你想复用这个流程，可以先写清楚异常现象，再给相关函数，补一句期望行为，最后要求模型输出风险等级、根因、最小修复和测试用例。不要一上来让模型优化一整段代码。目标越具体，输出越容易检查。后续如果要公开发布，最好补一张脱敏输入与输出截图，让读者能看到这不是事后拼出来的经验。",
+          "更适合社区用户的做法，是把模型回答当成审查清单，而不是结论本身。你可以先让它列出可能出错的边界，再逐条跑样例；能复现的问题留下，不能复现的问题删掉。这样既能节省排查时间，又不会把不可验证的建议带进代码库。每次复用时，都要留下最小输入、模型建议和实际验证结果，方便后面的人判断这条经验是否适合自己的项目。"
+        ],
+        reuse: ["需要做代码审查、边界条件排查、测试用例补齐的开发者。"],
+        boundary: ["公开案例只能使用脱敏片段。", "保留风险等级、复现条件、最小修复和测试样例。", "不写成自动修复生产代码。", "公开前需要补一张脱敏代码输入与输出截图。"]
+      }
+    },
+    "whisper-1": {
+      case: {
+        sourceNote: "实测增强试排稿 V0.3；证据来自本地 audio_transcription run、本地合成测试音频和转写文本。",
+        process: [
+          "准备一段本地合成测试音频，单人语音，不包含真实会议、访谈、用户隐私或第三方版权内容。",
+          "调用 whisper-1 做 audio_transcription，只验证转写链路和素材落盘，不把结果包装成真实会议纪要。",
+          "记录返回文本：Today we will compare three safe model, service examples, retrieval, summary, and transcription.",
+          "人工复核音频来源、转写文本、是否有不清晰片段，再决定能否进入公开案例。"
+        ],
+        prompt: "将本地合成测试音频转写成文本。音频用于模型服务素材链路验证，不包含真实用户隐私。输出只需要转写文本，不要补写会议纪要或摘要。",
+        outputExcerpt: [
+          "转写文本：Today we will compare three safe model, service examples, retrieval, summary, and transcription. This is generated test audio.",
+          "素材说明：本地合成音频，单人语音。",
+          "不清晰片段：本轮记录为空，但正式音频仍需人工听回。"
+        ],
+        asset: {
+          type: "audio",
+          label: "本地合成测试音频",
+          src: "../../model_service_case_factory/live_runs/2026-06-17T07-13-41-860Z-p0/generated_audio/audio_transcription_001.wav",
+          note: "只用于验证转写链路；公开前仍需确认授权、隐私和可读性。"
+        },
+        evidence: [
+          { label: "请求类型", value: "audio_transcription；目标模型 whisper-1" },
+          { label: "素材文件", value: "本地合成 WAV 音频，单人语音，不含真实会议或用户隐私" },
+          { label: "输出证据", value: "保留转写文本、音频说明、不清晰片段记录和人工复核要求" },
+          { label: "截图素材", value: "当前可直接播放本地音频；公开前建议补音频波形或转写过程截图" }
+        ],
+        body: [
+          "音频转写看起来像一个简单任务：上传音频，得到文字。但真正进入内容生产时，你会发现转写只是第一步。可信的音频案例不能只写“模型完成转写”，还要说明音频从哪里来、有没有授权、时长和语言是什么、转写结果怎么复核。",
+          "本轮使用的是本地合成测试音频，不包含真实会议、访谈、用户隐私或第三方版权音频。音频内容是一句英文测试句，大意是比较三类安全的模型服务示例：检索、总结和转写。whisper-1 返回的文本是：Today we will compare three safe model, service examples, retrieval, summary, and transcription. This is generated test audio.",
+          "这条结果能证明转写链路跑通，但不能直接证明它适合所有会议纪要、访谈稿或字幕任务。测试音频很短、单人语音、没有背景噪声，也没有专有名词和多人抢话。正式内容里如果不交代这些条件，用户会误以为转写效果可以直接迁移到复杂场景。",
+          "所以这篇案例的正文要把过程写清楚。第一步，确认音频是本地合成素材，避免隐私和版权风险。第二步，调用转写接口，只要求输出文本，不要求模型顺手总结会议。第三步，保留转写文本和音频文件作为素材证据。第四步，人工听回关键片段，检查错词、标点、停顿和专有名词。最后才决定它适合做字幕、纪要，还是只能作为转写链路示例。",
+          "对内容运营、播客整理、课程字幕、访谈记录用户来说，Whisper 的价值不是替你完成最终稿，而是把音频先变成可编辑文本。后续要不要摘要、分段、提取待办或改成文章，需要再接文本模型，也需要人工校对。尤其是涉及人物、机构、产品名、金额、时间和承诺性表述时，不能只看转写结果。",
+          "如果你要复用这个流程，建议从短音频开始。先选 1 到 3 分钟、来源清楚、没有隐私风险的素材，记录原音频、转写文本、人工修正点和不清晰片段。等你知道哪些词容易错、哪些场景需要校对，再考虑批量处理。",
+          "公开发布前，这类案例最好补一个素材图或截图：可以是音频波形、转写过程截图、或者脱敏后的转写文本对照图。只有正文没有素材，可信度会弱很多；但素材也不能直接暴露真实会议内容、说话人身份或未授权录音。",
+          "对普通用户来说，最容易忽略的是校对成本。短音频看起来一次就能完成，长会议里的人名、产品名、英文缩写和数字经常需要回听。把这些容易错的地方提前标出来，才能判断 Whisper 是帮你省时间，还是只是把工作从听音频转成改文字。"
+        ],
+        reuse: ["需要把会议、访谈、课程、播客或素材录音变成可编辑文本的用户。"],
+        boundary: ["没有授权的音频不能直接处理。", "含敏感信息的会议需要先脱敏。", "不要承诺零误差或替代人工校对。", "公开前需要补音频波形、转写过程截图或脱敏对照图。"]
+      }
+    }
+  };
+
   function postCopyFor(item) {
-    return MODEL_POST_COPY[item.model] || {
+    return R1_PUBLISH_POST_COPY[item.model] || MODEL_POST_COPY[item.model] || {
       caseTitle: `${item.title} 场景案例`,
       caseInput: `输入一个 ${item.type} 任务样例，让模型说明适用边界、生成结果和人工复核点。`,
       caseOutput: "输出可阅读的场景案例，帮助用户理解这个模型适合什么任务。",
@@ -768,27 +957,48 @@
 
   function generatedPostsFor(item) {
     const copy = postCopyFor(item);
+    const longBody = R1_LONG_POST_BODY[item.model] || {};
     return [
       {
         id: "case",
         kind: "场景案例",
-        source: "脚本生成样例",
+        source: "多元拾光案例",
         title: copy.caseTitle,
         summary: copy.caseOutput,
         input: copy.caseInput,
         output: copy.caseOutput,
-        review: ["确认输入材料已脱敏", "确认输出只作为初稿", "保留人工复核和修订记录"],
+        sourceNote: longBody.case?.sourceNote || "内容由多元拾光整理，复用前需要确认事实、素材授权和表达边界。",
+        process: longBody.case?.process || [],
+        prompt: longBody.case?.prompt || "",
+        outputExcerpt: longBody.case?.outputExcerpt || [],
+        codeExcerpt: longBody.case?.codeExcerpt || null,
+        evidence: longBody.case?.evidence || [],
+        asset: longBody.case?.asset || null,
+        body: longBody.case?.body || [],
+        reuse: longBody.case?.reuse || [],
+        boundary: longBody.case?.boundary || [],
+        review: ["输入材料不要包含账号、隐私或未授权素材", "关键事实、金额和承诺性结论需要自己再确认", "输出适合作为参考，不建议直接当作最终结论"],
         next: "读完案例后，可以回到模型详情提交 API 体验意向或收藏模型。"
       },
       {
         id: "api",
         kind: "API 经验",
-        source: "用户经验样例",
+        source: "社区经验",
         title: copy.apiTitle,
         summary: copy.apiOutput,
         input: copy.apiInput,
         output: copy.apiOutput,
-        review: ["不展示真实密钥和账户信息", "记录失败原因而不是只写成功结果", "把价格和可用性留给站内实时口径确认"],
+        sourceNote: longBody.api?.sourceNote || "内容由多元拾光整理，复用前需要确认站内价格、可用性和自身任务边界。",
+        process: longBody.api?.process || [],
+        prompt: longBody.api?.prompt || "",
+        outputExcerpt: longBody.api?.outputExcerpt || [],
+        codeExcerpt: longBody.api?.codeExcerpt || null,
+        evidence: longBody.api?.evidence || [],
+        asset: longBody.api?.asset || null,
+        body: longBody.api?.body || [],
+        reuse: longBody.api?.reuse || [],
+        boundary: longBody.api?.boundary || [],
+        review: ["不要在正文或评论里粘贴 API Key、Token 或账号信息", "失败原因要记录清楚，方便选择替代模型", "价格和可用性以站内当前页面为准"],
         next: "读完经验后，可以回到模型详情判断是否适合自己的任务。"
       }
     ];
@@ -842,7 +1052,11 @@
       <article
         class="generated-post-card"
         data-generated-post-card
-        data-content-href="${escapeHtml(contentDetailHref(item, post.id))}"
+        data-content-href="${escapeHtml(canonicalContentDetailHref(item, post.id))}"
+        data-model-content-href="${escapeHtml(contentDetailHref(item, post.id))}"
+        data-detail-route-href="${escapeHtml(canonicalContentDetailHref(item, post.id))}"
+        data-content-template-state="${escapeHtml(contentTemplateState(post.id))}"
+        data-content-route-source="model-service"
         data-content-id="${escapeHtml(post.id)}"
         role="link"
         tabindex="0"
@@ -853,7 +1067,7 @@
           <em>${escapeHtml(post.source)}</em>
         </div>
         <strong>${escapeHtml(post.title)}</strong>
-        <p>${escapeHtml(post.summary)}</p>
+        <p>${escapeHtml(publicContentText(post.summary))}</p>
         <div class="post-card-footer">
           <span>使用模型</span>
           <b>${escapeHtml(item.title)}</b>
@@ -866,9 +1080,503 @@
     return (items || []).map((item) => `<li>${escapeHtml(item)}</li>`).join("");
   }
 
+  function renderBodyParagraphs(paragraphs) {
+    return (paragraphs || []).map((paragraph) => `<p data-content-body-paragraph>${escapeHtml(paragraph)}</p>`).join("");
+  }
+
+  function renderProcessSteps(steps) {
+    if (!steps?.length) return "";
+    return `
+      <div class="content-block content-process-block" data-content-process>
+        <span>实测过程</span>
+        <ol class="content-process-list">
+          ${steps.map((step, index) => `
+            <li data-content-process-step>
+              <b>${index + 1}</b>
+              <p>${escapeHtml(step)}</p>
+            </li>
+          `).join("")}
+        </ol>
+      </div>
+    `;
+  }
+
+  function renderPromptSummary(prompt) {
+    if (!prompt) return "";
+    return `
+      <div class="content-block content-prompt-block" data-content-prompt>
+        <span>提示词摘要</span>
+        <p>${escapeHtml(prompt)}</p>
+      </div>
+    `;
+  }
+
+  function renderOutputExcerpt(items) {
+    if (!items?.length) return "";
+    return `
+      <div class="content-block content-output-excerpt" data-content-output-excerpt>
+        <span>输出节选</span>
+        <ul>${renderReviewItems(items)}</ul>
+      </div>
+    `;
+  }
+
+  function renderCodeExcerpt(excerpt) {
+    if (!excerpt?.code) return "";
+    return `
+      <div class="content-block content-code-excerpt" data-content-code-excerpt>
+        <span>${escapeHtml(excerpt.label || "代码节选")}</span>
+        <pre><code>${escapeHtml(excerpt.code)}</code></pre>
+      </div>
+    `;
+  }
+
+  function renderAsset(asset) {
+    if (!asset?.src) return "";
+    if (asset.type === "audio") {
+      return `
+        <div class="content-asset-card" data-content-asset>
+          <span>${escapeHtml(asset.label || "素材文件")}</span>
+          <audio controls src="${escapeHtml(asset.src)}"></audio>
+          <p>${escapeHtml(publicContentText(asset.note || ""))}</p>
+        </div>
+      `;
+    }
+    if (asset.type === "image") {
+      return `
+        <figure class="content-asset-card" data-content-asset>
+          <span>${escapeHtml(asset.label || "生成图片")}</span>
+          <img src="${escapeHtml(asset.src)}" alt="${escapeHtml(asset.label || "生成图片素材")}" />
+          <figcaption>${escapeHtml(publicContentText(asset.note || ""))}</figcaption>
+        </figure>
+      `;
+    }
+    return `
+      <div class="content-asset-card" data-content-asset>
+        <span>${escapeHtml(asset.label || "素材文件")}</span>
+        <p>${escapeHtml(publicContentText(asset.note || asset.src))}</p>
+      </div>
+    `;
+  }
+
+  function renderEvidenceCards(items, asset) {
+    if (!items?.length && !asset) return "";
+    return `
+      <div class="content-block content-evidence-block" data-content-evidence>
+        <span>素材证据</span>
+        <div class="content-evidence-grid">
+          ${(items || []).map((item) => `
+            <div class="content-evidence-card" data-content-evidence-card>
+              <strong>${escapeHtml(item.label)}</strong>
+              <p>${escapeHtml(item.value)}</p>
+            </div>
+          `).join("")}
+        </div>
+        ${renderAsset(asset)}
+      </div>
+    `;
+  }
+
+  function renderOptionalBodyList(label, items, attr) {
+    if (!items?.length) return "";
+    return `
+      <div class="content-body-note" ${attr}>
+        <span>${escapeHtml(label)}</span>
+        <ul>${renderReviewItems(items)}</ul>
+      </div>
+    `;
+  }
+
+  function publicContentText(text) {
+    return String(text || "")
+      .replace(/人工复核点/g, "需要确认的地方")
+      .replace(/人工复核/g, "人工确认")
+      .replace(/素材证据/g, "素材说明")
+      .replace(/输出证据/g, "结果节选")
+      .replace(/截图素材/g, "素材说明")
+      .replace(/完整 JSON/g, "完整原始数据")
+      .replace(/内部 run 路径/g, "内部过程信息")
+      .replace(/API 控制台/g, "调用页面")
+      .replace(/公开前仍需/g, "复用前需要")
+      .replace(/发布前为什么/g, "使用前为什么")
+      .replace(/公开发布前，?这类案例最好补一个素材图或截图：/g, "复用这类流程时，可以保留一份素材说明：")
+      .replace(/后续如果要公开发布，最好补一张脱敏输入与输出截图，让读者能看到这不是事后拼出来的经验。/g, "复用这套流程时，最好保留脱敏输入与输出对照，方便自己回看判断依据。")
+      .replace(/公开前需要补[^。]*。?/g, "复用前建议保留脱敏输入与输出对照。")
+      .replace(/公开前需补[^。]*。?/g, "复用前建议保留脱敏输入与输出对照。")
+      .replace(/发布前需要补[^。]*。?/g, "复用前建议保留脱敏输入与输出对照。");
+  }
+
+  function publicExcerptText(text) {
+    return publicContentText(text)
+      .replace(/rag_doc_[a-z]\s*\/\s*score=[0-9.]+：/gi, "召回片段：")
+      .replace(/embeddingCount=\d+，embeddingDimensions=\d+，prompt_tokens=\d+/g, "已完成向量化和召回摘要。")
+      .replace(/prompt_tokens=\d+，completion_tokens=\d+，total_tokens=\d+/g, "已记录输入、输出和人工修订点。");
+  }
+
+  function renderPublicBodyParagraphs(paragraphs) {
+    return (paragraphs || []).map((paragraph) => `<p data-content-body-paragraph>${escapeHtml(publicContentText(paragraph))}</p>`).join("");
+  }
+
+  function renderContentTopicPills(item, post) {
+    const topics = [post.kind, detailUserLabel(item), item.type]
+      .filter(Boolean)
+      .filter((value, index, list) => list.indexOf(value) === index)
+      .slice(0, 3);
+    return topics.map((topic) => `<span class="content-topic-pill" data-content-topic>${escapeHtml(topic)}</span>`).join("");
+  }
+
+  function contentAudience(item, post) {
+    if (post.reuse?.length) return publicContentText(post.reuse[0]);
+    if (post.kind === "API 经验") return "正在评估 API 接入、排错和成本边界的技术用户。";
+    return `正在判断 ${item.title} 是否适合当前任务的用户。`;
+  }
+
+  function renderContentMeta(post) {
+    const metrics = post.kind === "API 经验"
+      ? { reads: "1,482", comments: "18", likes: "86", favorites: "42" }
+      : { reads: "2,136", comments: "24", likes: "128", favorites: "63" };
+    return `
+      <div class="content-meta-row" data-content-meta>
+        <div class="content-author">
+          <span class="content-author-avatar"></span>
+          <span>多元拾光官方</span>
+          <em>更新于 2026-06-17</em>
+        </div>
+        <div class="content-meta-stats">
+          <span>阅读 ${metrics.reads}</span>
+          <span>评论 ${metrics.comments}</span>
+          <span>点赞 ${metrics.likes}</span>
+          <span>收藏 ${metrics.favorites}</span>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderContentSummaryCards(item, post) {
+    return `
+      <div class="content-summary-strip" data-content-summary-strip>
+        <div class="content-model-card" data-content-model-card>
+          <span>关联模型</span>
+          <strong>${escapeHtml(item.title)}</strong>
+          <p>${escapeHtml(cardSummary(item))}</p>
+          <a href="${escapeHtml(modelDetailHref(item))}" data-content-model-link>查看模型详情</a>
+        </div>
+        <div class="content-model-card">
+          <span>适合阅读</span>
+          <strong>${escapeHtml(post.kind === "API 经验" ? "接入前判断" : "场景复用")}</strong>
+          <p>${escapeHtml(contentAudience(item, post))}</p>
+        </div>
+        <div class="content-model-card">
+          <span>读完可以做什么</span>
+          <strong>回到模型页继续选型</strong>
+          <p>${escapeHtml(publicContentText(post.next))}</p>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderContentCaseModule(item, post) {
+    const cards = [
+      ["任务背景", post.input, "data-content-input"],
+      ["使用模型", item.title, ""],
+      ["结果摘要", post.output, "data-content-output"],
+      ["适合人群", contentAudience(item, post), "data-content-reuse"]
+    ];
+    return `
+      <section class="content-block content-case-module" data-content-case-module>
+        <h2>${escapeHtml(post.kind)}要点</h2>
+        <div class="content-field-grid">
+          ${cards.map(([label, value, attr]) => `
+            <article class="content-field-card" data-content-case-card ${attr}>
+              <span>${escapeHtml(label)}</span>
+              <p>${escapeHtml(publicContentText(value))}</p>
+            </article>
+          `).join("")}
+        </div>
+      </section>
+    `;
+  }
+
+  function renderPublicProcess(post) {
+    if (!post.process?.length && !post.prompt && !post.outputExcerpt?.length && !post.codeExcerpt && !post.asset) return "";
+    return `
+      <section class="content-block content-process-module" data-content-process-module>
+        <h2>过程和结果</h2>
+        ${post.process?.length ? `
+          <ol class="content-process-list" data-content-process>
+            ${post.process.map((step, index) => `
+              <li data-content-process-step>
+                <b>${index + 1}</b>
+                <p>${escapeHtml(publicContentText(step))}</p>
+              </li>
+            `).join("")}
+          </ol>
+        ` : ""}
+        ${post.prompt ? `
+          <div class="content-inline-note" data-content-prompt>
+            <span>提示写法</span>
+            <p>${escapeHtml(publicContentText(post.prompt))}</p>
+          </div>
+        ` : ""}
+        ${post.outputExcerpt?.length ? `
+          <div class="content-inline-note content-output-excerpt" data-content-output-excerpt>
+            <span>结果节选</span>
+            <ul>${post.outputExcerpt.map((item) => `<li>${escapeHtml(publicExcerptText(item))}</li>`).join("")}</ul>
+          </div>
+        ` : ""}
+        ${renderCodeExcerpt(post.codeExcerpt)}
+        ${renderAsset(post.asset)}
+      </section>
+    `;
+  }
+
+  function renderContentBoundary(items) {
+    if (!items?.length) return "";
+    return `
+      <div class="content-boundary" data-content-boundary>
+        <span>复用边界</span>
+        <ul>${items.map((item) => `<li>${escapeHtml(publicContentText(item))}</li>`).join("")}</ul>
+      </div>
+    `;
+  }
+
+  function renderContentChecks(post) {
+    return `
+      <section class="content-block content-check-module" data-content-review data-content-check-module>
+        <h2>使用前确认</h2>
+        <ul>${renderReviewItems(post.review)}</ul>
+      </section>
+    `;
+  }
+
+  function renderContentComment({ name, time, text, avatar, author = false }) {
+    return `
+      <article class="content-comment-item" data-content-comment>
+        <div class="content-comment-head">
+          <img class="content-comment-avatar" src="${escapeHtml(avatar)}" alt="" />
+          <div class="content-comment-author">
+            <div class="content-comment-name">
+              <strong>${escapeHtml(name)}</strong>
+              ${author ? `<span class="content-comment-author-badge" data-content-comment-author-badge>作者</span>` : ""}
+            </div>
+            <span class="content-comment-time">${escapeHtml(time)}</span>
+          </div>
+        </div>
+        <p>${escapeHtml(text)}</p>
+      </article>
+    `;
+  }
+
+  function renderContentComments(post) {
+    const firstComment = post.kind === "API 经验"
+      ? "这篇对接入前判断挺有用，希望后面能补更多失败排查和成本对比。"
+      : "这种按任务写的案例更容易判断能不能复用，最好继续保留输入和结果节选。";
+    return `
+      <section class="content-comments" data-content-comments>
+        <h2>全部评论</h2>
+        <div class="content-comment-box">
+          <span>写下你的补充、追问或复用结果</span>
+          <button type="button">发送</button>
+        </div>
+        <div class="content-comment-list">
+          ${renderContentComment({
+            name: "多元拾光官方",
+            time: "12 分钟前",
+            text: firstComment,
+            avatar: figmaAsset("detail-author-jianbing-avatar-source.png"),
+            author: true
+          })}
+          ${renderContentComment({
+            name: "代码小张",
+            time: "38 分钟前",
+            text: "我更关心复用时哪些部分需要自己确认，这个模块可以直接留着。",
+            avatar: figmaAsset("detail-comment-xiaobai-avatar-source.png")
+          })}
+        </div>
+      </section>
+    `;
+  }
+
+  function contentMetrics(post) {
+    return post.kind === "API 经验"
+      ? { reads: "1,482", comments: "18", likes: "86", favorites: "42" }
+      : { reads: "2,136", comments: "24", likes: "128", favorites: "63" };
+  }
+
+  function renderContentLeftActions(post) {
+    const metrics = contentMetrics(post);
+    return `
+      <aside class="content-quick-dock" data-content-left-actions data-left-actions data-actions>
+        <button class="content-quick-action primary" aria-label="点赞" title="点赞" data-content-action="like">
+          <img data-icon src="${icon("Health & Medical/heart-line.svg")}" alt="" />
+          <span>${escapeHtml(metrics.likes)}</span>
+        </button>
+        <button class="content-quick-action" aria-label="评论" title="评论" data-content-action="comment">
+          <img data-icon src="${icon("Communication/chat-3-line.svg")}" alt="" />
+          <span>${escapeHtml(metrics.comments)}</span>
+        </button>
+        <button class="content-quick-action" aria-label="收藏" title="收藏" data-content-action="favorite">
+          <img data-icon src="${icon("Business/bookmark-line.svg")}" alt="" />
+          <span>${escapeHtml(metrics.favorites)}</span>
+        </button>
+        <button class="content-quick-action" aria-label="转发" title="转发" data-content-action="share">
+          <img data-icon src="${icon("System/share-forward-line.svg")}" alt="" />
+        </button>
+      </aside>
+    `;
+  }
+
+  function renderContentLinkedModel(item) {
+    return `
+      <div class="content-linked-model" data-content-linked-model>
+        <span>关联模型</span>
+        <a href="${escapeHtml(modelDetailHref(item))}" data-content-model-link>${escapeHtml(item.title)}</a>
+        <em>创作时可选；未关联模型的文章仍按普通内容发布。</em>
+      </div>
+    `;
+  }
+
+  function renderMarkdownList(items, attr = "") {
+    if (!items?.length) return "";
+    return `<ul ${attr}>${items.map((item) => `<li>${escapeHtml(publicContentText(item))}</li>`).join("")}</ul>`;
+  }
+
+  function renderArticleBody(item, post) {
+    const body = renderPublicBodyParagraphs(post.body || []);
+    const process = post.process?.length ? `
+      <h2 data-content-markdown-section>处理过程</h2>
+      <ol data-content-process>
+        ${post.process.map((step, index) => `<li data-content-process-step>${index + 1}. ${escapeHtml(publicContentText(step))}</li>`).join("")}
+      </ol>
+    ` : "";
+    const prompt = post.prompt ? `
+      <h2 data-content-markdown-section>提示写法</h2>
+      <blockquote data-content-prompt>${escapeHtml(publicContentText(post.prompt))}</blockquote>
+    ` : "";
+    const outputExcerpt = post.outputExcerpt?.length ? `
+      <h2 data-content-markdown-section>结果节选</h2>
+      ${renderMarkdownList(post.outputExcerpt.map(publicExcerptText), "data-content-output-excerpt")}
+    ` : "";
+    const code = post.codeExcerpt?.code ? `
+      <pre class="content-code-block" data-content-code-excerpt><code>${escapeHtml(post.codeExcerpt.code)}</code></pre>
+    ` : "";
+    const asset = post.asset ? renderAsset(post.asset) : "";
+    return `
+      <section class="content-block content-body-block content-article-body" data-content-body data-content-body-markdown>
+        <h2 data-content-markdown-section>正文说明</h2>
+        <div class="content-long-body">
+          ${body}
+          <h2 data-content-markdown-section>这次要解决的问题</h2>
+          <p data-content-body-paragraph data-content-input>${escapeHtml(publicContentText(post.input))}</p>
+          <h2 data-content-markdown-section>使用的模型</h2>
+          <p data-content-body-paragraph data-content-output>${escapeHtml(item.title)}。${escapeHtml(publicContentText(post.output))}</p>
+          ${process}
+          ${prompt}
+          ${outputExcerpt}
+          ${code}
+          ${asset}
+          <h2 data-content-markdown-section>适合复用的人</h2>
+          ${renderMarkdownList(post.reuse?.length ? post.reuse : [contentAudience(item, post)], "data-content-reuse")}
+          <h2 data-content-markdown-section>复用边界</h2>
+          ${renderMarkdownList(post.boundary, "data-content-boundary")}
+          <h2 data-content-markdown-section>使用前确认</h2>
+          ${renderMarkdownList(post.review, "data-content-review")}
+        </div>
+      </section>
+    `;
+  }
+
+  function renderArticleComments(post) {
+    const firstComment = post.kind === "API 经验"
+      ? "我更关心失败和替代模型怎么选，这种经验适合继续补排查样例。"
+      : "正文里把输入、过程和结果放在一起更好读，也方便自己照着试。";
+    return `
+      <section class="content-comments" data-content-comments>
+        <h2>全部评论</h2>
+        <div class="content-comment-box" data-comment-input>
+          <span>写下你的问题、补充或实践反馈</span>
+          <button type="button">发布</button>
+        </div>
+        <div class="content-comment-list">
+          ${renderContentComment({
+            name: "多元拾光官方",
+            time: "12 分钟前",
+            text: firstComment,
+            avatar: figmaAsset("detail-author-jianbing-avatar-source.png"),
+            author: true
+          })}
+          ${renderContentComment({
+            name: "代码小张",
+            time: "38 分钟前",
+            text: "如果创作中心能直接关联模型，后续在模型详情里聚合这些文章就顺了。",
+            avatar: figmaAsset("detail-comment-xiaobai-avatar-source.png")
+          })}
+        </div>
+      </section>
+    `;
+  }
+
+  function renderContentRightRail(item, post) {
+    const related = [
+      ["Embedding 不直接回答：RAG 链路里它负责什么", item.model],
+      ["API 用户经验：先评估召回质量，再接生成模型", "API 经验"],
+      ["低成本文本任务如何做人工抽检", "模型选型"]
+    ];
+    const topics = ["RAG 应用", "API 排错", "模型选型", "知识库", "Agent", "MCP Server"];
+    return `
+      <section class="rail-card right-module content-author-card" data-right-module="author-card">
+        <div class="right-title"><h3>作者</h3></div>
+        <div class="content-rail-author">
+          <span class="content-author-avatar"></span>
+          <div>
+            <strong>多元拾光官方</strong>
+            <p>整理模型服务、API 经验和可复用案例。</p>
+          </div>
+        </div>
+      </section>
+      <section class="rail-card right-module" data-right-module="toc">
+        <div class="right-title"><h3>目录</h3></div>
+        <div class="compare-list">
+          ${["正文说明", "这次要解决的问题", "使用的模型", "处理过程", "结果节选", "复用边界"].map((label) => `
+            <div class="compare-item" data-content-toc-item><span>${escapeHtml(label)}</span></div>
+          `).join("")}
+        </div>
+      </section>
+      <section class="rail-card right-module" data-right-module="related-content">
+        <div class="right-title"><h3>相关内容</h3></div>
+        <div class="hot-list">
+          ${related.map(([title, tag]) => `
+            <div class="hot-item" data-content-related-item>
+              <span class="hot-name">${escapeHtml(title)}</span>
+              <span class="right-num">${escapeHtml(tag)}</span>
+            </div>
+          `).join("")}
+        </div>
+      </section>
+      <section class="rail-card right-module" data-right-module="topics" data-topic-rail-standard>
+        <div class="right-title"><h3>推荐话题</h3><a href="#" data-topic-more>›</a></div>
+        <div class="topic-list" data-standard-topic-list>
+          ${topics.map((topic, index) => `
+            <div class="topic-item prototype-topic-pill" data-topic-rail>
+              <span class="topic-name"># ${escapeHtml(topic)}</span>
+              <span class="right-num">${["2.1k", "982", "876", "742", "1.8k", "876"][index]}</span>
+            </div>
+          `).join("")}
+        </div>
+      </section>
+      <section class="rail-card right-module ad-banner" data-right-module="ad-banner">
+        <a href="#" data-ad-banner data-ad-slide aria-label="模型 API 联调灰度合作位">
+          <img data-ad-image src="../_assets/figma/model-service-ad-banner.svg" alt="模型 API 联调灰度合作位" />
+        </a>
+      </section>
+    `;
+  }
+
   function cardSummary(item) {
     return String(item.summary || "")
       .replace(/，?当前在中转站清单中[^。]*。/, "，由多元拾光官方整理为模型能力入口。")
+      .replace(/适合先查看[^。]*?再进入官方介绍和案例集合。/g, "适合先查看任务边界、适用场景和替代建议。")
+      .replace(/官方介绍|案例集合/g, "模型档案")
       .replace(/中转站清单\s*#?\d*/g, "多元拾光官方");
   }
 
@@ -885,21 +1593,11 @@
         tabindex="0"
         aria-label="查看 ${escapeHtml(item.title)} 模型档案"
       >
-        <div class="card-top">
-          <div class="badge-row">
-            <span class="badge ${escapeHtml(item.badgeClass)}">${escapeHtml(item.type)}</span>
-            <span class="badge ${escapeHtml(item.badgeClass)}">${escapeHtml(item.badge)}</span>
-          </div>
-          <span class="author-name" data-card-author>多元拾光官方</span>
-        </div>
         <h3 class="service-title">${escapeHtml(item.title)}</h3>
         <p class="summary">${escapeHtml(cardSummary(item))}</p>
-        <div class="tag-row">${renderTags(item.tags)}</div>
-        <div class="card-footer">
-          <div class="stat-line">
-            <span class="stat"><img class="meta-icon" data-icon src="${icon("Document/article-line.svg")}" alt="" />官方介绍</span>
-            <span class="stat"><img class="meta-icon" data-icon src="${icon("Business/links-line.svg")}" alt="" />案例集合</span>
-          </div>
+        <div class="card-footer card-meta-row" data-card-meta-row>
+          <div class="tag-row card-tags" data-card-tags>${renderTags(item.tags.slice(0, 3))}</div>
+          <span class="author-name" data-card-author>@多元拾光官方</span>
         </div>
       </article>
     `;
@@ -954,7 +1652,10 @@
 
   function findModel() {
     const requested = params.get("model");
-    if (!requested) return models.find((item) => item.model === "gpt-5.2") || models[0] || allModels[0];
+    if (!requested) {
+      const preferredModel = state === "content" ? "text-embedding-3-large" : "gpt-5.2";
+      return models.find((item) => item.model === preferredModel) || models[0] || allModels[0];
+    }
     return models.find((item) => item.model === requested) || models[0] || allModels[0];
   }
 
@@ -1056,7 +1757,7 @@
             <article class="detail-action-card" data-detail-action-card>
               <span>API 体验申请</span>
               <strong>提交模型试用意向</strong>
-              <p>进入人工灰度名单，由运营复核用户任务、模型需求和风险边界。</p>
+              <p>先说明你的任务、输入类型和预期结果，再确认是否适合继续试用。</p>
             </article>
             <article class="detail-action-card" data-detail-action-card>
               <span>收藏模型</span>
@@ -1070,7 +1771,7 @@
             </article>
           </div>
         </div>
-        <div class="safe-note detail-safe-note">价格、可用性、别名和聚合范围需要以实际站内显示为准；本页只用于模型选型和内容理解，不展示真实密钥、账户余额、调用日志或调用控制台。</div>
+        <div class="safe-note detail-safe-note">价格、可用性、别名和聚合范围需要以实际站内显示为准；本页用于模型选型和内容理解，正式接入前请按站内当前说明再次确认任务边界。</div>
       </section>
     `;
   }
@@ -1084,57 +1785,52 @@
     setActiveType("");
     setProviderMenu(false);
     const post = findGeneratedPost(item);
+    const metrics = contentMetrics(post);
+    const rightRail = document.querySelector("[data-right-rail]");
+    if (rightRail) rightRail.innerHTML = renderContentRightRail(item, post);
     stage.innerHTML = `
-      <section class="panel model-content-panel" data-model-generated-content-detail data-model-name="${escapeHtml(item.model)}" data-content-id="${escapeHtml(post.id)}" data-content-kind="${escapeHtml(post.kind)}">
-        <div class="content-detail-hero">
+      ${renderContentLeftActions(post)}
+      <section class="panel model-content-panel" data-model-generated-content-detail data-model-name="${escapeHtml(item.model)}" data-content-id="${escapeHtml(post.id)}" data-content-kind="${escapeHtml(post.kind)}" data-content-template-state="${escapeHtml(contentTemplateState(post.id))}" data-canonical-detail-href="${escapeHtml(canonicalContentDetailHref(item, post.id))}">
+        <div class="content-detail-hero" data-content-standard-header>
           <a class="detail-back" href="${escapeHtml(modelDetailHref(item))}" data-back-model-detail>
             <img data-icon src="${icon("Arrows/arrow-left-line.svg")}" alt="" />
             ${escapeHtml(item.title)}
           </a>
-          <div class="detail-kicker">
-            <span class="badge">${escapeHtml(post.kind)}</span>
-            <span class="badge">${escapeHtml(item.provider)}</span>
-            <span class="source">使用模型：${escapeHtml(item.title)}</span>
+          <div class="content-eyebrow-row" data-content-eyebrow>
+            <span class="content-type-badge" data-content-type>${escapeHtml(post.kind)}</span>
+            ${renderContentTopicPills(item, post)}
           </div>
           <h1 class="detail-title">${escapeHtml(post.title)}</h1>
-          <p class="detail-summary">${escapeHtml(post.summary)}</p>
+          <p class="detail-summary">${escapeHtml(publicContentText(post.summary))}</p>
+          <div class="content-meta-row" data-content-meta>
+            <div class="content-author">
+              <span class="content-author-avatar"></span>
+              <span>多元拾光官方</span>
+              <em>更新于 2026-06-17</em>
+            </div>
+            <div class="content-meta-stats">
+              <span>阅读 ${escapeHtml(metrics.reads)}</span>
+              <span>评论 ${escapeHtml(metrics.comments)}</span>
+              <span>点赞 ${escapeHtml(metrics.likes)}</span>
+              <span>收藏 ${escapeHtml(metrics.favorites)}</span>
+            </div>
+          </div>
+          ${renderContentLinkedModel(item)}
         </div>
         <div class="content-detail-grid">
-          <article class="content-main-article">
-            <div class="content-block" data-content-input>
-              <span>输入材料</span>
-              <p>${escapeHtml(post.input)}</p>
-            </div>
-            <div class="content-block" data-content-output>
-              <span>生成结果摘要</span>
-              <p>${escapeHtml(post.output)}</p>
-            </div>
-            <div class="content-block" data-content-review>
-              <span>人工复核点</span>
-              <ul>${renderReviewItems(post.review)}</ul>
-            </div>
+          <article class="content-main-article" data-content-article>
+            ${renderArticleBody(item, post)}
+            ${renderArticleComments(post)}
           </article>
-          <aside class="content-side-panel">
-            <div class="content-model-card" data-content-model-card>
-              <span>关联模型</span>
-              <strong>${escapeHtml(item.title)}</strong>
-              <p>${escapeHtml(item.summary)}</p>
-              <a href="${escapeHtml(modelDetailHref(item))}" data-content-model-link>查看模型详情</a>
-            </div>
-            <div class="content-model-card">
-              <span>下一步</span>
-              <strong>回到模型页完成转化</strong>
-              <p>${escapeHtml(post.next)}</p>
-            </div>
-          </aside>
         </div>
-        <div class="safe-note detail-safe-note">生成贴为内容形态样例，只展示脱敏后的任务描述、结果摘要和人工复核点；不展示真实密钥、账户余额、调用日志或用户隐私数据。</div>
       </section>
     `;
   }
 
   function applyTypeFilter(type) {
     setActiveType(type);
+    setActiveProvider("");
+    setProviderLabel("全部渠道");
     setProviderMenu(false);
     const list = filterByType(type);
     if (list.length) {
@@ -1156,11 +1852,12 @@
 
     document.querySelectorAll("[data-provider-option]").forEach((button) => {
       button.addEventListener("click", () => {
-        document.querySelectorAll("[data-provider-option]").forEach((item) => item.classList.toggle("active", item === button));
-        document.querySelector("[data-provider-label]").textContent = button.textContent.trim();
+        const provider = button.dataset.providerOption;
+        setActiveProvider(provider);
+        setProviderLabel(button.textContent.trim());
         setProviderMenu(false);
         setActiveType("all");
-        const list = filterByProvider(button.dataset.providerOption);
+        const list = filterByProvider(provider);
         if (list.length) {
           renderGrid(list);
         } else {

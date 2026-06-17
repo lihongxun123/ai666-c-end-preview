@@ -76,11 +76,11 @@
     }
 
     .nav-shell {
-      width: min(1440px, calc(100vw - 48px));
+      width: 1280px;
       height: 72px;
       margin: 0 auto;
       display: grid;
-      grid-template-columns: 220px minmax(360px, 438px) minmax(280px, 430px) 280px;
+      grid-template-columns: 220px minmax(330px, 1fr) 360px auto;
       gap: 24px;
       align-items: center;
     }
@@ -206,7 +206,7 @@
     }
 
     .top-actions {
-      width: 280px;
+      width: auto;
       height: 40px;
       display: flex;
       justify-content: flex-end;
@@ -258,11 +258,11 @@
     }
 
     .layout {
-      width: 1240px;
+      width: 1280px;
       min-height: 972px;
       margin: 24px auto 0;
       display: grid;
-      grid-template-columns: 820px 340px;
+      grid-template-columns: 860px 396px;
       gap: 24px;
       align-items: start;
     }
@@ -272,11 +272,11 @@
 
     .tabs-card {
       height: 58px;
-      padding: 0 20px;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      background: #fff;
-      box-shadow: var(--shadow);
+      padding: 0;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      box-shadow: none;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -1122,7 +1122,7 @@
             <strong><img class="icon" src="../../../resources/icons/remixicon/svg/Finance/coins-line.svg" alt="" /> 我的体验点</strong>
             <span>今日</span>
           </div>
-          <div class="point-block" data-point-block>
+          <div class="point-block" data-point-block data-aigc-target="insufficient" data-action-target="points-check" role="button" tabindex="0">
             <span>可用于 AIGC 模板体验</span>
             <strong>126 点</strong>
           </div>
@@ -1138,10 +1138,10 @@
             <span>返还</span>
           </div>
           <div class="rail-list" data-task-list>
-            <div class="rail-row"><span>完成一次体验</span><span>+8 点</span></div>
-            <div class="rail-row"><span>反馈一次结果</span><span>+5 点</span></div>
-            <div class="rail-row"><span>发布一个案例</span><span>+12 点</span></div>
-            <div class="rail-row"><span>收藏一个模板</span><span>+3 点</span></div>
+            <div class="rail-row" data-aigc-target="reward" data-action-target="task-reward" role="button" tabindex="0"><span>完成一次体验</span><span>+8 点</span></div>
+            <div class="rail-row" data-aigc-target="reward" data-action-target="task-reward" role="button" tabindex="0"><span>反馈一次结果</span><span>+5 点</span></div>
+            <div class="rail-row" data-aigc-route="../c-end-creation-platform-v2/index.html?state=editor-article" data-action-target="publish-case" role="link" tabindex="0"><span>发布一个案例</span><span>+12 点</span></div>
+            <div class="rail-row" data-aigc-target="reward" data-action-target="task-reward" role="button" tabindex="0"><span>收藏一个模板</span><span>+3 点</span></div>
           </div>
         </section>
 
@@ -1151,10 +1151,10 @@
             <span>可体验</span>
           </div>
           <div class="rail-list">
-            <div class="rail-row"><span>漫剧分镜方案</span><span>漫剧</span></div>
-            <div class="rail-row"><span>商品主图生成</span><span>图像</span></div>
-            <div class="rail-row"><span>活动海报结构</span><span>海报</span></div>
-            <div class="rail-row"><span>图生视频预览</span><span>视频</span></div>
+            <div class="rail-row" data-aigc-target="comic" data-action-target="featured-template" role="button" tabindex="0"><span>漫剧分镜方案</span><span>漫剧</span></div>
+            <div class="rail-row" data-aigc-target="image" data-action-target="featured-template" role="button" tabindex="0"><span>商品主图生成</span><span>图像</span></div>
+            <div class="rail-row" data-aigc-target="image" data-action-target="featured-template" role="button" tabindex="0"><span>活动海报结构</span><span>海报</span></div>
+            <div class="rail-row" data-aigc-target="video" data-action-target="featured-template" role="button" tabindex="0"><span>图生视频预览</span><span>视频</span></div>
           </div>
         </section>
 
@@ -1164,10 +1164,10 @@
             <span>结果</span>
           </div>
           <div class="rail-list">
-            <div class="rail-row"><span>漫剧起题方案</span><span>9 格</span></div>
-            <div class="rail-row"><span>商品图 Prompt</span><span>4:5</span></div>
-            <div class="rail-row"><span>海报卖点结构</span><span>3 段</span></div>
-            <div class="rail-row"><span>视频分镜示例</span><span>12 秒</span></div>
+            <div class="rail-row" data-aigc-target="success" data-action-target="case-reuse" role="button" tabindex="0"><span>漫剧起题方案</span><span>9 格</span></div>
+            <div class="rail-row" data-aigc-target="success" data-action-target="case-reuse" role="button" tabindex="0"><span>商品图 Prompt</span><span>4:5</span></div>
+            <div class="rail-row" data-aigc-target="success" data-action-target="case-reuse" role="button" tabindex="0"><span>海报卖点结构</span><span>3 段</span></div>
+            <div class="rail-row" data-aigc-target="success" data-action-target="case-reuse" role="button" tabindex="0"><span>视频分镜示例</span><span>12 秒</span></div>
           </div>
         </section>
       </aside>
@@ -1360,12 +1360,16 @@
       document.getElementById("cost-caption").textContent = config.costCaption;
       document.getElementById("cost-value").textContent = config.cost;
       document.getElementById("cost-notice").textContent = config.notice;
-      document.querySelector("[data-start-action]").lastChild.textContent = ` ${config.action}`;
+      const startAction = document.querySelector("[data-start-action]");
+      startAction.lastChild.textContent = ` ${config.action}`;
+      startAction.setAttribute("data-aigc-target", currentState === "insufficient" ? "reward" : "success");
+      startAction.setAttribute("data-action-target", currentState === "insufficient" ? "task-reward" : "experience-result");
+      document.querySelector("[data-secondary-action]").setAttribute("data-action-target", "example-feedback");
     }
 
     function templateCard(item) {
       return `
-        <article class="template-card" data-template-card>
+        <article class="template-card" data-template-card data-aigc-target="${item.target || "success"}" data-action-target="template-experience" role="button" tabindex="0">
           <div class="template-top">
             <div class="template-icon"><img src="${icon(item.icon)}" alt="" /></div>
             <span class="tag ${item.tagClass || ""}">${item.tag}</span>
@@ -1379,9 +1383,9 @@
 
     function renderDefault() {
       const templates = [
-        { title: "漫剧分镜方案", desc: "题材、人设、9 格分镜和每格画面 Prompt。", meta: "重点模板", cost: "16-24 点", tag: "漫剧", tagClass: "purple", icon: "Media/movie-2-ai-line.svg" },
-        { title: "商品主图生成", desc: "商品主体、卖点、背景和平台尺寸一次收敛。", meta: "官方模板", cost: "8-12 点", tag: "图像", tagClass: "green", icon: "Media/image-add-line.svg" },
-        { title: "图生视频预览", desc: "把海报或角色图拆成短片结构和镜头提示。", meta: "视频模板", cost: "18-28 点", tag: "视频", tagClass: "orange", icon: "Media/movie-ai-line.svg" }
+        { title: "漫剧分镜方案", desc: "题材、人设、9 格分镜和每格画面 Prompt。", meta: "重点模板", cost: "16-24 点", tag: "漫剧", tagClass: "purple", icon: "Media/movie-2-ai-line.svg", target: "comic" },
+        { title: "商品主图生成", desc: "商品主体、卖点、背景和平台尺寸一次收敛。", meta: "官方模板", cost: "8-12 点", tag: "图像", tagClass: "green", icon: "Media/image-add-line.svg", target: "image" },
+        { title: "图生视频预览", desc: "把海报或角色图拆成短片结构和镜头提示。", meta: "视频模板", cost: "18-28 点", tag: "视频", tagClass: "orange", icon: "Media/movie-ai-line.svg", target: "video" }
       ];
       return `
         <section class="section" data-template-section>
@@ -1476,12 +1480,12 @@
             <div class="result-card" data-result-card>
               <h3>《被替换的第 9 稿》</h3>
               <p>都市逆袭漫剧方案，已包含故事梗概、角色设定和 9 格分镜 Prompt。</p>
-              <div class="action-row"><button class="solid-button" type="button"><img class="icon" src="${icon("System/checkbox-multiple-line.svg")}" alt="" />复制 Prompt</button><button class="ghost-button" type="button">保存方案</button></div>
+              <div class="action-row"><button class="solid-button" type="button" data-aigc-feedback="copy-prompt" data-action-target="copy-prompt"><img class="icon" src="${icon("System/checkbox-multiple-line.svg")}" alt="" />复制 Prompt</button><button class="ghost-button" type="button" data-aigc-feedback="save-plan" data-action-target="save-plan">保存方案</button></div>
             </div>
             <div class="result-card">
               <h3>继续转化</h3>
               <p>反馈结果可做任务返还，发布案例可沉淀为社区内容，收藏模板方便下次复用。</p>
-              <div class="action-row"><button class="link-button" type="button">发布案例</button><button class="link-button" type="button">反馈结果</button><button class="link-button" type="button">收藏模板</button></div>
+              <div class="action-row"><button class="link-button" type="button" data-aigc-route="../c-end-creation-platform-v2/index.html?state=editor-article" data-action-target="publish-case">发布案例</button><button class="link-button" type="button" data-aigc-target="reward" data-action-target="feedback-result">反馈结果</button><button class="link-button" type="button" data-aigc-feedback="save-template" data-action-target="save-template">收藏模板</button></div>
             </div>
           </div>
         </section>
@@ -1501,7 +1505,7 @@
             <div class="result-card">
               <h3>先补充点数</h3>
               <p>如果还想继续体验，优先完成反馈、发布案例或收藏模板任务。</p>
-              <div class="action-row"><button class="solid-button" type="button">查看任务</button><button class="ghost-button" type="button">查看示例</button></div>
+              <div class="action-row"><button class="solid-button" type="button" data-aigc-target="reward" data-action-target="task-reward">查看任务</button><button class="ghost-button" type="button" data-aigc-feedback="example" data-action-target="example-feedback">查看示例</button></div>
             </div>
           </div>
         </section>
@@ -1557,6 +1561,40 @@
         else navigateState("success");
       };
       document.querySelector("[data-secondary-action]").onclick = () => showToast("示例用于静态原型走查");
+      document.querySelectorAll("[data-aigc-target]").forEach((node) => {
+        if (node.hasAttribute("data-start-action")) return;
+        node.onclick = (event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          navigateState(node.getAttribute("data-aigc-target"));
+        };
+        node.onkeydown = (event) => {
+          if (event.key !== "Enter" && event.key !== " ") return;
+          event.preventDefault();
+          navigateState(node.getAttribute("data-aigc-target"));
+        };
+      });
+      document.querySelectorAll("[data-aigc-route]").forEach((node) => {
+        node.onclick = (event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          location.href = node.getAttribute("data-aigc-route");
+        };
+      });
+      document.querySelectorAll("[data-aigc-feedback]").forEach((node) => {
+        node.onclick = (event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          const action = node.getAttribute("data-aigc-feedback");
+          const messages = {
+            "copy-prompt": "Prompt 已复制到原型反馈。",
+            "save-plan": "方案已保存到当前体验记录。",
+            "save-template": "模板已收藏，后续从最近使用进入。",
+            example: "示例用于静态原型走查"
+          };
+          showToast(messages[action] || "动作已记录为原型反馈。");
+        };
+      });
     }
 
     document.addEventListener("click", (event) => {

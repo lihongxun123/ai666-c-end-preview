@@ -292,6 +292,37 @@
       background: var(--brand);
       box-shadow: 0 0 0 5px var(--brand-soft);
     }
+    .detail-action-row,
+    .state-actions {
+      margin-top: 24px;
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .detail-action-row {
+      justify-content: flex-start;
+      margin-top: 0;
+      margin-bottom: 20px;
+    }
+    .action-button {
+      min-width: 104px;
+      height: 36px;
+      padding: 0 16px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #fff;
+      color: #172033;
+      font-size: 14px;
+      line-height: 20px;
+      font-weight: 720;
+      cursor: pointer;
+    }
+    .action-button.primary {
+      border-color: var(--brand);
+      background: var(--brand);
+      color: #fff;
+    }
     .detail-title {
       margin: 0;
       max-width: 860px;
@@ -526,7 +557,7 @@
         </div>
         <div class="announcement-list" data-announcement-list>
           ${notices.map((item) => `
-            <article class="announcement-item" data-announcement-item data-state-target="detail">
+            <article class="announcement-item" data-announcement-item data-state-target="detail" data-action-target="announcement-detail" role="link" tabindex="0">
               <div class="announcement-main">
                 <h2 class="notice-title">${item.title}</h2>
                 <p class="notice-desc">${item.desc}</p>
@@ -538,16 +569,14 @@
         </div>
       `;
 
-      root.querySelectorAll("[data-state-target]").forEach((node) => {
-        node.addEventListener("click", () => {
-          location.href = `${location.pathname}?state=detail`;
-        });
-      });
     }
 
     function renderDetail() {
       root.innerHTML = `
         <article class="detail-panel" data-announcement-detail>
+          <div class="detail-action-row">
+            <button class="action-button" type="button" data-state-target="default" data-action-target="announcement-list">返回公告</button>
+          </div>
           <div class="detail-meta">2026-06-14 发布</div>
           <h1 class="detail-title" data-detail-title>社区隐私保护与敏感信息处理说明</h1>
           <div class="markdown-body" data-markdown-body>
@@ -589,6 +618,9 @@
             <div class="state-icon"><img data-icon src="${icon("Document/file-list-3-line.svg")}" alt="" /></div>
             <h2>暂时没有公告</h2>
             <p>当前没有可展示的社区公告。</p>
+            <div class="state-actions">
+              <button class="action-button" type="button" data-state-target="default" data-action-target="announcement-list">返回公告</button>
+            </div>
           </div>
         </section>
       `;
@@ -619,9 +651,28 @@
             <div class="state-icon"><img data-icon src="${icon("System/error-warning-line.svg")}" alt="" /></div>
             <h2>公告加载失败</h2>
             <p>可以重试，或先返回继续浏览其他内容。</p>
+            <div class="state-actions">
+              <button class="action-button primary" type="button" data-state-target="default" data-action-target="retry-announcement">重新加载</button>
+              <button class="action-button" type="button" data-state-target="default" data-action-target="announcement-list">返回公告</button>
+            </div>
           </div>
         </section>
       `;
+    }
+
+    function bindStateTargets() {
+      root.querySelectorAll("[data-state-target]").forEach((node) => {
+        node.addEventListener("click", () => {
+          const next = node.getAttribute("data-state-target") || "default";
+          location.href = `${location.pathname}?state=${next}`;
+        });
+        node.addEventListener("keydown", (event) => {
+          if (event.key !== "Enter" && event.key !== " ") return;
+          event.preventDefault();
+          const next = node.getAttribute("data-state-target") || "default";
+          location.href = `${location.pathname}?state=${next}`;
+        });
+      });
     }
 
     if (state === "detail") {
@@ -635,6 +686,7 @@
     } else {
       renderList();
     }
+    bindStateTargets();
   </script>
   <script src="../_shared/c-end-prototype-interactions.js?v=20260617-model-service-content-v1"></script>
 </body>

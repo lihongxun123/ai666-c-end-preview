@@ -33,12 +33,12 @@
       backdrop-filter: none;
     }
     .nav-shell {
-      width: 1440px;
+      width: 1280px;
       height: 72px;
       margin: 0 auto;
       display: flex;
       align-items: center;
-      gap: 34px;
+      gap: 20px;
     }
     .brand {
       width: 182px;
@@ -98,7 +98,8 @@
       background: #242424;
     }
     .top-search {
-      width: 460px;
+      width: 430px;
+      flex: 0 0 430px;
       height: 42px;
       margin-left: auto;
       display: flex;
@@ -146,17 +147,17 @@
       box-shadow: none;
     }
     .layout {
-      width: 1240px;
+      width: 1280px;
       min-height: 984px;
       margin: 24px auto 0;
       display: grid;
-      grid-template-columns: 876px 340px;
+      grid-template-columns: 860px 396px;
       gap: 24px;
     }
-    .main-panel { width: 876px; min-width: 876px; }
+    .main-panel { width: 860px; min-width: 860px; }
     .right-rail {
-      width: 340px;
-      min-width: 340px;
+      width: 396px;
+      min-width: 396px;
       display: flex;
       flex-direction: column;
       gap: 16px;
@@ -191,11 +192,13 @@
       gap: 8px;
       height: 28px;
       padding: 0 10px;
-      border-radius: 0 4px 4px 0;
-      background: linear-gradient(90deg, rgba(36, 36, 36, 0.12), rgba(36, 36, 36, 0.055), transparent);
-      color: #242424;
+      border: 1px solid #e8e8e8;
+      border-radius: 4px;
+      background: #f7f7f7;
+      background-image: none;
+      color: #4f4f4f;
       font-size: 13px;
-      font-weight: 750;
+      font-weight: 580;
     }
     .mini-icon, .meta-icon { width: 16px; height: 16px; }
     .channel-title {
@@ -236,12 +239,16 @@
     .quick-type img { width: 15px; height: 15px; }
     .tabs-panel, .type-panel {
       margin-top: 16px;
-      padding: 0 22px;
+      padding: 0;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      box-shadow: none;
     }
-    .tabs-panel { height: 66px; }
+    .tabs-panel { height: 58px; }
     .type-panel { height: 56px; }
     .tabs, .type-tabs {
       display: flex;
@@ -250,12 +257,16 @@
     }
     .tab {
       position: relative;
-      height: 66px;
+      height: 58px;
+      padding: 0;
       border: 0;
       background: transparent;
       color: #56627a;
       font-size: 16px;
+      line-height: 22px;
       font-weight: 760;
+      display: inline-flex;
+      align-items: flex-start;
     }
     .tab.active { color: #242424; }
     .tab.active::after {
@@ -269,11 +280,12 @@
       background: #242424;
     }
     .type-pill {
+      position: relative;
       height: 34px;
-      padding: 0 12px;
-      border: 1px solid #e8e8e8;
-      border-radius: 6px;
-      background: #fff;
+      padding: 0;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
       color: #4f4f4f;
       font-size: 13px;
       font-weight: 750;
@@ -282,8 +294,8 @@
       gap: 7px;
     }
     .type-pill.active {
-      border-color: #dddddd;
-      background: #f6f6f6;
+      border-color: transparent;
+      background: transparent;
       color: #242424;
     }
     .type-pill img { width: 15px; height: 15px; }
@@ -307,9 +319,9 @@
     }
     .stage { margin-top: 16px; }
     .resource-grid {
-      width: 876px;
+      width: 860px;
       display: grid;
-      grid-template-columns: repeat(2, 430px);
+      grid-template-columns: repeat(2, 422px);
       gap: 16px;
     }
     .resource-card {
@@ -323,13 +335,8 @@
       box-shadow: none;
     }
     .resource-card::before {
-      content: "";
-      position: absolute;
-      left: 0;
-      right: 0;
-      top: 0;
-      height: 2px;
-      background: rgba(36, 36, 36, 0.42);
+      content: none;
+      display: none;
     }
     .card-top, .card-footer, .stat-line {
       display: flex;
@@ -355,14 +362,18 @@
       white-space: nowrap;
     }
     .badge {
-      border-radius: 0 4px 4px 0;
-      background: linear-gradient(90deg, rgba(36, 36, 36, 0.12), rgba(36, 36, 36, 0.055), transparent);
-      color: #242424;
+      border: 1px solid #e8e8e8;
+      border-radius: 4px;
+      background: #f7f7f7;
+      background-image: none;
+      color: #4f4f4f;
+      font-weight: 580;
     }
     .badge.green,
     .badge.orange,
     .badge.purple {
-      background: linear-gradient(90deg, rgba(36, 36, 36, 0.10), rgba(36, 36, 36, 0.035), transparent);
+      background: #f7f7f7;
+      background-image: none;
       color: #4f4f4f;
     }
     .resource-title {
@@ -436,12 +447,12 @@
       border-color: #e8e8e8;
       background: #fff;
     }
-    .topic-list, .hot-list, .collection-list {
+    .topic-list, .hot-list, .path-list {
       display: flex;
       flex-direction: column;
       gap: 6px;
     }
-    .topic-item, .hot-item, .collection-item {
+    .topic-item, .hot-item, .path-item {
       min-height: 28px;
       display: flex;
       align-items: center;
@@ -472,7 +483,6 @@
       position: relative;
       overflow: hidden;
       border: 1px solid #f1f1f1;
-      border-left: 4px solid #242424;
       border-radius: 6px;
       background: linear-gradient(90deg, #f6f6f6 0%, #ffffff 76%);
       color: #242424;
@@ -491,13 +501,15 @@
     .ad-label {
       height: 22px;
       padding: 0 7px;
-      border-radius: 0 4px 4px 0;
-      background: linear-gradient(90deg, rgba(36, 36, 36, 0.12), rgba(36, 36, 36, 0.055), transparent);
-      color: #242424;
+      border: 1px solid #e8e8e8;
+      border-radius: 4px;
+      background: #ffffff;
+      background-image: none;
+      color: #4f4f4f;
       display: inline-flex;
       align-items: center;
       font-size: 12px;
-      font-weight: 850;
+      font-weight: 580;
     }
     .ad-banner h3 {
       margin: 10px 0 4px;
@@ -515,7 +527,7 @@
       line-height: 18px;
     }
     .empty-state, .failed-state, .loading-state {
-      width: 876px;
+      width: 860px;
       min-height: 500px;
       padding: 24px;
     }
@@ -547,9 +559,9 @@
       font-size: 14px;
     }
     .loading-grid {
-      width: 876px;
+      width: 860px;
       display: grid;
-      grid-template-columns: repeat(2, 430px);
+      grid-template-columns: repeat(2, 422px);
       gap: 16px;
     }
     .skeleton-card {
@@ -724,15 +736,15 @@
           </div>
         </section>
 
-        <section class="panel right-module" data-right-module="curated-guides">
+        <section class="panel right-module" data-right-module="recommended-paths">
           <div class="right-title">
-            <h3>精选专题</h3>
+            <h3>入门路径</h3>
             <a href="#">查看</a>
           </div>
-          <div class="collection-list">
-            <div class="collection-item"><span>API 接入入门</span><span class="badge green">8 篇</span></div>
-            <div class="collection-item"><span>MCP 连接实践</span><span class="badge purple">6 篇</span></div>
-            <div class="collection-item"><span>工作流提效实战</span><span class="badge">9 篇</span></div>
+          <div class="path-list">
+            <div class="path-item"><span>首次 API 接入</span><span class="badge green">先看教程</span></div>
+            <div class="path-item"><span>MCP 连接边界</span><span class="badge purple">先看权限</span></div>
+            <div class="path-item"><span>工作流提效实践</span><span class="badge">先套模板</span></div>
           </div>
         </section>
 
@@ -1019,8 +1031,8 @@
 
         html.prototype-dir-c-end-ai-plus-channel-v1.prototype-ai666-home-skin [data-type-tab].active,
         html.prototype-dir-c-end-ai-plus-channel-v1.prototype-ai666-home-skin .type-pill.active {
-          border-color: #dcdcdc !important;
-          background: #f6f6f6 !important;
+          border-color: transparent !important;
+          background: transparent !important;
           color: #242424 !important;
           font-weight: 560 !important;
           box-shadow: none !important;
@@ -1028,13 +1040,20 @@
 
         html.prototype-dir-c-end-ai-plus-channel-v1.prototype-ai666-home-skin [data-type-tab].active::after,
         html.prototype-dir-c-end-ai-plus-channel-v1.prototype-ai666-home-skin .type-pill.active::after {
-          content: none !important;
+          content: "" !important;
+          position: absolute !important;
+          left: 0 !important;
+          right: 0 !important;
+          bottom: -1px !important;
+          height: 1px !important;
+          border-radius: 0 !important;
+          background: #242424 !important;
         }
 
         html.prototype-dir-c-end-ai-plus-channel-v1.prototype-ai666-home-skin [data-topic-rail-standard] .prototype-topic-list,
         html.prototype-dir-c-end-ai-plus-channel-v1.prototype-ai666-home-skin .topic-list,
         html.prototype-dir-c-end-ai-plus-channel-v1.prototype-ai666-home-skin .hot-list,
-        html.prototype-dir-c-end-ai-plus-channel-v1.prototype-ai666-home-skin .collection-list {
+        html.prototype-dir-c-end-ai-plus-channel-v1.prototype-ai666-home-skin .path-list {
           display: flex !important;
           flex-direction: column !important;
           gap: 8px !important;
@@ -1044,7 +1063,7 @@
         html.prototype-dir-c-end-ai-plus-channel-v1.prototype-ai666-home-skin [data-topic-rail-standard] .prototype-topic-pill,
         html.prototype-dir-c-end-ai-plus-channel-v1.prototype-ai666-home-skin .topic-item,
         html.prototype-dir-c-end-ai-plus-channel-v1.prototype-ai666-home-skin .hot-item,
-        html.prototype-dir-c-end-ai-plus-channel-v1.prototype-ai666-home-skin .collection-item {
+        html.prototype-dir-c-end-ai-plus-channel-v1.prototype-ai666-home-skin .path-item {
           width: 100% !important;
           min-height: 28px !important;
           height: 28px !important;
@@ -1088,7 +1107,7 @@
           font: 400 12px/18px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
         }
 
-        html.prototype-dir-c-end-ai-plus-channel-v1.prototype-ai666-home-skin .collection-item .badge {
+        html.prototype-dir-c-end-ai-plus-channel-v1.prototype-ai666-home-skin .path-item .badge {
           height: 20px !important;
           padding: 0 7px !important;
           border: 1px solid #e8e8e8 !important;
@@ -1102,27 +1121,20 @@
           position: relative !important;
           height: 22px !important;
           min-height: 22px !important;
-          padding: 0 8px 0 0 !important;
-          gap: 7px !important;
+          padding: 0 8px !important;
+          gap: 6px !important;
           border: 1px solid #e2e2e2 !important;
-          border-radius: 5px !important;
+          border-radius: 4px !important;
           background: #ffffff !important;
+          background-image: none !important;
           color: #4b4b4b !important;
           font: 500 12px/20px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
           overflow: hidden !important;
         }
 
         html.prototype-dir-c-end-ai-plus-channel-v1.prototype-ai666-home-skin [data-resource-card] .topic-chip[data-topic-chip]::before {
-          content: "#" !important;
-          width: 20px !important;
-          height: 20px !important;
-          display: inline-flex !important;
-          align-items: center !important;
-          justify-content: center !important;
-          border-right: 1px solid #ececec !important;
-          background: #f7f7f7 !important;
-          color: #6b6b6b !important;
-          font: 620 11px/20px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+          content: none !important;
+          display: none !important;
         }
       `;
       document.head.appendChild(style);

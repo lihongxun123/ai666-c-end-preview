@@ -15,11 +15,11 @@
       --text: #151b26;
       --muted: #667085;
       --weak: #98a2b3;
-      --brand: #16b8a6;
-      --brand-deep: #0f9384;
-      --brand-soft: rgba(22, 184, 166, 0.10);
-      --blue: #2563eb;
-      --blue-soft: rgba(37, 99, 235, 0.10);
+      --brand: #242424;
+      --brand-deep: #3f3f3f;
+      --brand-soft: rgba(36, 36, 36, 0.06);
+      --blue: #4f4f4f;
+      --blue-soft: rgba(36, 36, 36, 0.06);
       --orange: #f97316;
       --orange-soft: rgba(249, 115, 22, 0.12);
       --red: #ef4444;
@@ -74,11 +74,11 @@
     }
 
     .nav-shell {
-      width: 1440px;
+      width: 1280px;
       height: 72px;
       margin: 0 auto;
       display: grid;
-      grid-template-columns: 220px 438px 430px 280px;
+      grid-template-columns: 220px 438px 350px 200px;
       gap: 24px;
       align-items: center;
     }
@@ -271,14 +271,14 @@
     }
 
     .profile-shell {
-      width: 1380px;
+      width: 1280px;
       margin: 28px auto 88px;
     }
 
     .profile-card {
-      width: 1380px;
+      width: 1280px;
       min-height: 177px;
-      border: 1px solid rgba(22, 184, 166, 0.18);
+      border: 1px solid rgba(36, 36, 36, 0.10);
       border-radius: 16px;
       background: rgba(255, 255, 255, 0.92);
       box-shadow: var(--shadow);
@@ -294,7 +294,7 @@
       content: "";
       position: absolute;
       inset: 0;
-      background: linear-gradient(110deg, rgba(22, 184, 166, 0.10), transparent 36%, rgba(37, 99, 235, 0.06));
+      background: linear-gradient(110deg, rgba(36, 36, 36, 0.04), transparent 36%, rgba(36, 36, 36, 0.025));
       pointer-events: none;
     }
 
@@ -484,7 +484,7 @@
     .btn-soft {
       background: var(--brand-soft);
       color: var(--brand-deep);
-      border: 1px solid rgba(22, 184, 166, 0.22);
+      border: 1px solid rgba(36, 36, 36, 0.12);
     }
 
     .btn-plain {
@@ -519,6 +519,11 @@
       box-shadow: 0 10px 28px rgba(22, 32, 54, 0.04);
     }
 
+    .content-card,
+    .relation-row {
+      cursor: pointer;
+    }
+
     .quick-icon {
       width: 42px;
       height: 42px;
@@ -527,7 +532,7 @@
       align-items: center;
       justify-content: center;
       background: var(--brand-soft);
-      border: 1px solid rgba(22, 184, 166, 0.18);
+      border: 1px solid rgba(36, 36, 36, 0.10);
     }
 
     .quick-icon img {
@@ -549,6 +554,19 @@
       color: var(--muted);
       font-size: 12px;
       line-height: 18px;
+    }
+
+    .quick-card .quick-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 0;
+      line-height: 0;
+    }
+
+    .quick-card .quick-icon img {
+      display: block;
+      flex: 0 0 auto;
     }
 
     .quick-arrow {
@@ -611,9 +629,9 @@
     }
 
     .content-grid {
-      width: 1380px;
+      width: 1280px;
       display: grid;
-      grid-template-columns: repeat(5, 260px);
+      grid-template-columns: repeat(4, 260px);
       gap: 20px;
       align-items: start;
     }
@@ -644,9 +662,9 @@
       display: inline-flex;
       align-items: center;
       padding: 0 8px;
-      border-radius: 999px;
+      border-radius: 1px;
       background: var(--blue-soft);
-      color: #1d4ed8;
+      color: #4f4f4f;
       font-size: 12px;
       line-height: 18px;
       font-weight: 700;
@@ -688,6 +706,18 @@
     .card-stats {
       justify-content: space-between;
       color: var(--muted);
+    }
+
+    .card-stats span {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      min-width: 0;
+    }
+
+    .card-stats img {
+      display: block;
+      flex: 0 0 auto;
     }
 
     .state-panel,
@@ -1281,11 +1311,11 @@
     function profileActions(state) {
       if (isMyProfile(state)) {
         return `
-          <button class="btn btn-soft" type="button" data-state-link="edit">
+          <button class="btn btn-soft" type="button" data-state-link="edit" data-action-target="profile-edit-modal">
             <img src="${icon("Design/edit-line.svg")}" alt="" data-icon />
             编辑资料
           </button>
-          <button class="btn btn-plain" type="button" data-state-link="following">
+          <button class="btn btn-plain" type="button" data-state-link="following" data-action-target="relation-following-list">
             <img src="${icon("User & Faces/user-follow-line.svg")}" alt="" data-icon />
             关注 / 粉丝
           </button>
@@ -1294,20 +1324,20 @@
 
       if (state === "followed") {
         return `
-          <button class="btn btn-soft" type="button" data-state-link="other">
+          <button class="btn btn-soft" type="button" data-state-link="other" data-action-target="author-unfollow-preview">
             <img src="${icon("System/checkbox-circle-line.svg")}" alt="" data-icon />
             已关注
           </button>
-          <button class="btn btn-plain" type="button" data-state-link="fans">粉丝列表</button>
+          <button class="btn btn-plain" type="button" data-state-link="fans" data-action-target="relation-fans-list">粉丝列表</button>
         `;
       }
 
       return `
-        <button class="btn btn-primary" type="button" data-state-link="followed">
+        <button class="btn btn-primary" type="button" data-state-link="followed" data-action-target="author-followed-state">
           <img src="${icon("User & Faces/user-follow-line.svg")}" alt="" data-icon />
           关注作者
         </button>
-        <button class="btn btn-plain" type="button" data-state-link="fans">粉丝列表</button>
+        <button class="btn btn-plain" type="button" data-state-link="fans" data-action-target="relation-fans-list">粉丝列表</button>
       `;
     }
 
@@ -1396,7 +1426,7 @@
       return `
         <div class="content-grid" data-content-grid>
           ${contentItems.map((item) => `
-            <article class="content-card" data-profile-content-card>
+            <article class="content-card" data-profile-content-card data-detail-state="${item.type === "AIGC" ? "aigc" : item.type === "模型服务" ? "model-case" : item.type === "AI+资源" ? "workflow" : "article"}" role="link" tabindex="0">
               <img class="cover" src="${figmaAsset(item.cover)}" alt="" />
               <div class="card-body">
                 <span class="card-type">${item.type}</span>
@@ -1424,7 +1454,7 @@
       return `
         <div class="relation-panel" data-relation-panel>
           ${list.map(([name, desc, action], index) => `
-            <div class="relation-row" data-relation-row>
+            <div class="relation-row" data-relation-row data-author-profile-entry role="link" tabindex="0">
               <img class="relation-avatar" src="${index % 2 === 0 ? figmaAsset("other-profile-avatar-source.png") : figmaAsset("detail-comment-devon-avatar-source.png")}" alt="" />
               <div>
                 <div class="relation-name">
@@ -1433,7 +1463,7 @@
                 </div>
                 <div class="relation-desc">${desc}</div>
               </div>
-              <button class="relation-action ${action === "已关注" ? "followed" : ""}" type="button">${action}</button>
+              <button class="relation-action ${action === "已关注" ? "followed" : ""}" type="button" data-relation-action data-action-target="${action === "查看" ? "author-profile" : "relation-follow-state"}">${action}</button>
             </div>
           `).join("")}
         </div>
@@ -1629,6 +1659,52 @@
           event.preventDefault();
           const target = new URL("../c-end-favorites-v1/index.html", window.location.href);
           window.location.href = target.toString();
+        });
+      });
+
+      const openDetail = (node) => {
+        const state = node?.getAttribute("data-detail-state") || "article";
+        const target = new URL(`../c-end-detail-page-v1/index.html?state=${state}`, window.location.href);
+        window.location.href = target.toString();
+      };
+
+      document.querySelectorAll("[data-profile-content-card]").forEach((node) => {
+        node.addEventListener("click", (event) => {
+          if (event.target.closest("button")) return;
+          openDetail(node);
+        });
+        node.addEventListener("keydown", (event) => {
+          if (event.key !== "Enter" && event.key !== " ") return;
+          event.preventDefault();
+          openDetail(node);
+        });
+      });
+
+      const openAuthorProfile = () => goState("other");
+      document.querySelectorAll("[data-author-profile-entry]").forEach((node) => {
+        node.addEventListener("click", (event) => {
+          if (event.target.closest("button")) return;
+          event.preventDefault();
+          openAuthorProfile();
+        });
+        node.addEventListener("keydown", (event) => {
+          if (event.key !== "Enter" && event.key !== " ") return;
+          event.preventDefault();
+          openAuthorProfile();
+        });
+      });
+
+      document.querySelectorAll("[data-relation-action]").forEach((node) => {
+        node.addEventListener("click", (event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          if (node.textContent.trim() === "查看") {
+            openAuthorProfile();
+            return;
+          }
+          node.textContent = "已关注";
+          node.classList.add("followed");
+          node.setAttribute("data-action-feedback", "followed");
         });
       });
     }

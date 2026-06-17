@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540" viewBox="0 0 960 540" role="img" aria-labelledby="title desc">
+  <title id="title">text-embedding-3-large 脱敏运行过程截图</title>
+  <desc id="desc">展示一次 Embedding 召回实测的脱敏输入、调用摘要和召回结果，不包含密钥、请求头、账户余额或原始日志。</desc>
+  <rect width="960" height="540" rx="16" fill="#f5f5f3"/>
+  <rect x="28" y="28" width="904" height="484" rx="12" fill="#ffffff" stroke="#deded9"/>
+  <rect x="28" y="28" width="904" height="48" rx="12" fill="#242424"/>
+  <circle cx="55" cy="52" r="6" fill="#ef6b5b"/>
+  <circle cx="77" cy="52" r="6" fill="#f0c451"/>
+  <circle cx="99" cy="52" r="6" fill="#65bd69"/>
+  <text x="126" y="58" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="15" font-weight="700" fill="#ffffff">Embedding 召回实测 / 脱敏过程图</text>
+  <text x="790" y="58" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="13" fill="#c9c9c9">2026-06-17 15:24</text>
+
+  <text x="56" y="112" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="20" font-weight="800" fill="#1f1f1f">输入材料</text>
+  <rect x="56" y="132" width="258" height="64" rx="8" fill="#f7f7f7" stroke="#e6e6e2"/>
+  <text x="72" y="157" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="13" font-weight="700" fill="#1f1f1f">用户问题</text>
+  <text x="72" y="181" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="13" fill="#5f5f5f">案例素材优先选什么模型？</text>
+  <rect x="56" y="212" width="258" height="174" rx="8" fill="#ffffff" stroke="#e6e6e2"/>
+  <text x="72" y="238" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="13" font-weight="700" fill="#1f1f1f">脱敏片段</text>
+  <text x="72" y="268" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="13" fill="#4d4d4d">rag_doc_b：新用户按任务问模型选择</text>
+  <text x="72" y="298" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="13" fill="#4d4d4d">rag_doc_a：案例包含流程和成本提示</text>
+  <text x="72" y="328" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="13" fill="#4d4d4d">rag_doc_c：复用提示词带来更多追问</text>
+  <text x="72" y="358" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="13" fill="#8a8a8a">共 6 段输入，均为虚构/脱敏素材</text>
+
+  <text x="358" y="112" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="20" font-weight="800" fill="#1f1f1f">调用摘要</text>
+  <rect x="358" y="132" width="244" height="254" rx="8" fill="#f7fbf9" stroke="#d9e8df"/>
+  <text x="378" y="162" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="13" font-weight="700" fill="#1f1f1f">模型</text>
+  <text x="474" y="162" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="13" fill="#16725f">text-embedding-3-large</text>
+  <text x="378" y="198" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="13" font-weight="700" fill="#1f1f1f">接口</text>
+  <text x="474" y="198" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="13" fill="#4d4d4d">/v1/embeddings</text>
+  <text x="378" y="234" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="13" font-weight="700" fill="#1f1f1f">状态</text>
+  <text x="474" y="234" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="13" fill="#16725f">200 / succeeded</text>
+  <text x="378" y="270" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="13" font-weight="700" fill="#1f1f1f">向量</text>
+  <text x="474" y="270" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="13" fill="#4d4d4d">6 组，3072 维</text>
+  <text x="378" y="306" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="13" font-weight="700" fill="#1f1f1f">Token</text>
+  <text x="474" y="306" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="13" fill="#4d4d4d">128</text>
+  <text x="378" y="342" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="13" font-weight="700" fill="#1f1f1f">耗时</text>
+  <text x="474" y="342" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="13" fill="#4d4d4d">约 4.1 秒</text>
+
+  <text x="646" y="112" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="20" font-weight="800" fill="#1f1f1f">召回结果</text>
+  <rect x="646" y="132" width="230" height="72" rx="8" fill="#fff" stroke="#e6e6e2"/>
+  <text x="664" y="158" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="13" font-weight="700" fill="#1f1f1f">#1 rag_doc_b</text>
+  <text x="786" y="158" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="13" fill="#16725f">0.4051</text>
+  <text x="664" y="184" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="13" fill="#5f5f5f">新用户按任务理解模型</text>
+  <rect x="646" y="220" width="230" height="72" rx="8" fill="#fff" stroke="#e6e6e2"/>
+  <text x="664" y="246" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="13" font-weight="700" fill="#1f1f1f">#2 rag_doc_a</text>
+  <text x="786" y="246" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="13" fill="#16725f">0.3355</text>
+  <text x="664" y="272" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="13" fill="#5f5f5f">流程和成本提示提升收藏</text>
+  <rect x="646" y="308" width="230" height="72" rx="8" fill="#fff" stroke="#e6e6e2"/>
+  <text x="664" y="334" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="13" font-weight="700" fill="#1f1f1f">#3 rag_doc_c</text>
+  <text x="786" y="334" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="13" fill="#16725f">0.2160</text>
+  <text x="664" y="360" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="13" fill="#5f5f5f">复用提示词带来追问</text>
+
+  <rect x="56" y="420" width="820" height="54" rx="8" fill="#fff8e8" stroke="#eadfbe"/>
+  <text x="76" y="446" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="13" font-weight="700" fill="#1f1f1f">人工复核</text>
+  <text x="154" y="446" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="13" fill="#5f5f5f">召回命中不等于事实正确；发布前仍需检查资料是否过期、片段是否完整、价格口径是否最新。</text>
+</svg>

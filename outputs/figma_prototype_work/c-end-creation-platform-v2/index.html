@@ -182,21 +182,22 @@
     }
 
     .workspace {
-      width: calc(100vw - 64px);
-      min-width: 1216px;
+      width: 1280px;
+      min-width: 0;
       margin: 20px auto 32px;
       display: grid;
-      grid-template-columns: 216px minmax(0, 1fr) minmax(0, 1fr);
-      gap: 20px;
+      grid-template-columns: 216px minmax(0, 696px) 320px;
+      gap: 24px;
       align-items: start;
     }
 
     .workspace.no-right-rail {
-      grid-template-columns: 216px minmax(760px, 1fr);
+      grid-template-columns: 216px minmax(0, 1040px);
     }
 
     .workspace.no-right-rail .main {
-      min-width: 760px;
+      width: 1040px;
+      min-width: 0;
     }
 
     .left-nav,
@@ -348,9 +349,10 @@
 
     .publish-card:hover,
     .mode-card:hover {
-      border-color: rgba(15, 159, 143, 0.52);
+      border-color: #dddddd;
+      background: #fcfcfc;
       transform: translateY(-1px);
-      box-shadow: 0 12px 28px rgba(15, 159, 143, 0.10);
+      box-shadow: none;
     }
 
     .publish-icon,
@@ -534,7 +536,7 @@
     }
 
     .plain-link {
-      color: var(--brand-strong);
+      color: #4f4f4f;
       background: transparent;
       font-size: 13px;
       line-height: 18px;
@@ -765,6 +767,90 @@
       font-size: 12px;
       line-height: 18px;
       font-variant-numeric: tabular-nums;
+    }
+
+    .article-compose-card {
+      padding: 0;
+      border: 0;
+      background: transparent;
+    }
+
+    .article-compose-shell {
+      min-height: 380px;
+      grid-template-rows: minmax(320px, 1fr) 44px;
+    }
+
+    .article-compose-shell textarea {
+      min-height: 320px;
+    }
+
+    .model-association-field {
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #ffffff;
+    }
+
+    .model-association-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .model-association-head label {
+      margin: 0;
+    }
+
+    .model-association-head span {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 18px;
+      font-weight: 620;
+    }
+
+    .model-association-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .model-association-row input {
+      width: 100%;
+      height: 36px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface-soft);
+      color: var(--text);
+      padding: 0 11px;
+      font-size: 13px;
+      line-height: 20px;
+      outline: 0;
+    }
+
+    .model-association-chip {
+      display: inline-flex;
+      align-items: center;
+      height: 30px;
+      padding: 0 10px;
+      border-radius: 6px;
+      border: 1px solid var(--line-strong);
+      background: #ffffff;
+      color: var(--text);
+      font-size: 12px;
+      line-height: 18px;
+      font-weight: 760;
+      white-space: nowrap;
+    }
+
+    .model-association-note {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 18px;
+      font-weight: 560;
     }
 
     .topic-row {
@@ -1345,7 +1431,7 @@
 
     window.__CREATION_PLATFORM_V2__ = {
       workspaceMinWidth: 1280,
-      desktopUsesAvailableWidth: true,
+      desktopUsesAvailableWidth: false,
       normalPublishTypes: normalTypes.map((item) => item.label),
       aiAssetPublishTypes: assetTypes.map((item) => item.label),
       workflowRemovedInThisVersion: true,
@@ -1407,7 +1493,7 @@
 
     function publishCard(item, group) {
       return `
-        <button class="publish-card" data-publish-type="${item.label}" data-publish-group="${group}" data-go="${item.state}">
+        <button class="publish-card" data-publish-type="${item.label}" data-publish-group="${group}" data-go="${item.state}" data-action-target="publish-editor">
           <span class="publish-icon">${icon(item.icon)}</span>
           <strong>${item.label}</strong>
           <span>${item.desc}</span>
@@ -1449,9 +1535,9 @@
               <p class="subtext">继续 3 条高完成度草稿、补 1 条未通过内容说明、查看近 7 日基础反馈。</p>
             </div>
             <div class="workspace-actions">
-              <button class="btn soft" data-go="drafts" data-creator-next-action>继续草稿</button>
-              <button class="btn soft" data-go="rejected" data-creator-next-action>处理未通过</button>
-              <button class="btn primary" data-go="home" data-creator-next-action>${icon("flash")} 新建内容</button>
+              <button class="btn soft" data-go="drafts" data-creator-next-action data-action-target="drafts">继续草稿</button>
+              <button class="btn soft" data-go="rejected" data-creator-next-action data-action-target="rejected-edit">处理未通过</button>
+              <button class="btn primary" data-go="home" data-creator-next-action data-action-target="new-content">${icon("flash")} 新建内容</button>
             </div>
           </div>
           ${sectionTitle("选择发布类型", '<span class="badge blue">快速开始</span>')}
@@ -1492,7 +1578,7 @@
 
     function statusCard(name, num, state, tone) {
       return `
-        <button class="status-card" data-go="${state}">
+        <button class="status-card" data-go="${state}" data-action-target="creator-status">
           <span class="badge ${tone}">${name}</span>
           <div class="num">${num}</div>
           <div class="meta-line">点击进入对应状态</div>
@@ -1513,7 +1599,7 @@
             ${contentNode}
             <div class="meta-line">${typeNode}<span>${time}</span><span>已自动保存</span></div>
           </div>
-          <button class="btn soft" data-go="${state}" data-creator-next-action>继续编辑</button>
+          <button class="btn soft" data-go="${state}" data-creator-next-action data-action-target="continue-edit">继续编辑</button>
         </div>
       `;
     }
@@ -1569,7 +1655,7 @@
           </div>
           <div class="row-actions">
             <span class="badge ${tone}">${status}</span>
-            <button class="plain-link" data-go="${state}">查看</button>
+          <button class="plain-link" data-go="${state}" data-action-target="status-detail">查看</button>
           </div>
         </div>
       `;
@@ -1730,7 +1816,7 @@
       `;
     }
 
-    function normalEditorView(kind) {
+  function normalEditorView(kind) {
       const config = {
         "editor-article": {
           type: "文章",
@@ -1769,8 +1855,9 @@
               ${field("title", "标题", `${config.type}标题示例`)}
               ${field("summary", "摘要", "用 1-2 句话说明内容价值。")}
               ${topicPicker()}
+              ${kind === "editor-article" ? modelAssociationField() : ""}
               ${["editor-image", "editor-video"].includes(kind) ? mediaField(config.media) : ""}
-              ${markdownEditorField("body", "Markdown 编辑器", config.body)}
+              ${markdownComposerField("body", "Markdown 正文", config.body, kind)}
             </div>
           </div>
           ${editorActions()}
@@ -1800,6 +1887,51 @@
       return textareaField(key, label, value, "body-editor markdown-editor");
     }
 
+    function markdownComposerField(key, label, value, kind) {
+      const isArticle = kind === "editor-article";
+      return `
+        <div class="field markdown-compose-field" data-field="${key}" data-markdown-compose-field>
+          <label>${label}</label>
+          <div class="flash-compose-card article-compose-card" data-editor-markdown-shell>
+            <div class="flash-compose-shell article-compose-shell" data-article-compose-shell>
+              <textarea class="markdown-editor" data-article-compose-textarea maxlength="12000" placeholder="用 Markdown 写正文，可以包含小标题、步骤、提示词、结果节选和使用边界。">${value}</textarea>
+              <div class="flash-compose-bar" data-article-compose-bar>
+                <div class="flash-compose-tools">
+                  <div class="flash-compose-toolbar" data-article-md-toolbar aria-label="编辑工具">
+                    ${flashTool("heading", "heading", "Heading")}
+                    ${flashTool("bold", "bold", "Bold")}
+                    ${flashTool("italic", "italic", "Italic")}
+                    ${flashTool("quote", "quote", "Quote")}
+                    ${flashTool("list", "unordered", "List")}
+                    ${flashTool("ordered-list", "ordered", "Ordered list")}
+                    ${flashTool("image", "imageAdd", "Image", isArticle)}
+                    <input type="file" accept="image/*" multiple hidden data-article-compose-image-input />
+                  </div>
+                </div>
+                <span class="flash-compose-counter" data-article-compose-counter>0 / 12000</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function modelAssociationField() {
+      return `
+        <div class="model-association-field" data-field="model-association" data-model-association>
+          <div class="model-association-head">
+            <label>关联模型</label>
+            <span>可选</span>
+          </div>
+          <div class="model-association-row">
+            <input value="text-embedding-3-large" placeholder="搜索或输入模型名；没有对应模型也可以留空发布" data-model-association-input />
+            <span class="model-association-chip" data-model-association-chip>已关联模型</span>
+          </div>
+          <div class="model-association-note">关联后文章会出现在对应模型详情页；不关联时仍按普通文章进入内容流。</div>
+        </div>
+      `;
+    }
+
     function topicPicker() {
       return `
         <div class="field" data-field="topics">
@@ -1827,8 +1959,8 @@
       return `
         <div class="editor-actions">
           <span class="toast" data-toast></span>
-          <button class="btn" data-action="save-draft">${icon("save")} 保存草稿</button>
-          <button class="btn primary" data-action="submit-review">${icon("submit")} 提交</button>
+          <button class="btn" data-action="save-draft" data-action-target="draft-feedback">${icon("save")} 保存草稿</button>
+          <button class="btn primary" data-action="submit-review" data-action-target="reviewing">${icon("submit")} 提交</button>
         </div>
       `;
     }
@@ -1939,7 +2071,7 @@
           copy: "作者可以查看状态，但不能重复提交。审核完成后会进入已发布或未通过。",
           badge: "审核中",
           tone: "amber",
-          action: '<button class="btn soft" data-go="management">查看内容管理</button>'
+          action: '<button class="btn soft" data-go="management" data-action-target="management">查看内容管理</button>'
         },
         rejected: {
           icon: "warn",
@@ -1947,7 +2079,7 @@
           copy: "原因：示例配置说明不够完整，请补充权限边界和使用场景后重新提交。",
           badge: "未通过",
           tone: "red",
-          action: '<button class="btn primary" data-action="resubmit-edit">修改后重提</button>'
+          action: '<button class="btn primary" data-action="resubmit-edit" data-action-target="resubmit-edit">修改后重提</button>'
         },
         published: {
           icon: "check",
@@ -1955,7 +2087,7 @@
           copy: "已发布内容可以被访问，可继续优化标题、摘要和封面表现。",
           badge: "已发布",
           tone: "green",
-          action: '<button class="btn soft" data-go="management">回到内容管理</button>'
+          action: '<button class="btn soft" data-go="management" data-action-target="management">回到内容管理</button>'
         }
       }[state];
 
@@ -2169,6 +2301,8 @@
       if (!hasRail) drawerNode.classList.remove("open");
 
       updateMarkdownPreview();
+      updateFlashCounter();
+      updateArticleCounter();
       document.title = `多元拾光 创作服务平台 - ${routeTitles[state] || "创作首页"}`;
       document.querySelectorAll("[data-nav]").forEach((node) => node.classList.remove("active"));
       const activeNav = state === "management" || ["reviewing", "rejected", "published"].includes(state)
@@ -2192,15 +2326,23 @@
       image: "\n![图片说明](image-url)\n"
     };
 
-    function updateFlashCounter() {
-      const textarea = document.querySelector("[data-flash-compose-textarea]");
-      const counter = document.querySelector("[data-flash-compose-counter]");
+    function updateComposerCounter(textareaSelector, counterSelector, defaultMax) {
+      const textarea = document.querySelector(textareaSelector);
+      const counter = document.querySelector(counterSelector);
       if (!textarea || !counter) return;
-      counter.textContent = `${textarea.value.length} / ${textarea.maxLength || 600}`;
+      counter.textContent = `${textarea.value.length} / ${textarea.maxLength || defaultMax}`;
     }
 
-    function insertFlashSnippet(command) {
-      const textarea = document.querySelector("[data-flash-compose-textarea]");
+    function updateFlashCounter() {
+      updateComposerCounter("[data-flash-compose-textarea]", "[data-flash-compose-counter]", 600);
+    }
+
+    function updateArticleCounter() {
+      updateComposerCounter("[data-article-compose-textarea]", "[data-article-compose-counter]", 12000);
+    }
+
+    function insertMarkdownSnippet(command, textareaSelector, counterCallback) {
+      const textarea = document.querySelector(textareaSelector);
       const snippet = flashMarkdownSnippets[command];
       if (!textarea || !snippet) return;
       let start = textarea.selectionStart ?? textarea.value.length;
@@ -2214,8 +2356,16 @@
       const nextPosition = Math.min(start + snippet.length, textarea.value.length);
       textarea.focus();
       textarea.setSelectionRange(nextPosition, nextPosition);
-      updateFlashCounter();
+      counterCallback();
       updateMarkdownPreview();
+    }
+
+    function insertFlashSnippet(command) {
+      insertMarkdownSnippet(command, "[data-flash-compose-textarea]", updateFlashCounter);
+    }
+
+    function insertArticleSnippet(command) {
+      insertMarkdownSnippet(command, "[data-article-compose-textarea]", updateArticleCounter);
     }
 
     document.addEventListener("click", (event) => {
@@ -2223,6 +2373,12 @@
       if (markdownNode) {
         event.preventDefault();
         insertFlashSnippet(markdownNode.getAttribute("data-md-command"));
+        return;
+      }
+      const articleMarkdownNode = event.target.closest("[data-article-md-toolbar] [data-md-command]");
+      if (articleMarkdownNode) {
+        event.preventDefault();
+        insertArticleSnippet(articleMarkdownNode.getAttribute("data-md-command"));
         return;
       }
 
@@ -2251,6 +2407,9 @@
     document.addEventListener("input", (event) => {
       if (event.target.closest("[data-flash-compose-textarea]")) {
         updateFlashCounter();
+      }
+      if (event.target.closest("[data-article-compose-textarea]")) {
+        updateArticleCounter();
       }
       updateMarkdownPreview();
     });

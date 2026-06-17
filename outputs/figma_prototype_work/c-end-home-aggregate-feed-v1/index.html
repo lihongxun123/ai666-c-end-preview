@@ -74,7 +74,7 @@
     }
 
     .nav-shell {
-      width: 1440px;
+      width: 1280px;
       height: 72px;
       margin: 0 auto;
       display: grid;
@@ -409,18 +409,18 @@
     }
 
     .layout {
-      width: 1240px;
+      width: 1280px;
       min-height: 948px;
       margin: 24px auto 0;
-      padding: 0 28px;
+      padding: 0;
       display: grid;
-      grid-template-columns: 820px 340px;
+      grid-template-columns: 860px 396px;
       column-gap: 24px;
       align-items: start;
     }
 
     .feed {
-      width: 820px;
+      width: 860px;
       min-width: 0;
     }
 
@@ -546,6 +546,25 @@
       align-items: center;
       gap: 8px;
       min-width: 0;
+    }
+
+    .item-kicker-row {
+      margin: 12px 0 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+      flex-wrap: wrap;
+    }
+
+    .meta-line .item-kicker-row {
+      margin: 0;
+      flex-wrap: nowrap;
+      overflow: hidden;
+    }
+
+    .item-kicker-row[data-card-type-row] {
+      margin: 0 0 10px;
     }
 
     .type-badge {
@@ -694,6 +713,7 @@
     }
 
     .author-time {
+      min-width: 0;
       overflow: hidden;
       text-overflow: ellipsis;
     }
@@ -981,10 +1001,14 @@
       border: 1px solid var(--line);
       border-radius: 6px;
       display: grid;
-      grid-template-columns: 52px minmax(0, 1fr);
-      gap: 10px;
-      align-items: center;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 12px;
+      align-items: start;
       background: #fff;
+    }
+
+    .activity-copy {
+      min-width: 0;
     }
 
     .activity-status {
@@ -994,6 +1018,7 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
+      justify-self: end;
       font-size: 12px;
       line-height: 18px;
       font-weight: 700;
@@ -1119,15 +1144,17 @@
 
           <article class="feed-item" data-feed-item data-content-hover-target>
             <div class="item-main">
-              <div class="item-title-row">
+              <div class="item-kicker-row" data-card-type-row>
                 <span class="type-badge type-model">模型服务</span>
+              </div>
+              <div class="item-title-row">
                 <h2>API 返回 429 应该怎么处理</h2>
               </div>
               <p class="summary">先判断限流、并发还是重试策略问题，再决定是否降频、排队或切换模型。</p>
               <div class="meta-line">
-                <div class="topics">
-                  <span class="topic-chip">API 排错</span>
-                  <span class="topic-chip">请求重试</span>
+                <div class="topics item-kicker-row" data-card-topic-author-row>
+                <span class="topic-chip">API 排错</span>
+                <span class="topic-chip">请求重试</span>
                   <span class="author-time">@多元拾光官方 · 2 小时前</span>
                 </div>
                 <div class="stats" aria-label="内容数据">
@@ -1146,15 +1173,17 @@
 
           <article class="feed-item no-cover" data-feed-item>
             <div class="item-main">
-              <div class="item-title-row">
+              <div class="item-kicker-row" data-card-type-row>
                 <span class="type-badge type-workflow">工作流</span>
+              </div>
+              <div class="item-title-row">
                 <h2>把接口文档转成测试用例的工作流</h2>
               </div>
               <p class="summary">输入接口文档，输出用例清单、边界条件和回归检查点，适合研发提效。</p>
               <div class="meta-line">
-                <div class="topics">
-                  <span class="topic-chip">工作流</span>
-                  <span class="topic-chip">测试自动化</span>
+                <div class="topics item-kicker-row" data-card-topic-author-row>
+                <span class="topic-chip">工作流</span>
+                <span class="topic-chip">测试自动化</span>
                   <span class="author-time">@ContentFlow · 5 小时前</span>
                 </div>
                 <div class="stats" aria-label="内容数据">
@@ -1167,15 +1196,17 @@
 
           <article class="feed-item" data-feed-item>
             <div class="item-main">
-              <div class="item-title-row">
+              <div class="item-kicker-row" data-card-type-row>
                 <span class="type-badge type-skill">Skill</span>
+              </div>
+              <div class="item-title-row">
                 <h2>长文内容结构化提炼 Skill</h2>
               </div>
               <p class="summary">一键提炼重点、主题和结构大纲，适合把调研材料转为可复用的内容资产。</p>
               <div class="meta-line">
-                <div class="topics">
-                  <span class="topic-chip">内容处理</span>
-                  <span class="topic-chip">知识整理</span>
+                <div class="topics item-kicker-row" data-card-topic-author-row>
+                <span class="topic-chip">内容处理</span>
+                <span class="topic-chip">知识整理</span>
                   <span class="author-time">@FlowCraft · 今天 10:24</span>
                 </div>
                 <div class="stats" aria-label="内容数据">
@@ -1191,15 +1222,17 @@
 
           <article class="feed-item" data-feed-item>
             <div class="item-main">
-              <div class="item-title-row">
+              <div class="item-kicker-row" data-card-type-row>
                 <span class="type-badge type-mcp">MCP</span>
+              </div>
+              <div class="item-title-row">
                 <h2>搜索增强 MCP：多源检索与结果优化</h2>
               </div>
               <p class="summary">支持网页、知识库和数据库联合检索，重点处理结果去重和排序优化。</p>
               <div class="meta-line">
-                <div class="topics">
-                  <span class="topic-chip">MCP</span>
-                  <span class="topic-chip">RAG 应用</span>
+                <div class="topics item-kicker-row" data-card-topic-author-row>
+                <span class="topic-chip">MCP</span>
+                <span class="topic-chip">RAG 应用</span>
                   <span class="author-time">@SearchPlus · 昨天</span>
                 </div>
                 <div class="stats" aria-label="内容数据">
@@ -1218,15 +1251,17 @@
 
           <article class="feed-item no-cover" data-feed-item>
             <div class="item-main">
-              <div class="item-title-row">
+              <div class="item-kicker-row" data-card-type-row>
                 <span class="type-badge type-case">教程案例</span>
+              </div>
+              <div class="item-title-row">
                 <h2>从 0 完成第一次 API 调用</h2>
               </div>
               <p class="summary">用最短路径跑通注册、Key、curl 请求和返回检查，降低技术类用户首次调用成本。</p>
               <div class="meta-line">
-                <div class="topics">
-                  <span class="topic-chip">API 入门</span>
-                  <span class="topic-chip">新手路径</span>
+                <div class="topics item-kicker-row" data-card-topic-author-row>
+                <span class="topic-chip">API 入门</span>
+                <span class="topic-chip">新手路径</span>
                   <span class="author-time">@DevNote · 昨天</span>
                 </div>
                 <div class="stats" aria-label="内容数据">
@@ -1239,7 +1274,7 @@
 
           <article class="feed-item no-cover flash-inline" data-flash-card data-no-detail="flash" data-content-type="闪念">
             <div class="item-main">
-              <div class="item-title-row">
+              <div class="item-kicker-row" data-card-type-row>
                 <span class="type-badge type-topic">闪念</span>
               </div>
               <p class="summary flash-text">从项目规模、上下文长度、代码审查和本地环境控制几个角度做轻量比较：长上下文更适合 Claude Code，本地改动审查和小步验证更适合 Codex GUI 插件。</p>
@@ -1253,9 +1288,9 @@
                 </figure>
               </div>
               <div class="meta-line">
-                <div class="topics">
-                  <span class="topic-chip">Vibe Coding</span>
-                  <span class="topic-chip">AI 编程</span>
+                <div class="topics item-kicker-row" data-card-topic-author-row>
+                <span class="topic-chip">Vibe Coding</span>
+                <span class="topic-chip">AI 编程</span>
                   <span class="author-time">@北方的郎 · 06-12</span>
                 </div>
                 <div class="stats" aria-label="内容数据">
@@ -1267,15 +1302,17 @@
           </article>
           <article class="feed-item no-cover" data-feed-item>
             <div class="item-main">
-              <div class="item-title-row">
+              <div class="item-kicker-row" data-card-type-row>
                 <span class="type-badge type-model">模型服务</span>
+              </div>
+              <div class="item-title-row">
                 <h2>模型 API 的超时、并发和限流应该先看什么</h2>
               </div>
               <p class="summary">把出错状态、并发上限和重试策略收敛到一张判断表，先做接入前的风险估算。</p>
               <div class="meta-line">
-                <div class="topics">
-                  <span class="topic-chip">模型接入</span>
-                  <span class="topic-chip">API 稳定性</span>
+                <div class="topics item-kicker-row" data-card-topic-author-row>
+                <span class="topic-chip">模型接入</span>
+                <span class="topic-chip">API 稳定性</span>
                   <span class="author-time">@ModelLab · 06-11</span>
                 </div>
                 <div class="stats" aria-label="内容数据">
@@ -1288,15 +1325,17 @@
 
           <article class="feed-item" data-feed-item>
             <div class="item-main">
-              <div class="item-title-row">
+              <div class="item-kicker-row" data-card-type-row>
                 <span class="type-badge type-skill">Skill</span>
+              </div>
+              <div class="item-title-row">
                 <h2>把客服问题整理成 FAQ 的最小 Skill 结构</h2>
               </div>
               <p class="summary">从问题分类、标准答案、边界提醒和人工复核四个字段开始，适合内容运营和售前支持。</p>
               <div class="meta-line">
-                <div class="topics">
-                  <span class="topic-chip">Skill</span>
-                  <span class="topic-chip">FAQ 知识库</span>
+                <div class="topics item-kicker-row" data-card-topic-author-row>
+                <span class="topic-chip">Skill</span>
+                <span class="topic-chip">FAQ 知识库</span>
                   <span class="author-time">@OpsBuilder · 06-10</span>
                 </div>
                 <div class="stats" aria-label="内容数据">
@@ -1319,7 +1358,7 @@
             <div class="ad-kicker" data-ad-kicker>赞助 · API 灰度体验</div>
             <div class="ad-title" data-ad-title>模型 API 稳定性周报</div>
             <div class="ad-sub" data-ad-sub>限流、重试和成本口径一次看清</div>
-            <a class="ad-cta" data-ad-cta href="../c-end-model-service-channel-v1/index.html">查看专题</a>
+            <a class="ad-cta" data-ad-cta data-action-target="model-service-channel" href="../c-end-model-service-channel-v1/index.html">查看专题</a>
           </div>
           <div class="ad-footer" aria-label="轮播分页">
             <span class="dot active"></span>
@@ -1331,12 +1370,12 @@
         <section class="rail-card" data-right-module="notice">
           <div class="rail-head">
             <div class="rail-title">社区公告</div>
-            <div class="rail-more" aria-label="查看更多">更多 <img src="../../../resources/icons/remixicon/svg/Arrows/arrow-right-line.svg" alt="" /></div>
+            <div class="rail-more" aria-label="查看更多" data-action-target="announcement-list">更多 <img src="../../../resources/icons/remixicon/svg/Arrows/arrow-right-line.svg" alt="" /></div>
           </div>
           <ul class="notice-list">
-            <li><span class="notice-title">社区内容规范更新说明</span><span class="notice-date">06-14</span></li>
-            <li><span class="notice-title">创作者激励计划灰度开放</span><span class="notice-date">06-12</span></li>
-            <li><span class="notice-title">模型服务内容投稿指引</span><span class="notice-date">06-10</span></li>
+            <li data-announcement-link data-state-target="detail" data-action-target="announcement-detail" role="link" tabindex="0"><span class="notice-title">社区内容规范更新说明</span><span class="notice-date">06-14</span></li>
+            <li data-announcement-link data-state-target="detail" data-action-target="announcement-detail" role="link" tabindex="0"><span class="notice-title">创作者激励计划灰度开放</span><span class="notice-date">06-12</span></li>
+            <li data-announcement-link data-state-target="detail" data-action-target="announcement-detail" role="link" tabindex="0"><span class="notice-title">模型服务内容投稿指引</span><span class="notice-date">06-10</span></li>
           </ul>
         </section>
 
@@ -1358,22 +1397,22 @@
         <section class="rail-card" data-right-module="activity">
           <div class="rail-head">
             <div class="rail-title">活动入口</div>
-            <div class="rail-more" aria-label="查看更多">更多 <img src="../../../resources/icons/remixicon/svg/Arrows/arrow-right-line.svg" alt="" /></div>
+            <div class="rail-more" aria-label="查看更多" data-action-target="activity-feedback">更多 <img src="../../../resources/icons/remixicon/svg/Arrows/arrow-right-line.svg" alt="" /></div>
           </div>
           <div class="activity-list">
-            <div class="activity">
-              <span class="activity-status status-running">进行中</span>
-              <div>
+            <div class="activity" data-activity-entry data-action-target="activity-feedback" role="button" tabindex="0">
+              <div class="activity-copy">
                 <div class="activity-title">AI 工作流征集活动</div>
                 <div class="activity-meta">06.10 - 06.30 · 1287 人参与</div>
               </div>
+              <span class="activity-status status-running">进行中</span>
             </div>
-            <div class="activity">
-              <span class="activity-status status-register">报名中</span>
-              <div>
+            <div class="activity" data-activity-entry data-action-target="activity-feedback" role="button" tabindex="0">
+              <div class="activity-copy">
                 <div class="activity-title">技术类用户灰度体验</div>
                 <div class="activity-meta">07.08 开始 · 官方筛选</div>
               </div>
+              <span class="activity-status status-register">报名中</span>
             </div>
           </div>
         </section>
@@ -1765,17 +1804,18 @@
     }
 
     body [data-main-layout] {
+      width: 1280px !important;
       padding: 0 !important;
-      grid-template-columns: 820px 396px !important;
+      grid-template-columns: 860px 396px !important;
       column-gap: 24px !important;
     }
 
     html.prototype-preview.prototype-canvas-standard body [data-main-layout].layout {
-      width: 1240px !important;
-      max-width: 1240px !important;
+      width: 1280px !important;
+      max-width: 1280px !important;
       padding-left: 0 !important;
       padding-right: 0 !important;
-      grid-template-columns: 820px 396px !important;
+      grid-template-columns: 860px 396px !important;
       column-gap: 24px !important;
       gap: 24px !important;
     }
@@ -1790,11 +1830,13 @@
     body .feed-tabs {
       height: 40px !important;
       gap: 18px !important;
+      align-items: flex-start !important;
     }
 
     body .feed-tab {
       height: 40px !important;
       padding: 0 !important;
+      align-items: flex-start !important;
     }
 
     body .feed-tab.active::after {
@@ -1804,7 +1846,7 @@
 
     body .feed-item {
       min-height: 174px !important;
-      padding: 28px 0 28px 20px !important;
+      padding: 28px 0 !important;
       grid-template-columns: minmax(0, 1fr) 160px !important;
       column-gap: 32px !important;
       background: transparent !important;
@@ -1821,21 +1863,36 @@
     }
 
     body .feed-item::before {
-      top: 30px !important;
-      bottom: 30px !important;
-      width: 2px !important;
-      background: rgba(36, 36, 36, 0.52) !important;
-      background-image: none !important;
-      border-radius: 0 !important;
+      content: none !important;
+      display: none !important;
     }
 
     body .feed-item:hover::before {
-      opacity: 1 !important;
+      opacity: 0 !important;
     }
 
     body .item-title-row {
       display: block !important;
       min-width: 0 !important;
+    }
+
+    body .item-kicker-row {
+      margin: 12px 0 0 !important;
+      display: flex !important;
+      align-items: center !important;
+      gap: 8px !important;
+      min-width: 0 !important;
+      flex-wrap: wrap !important;
+    }
+
+    body .meta-line .item-kicker-row {
+      margin: 0 !important;
+      flex-wrap: nowrap !important;
+      overflow: hidden !important;
+    }
+
+    body .item-kicker-row[data-card-type-row] {
+      margin: 0 0 10px !important;
     }
 
     body .type-badge,
@@ -1847,16 +1904,17 @@
     body .type-topic {
       position: relative !important;
       height: 22px !important;
-      margin: 0 0 11px !important;
-      padding: 0 12px 0 14px !important;
+      margin: 0 !important;
+      padding: 0 8px !important;
       gap: 0 !important;
-      border: 0 !important;
-      border-radius: 0 4px 4px 0 !important;
-      background: linear-gradient(90deg, rgba(36, 36, 36, 0.12) 0%, rgba(36, 36, 36, 0.055) 52%, rgba(36, 36, 36, 0) 100%) !important;
-      color: #343434 !important;
+      border: 1px solid #e8e8e8 !important;
+      border-radius: 4px !important;
+      background: #f7f7f7 !important;
+      background-image: none !important;
+      color: #4f4f4f !important;
       font-size: 12px !important;
       line-height: 20px !important;
-      font-weight: 600 !important;
+      font-weight: 580 !important;
       letter-spacing: 0 !important;
       box-shadow: none !important;
       clip-path: none !important;
@@ -1865,15 +1923,8 @@
     }
 
     body .type-badge::before {
-      content: "" !important;
-      position: absolute !important;
-      left: 0 !important;
-      top: 0 !important;
-      width: 4px !important;
-      height: 100% !important;
-      display: block !important;
-      background: #242424 !important;
-      border-radius: 0 1px 1px 0 !important;
+      content: none !important;
+      display: none !important;
     }
 
     body .type-badge::after {
@@ -1973,11 +2024,12 @@
     body .topics .topic-chip.prototype-topic-chip-unified {
       height: 22px !important;
       min-height: 22px !important;
-      padding: 0 8px 0 0 !important;
-      gap: 7px !important;
+      padding: 0 8px !important;
+      gap: 6px !important;
       border: 1px solid #e2e2e2 !important;
-      border-radius: 5px !important;
+      border-radius: 4px !important;
       background: #fff !important;
+      background-image: none !important;
       color: #4b4b4b !important;
       font: 500 12px/20px sohne, "Helvetica Neue", Helvetica, Arial, "PingFang SC", sans-serif !important;
       box-shadow: none !important;
@@ -1986,23 +2038,17 @@
 
     body .topic-chip::before,
     body .topics .topic-chip.prototype-topic-chip-unified::before {
-      content: "#" !important;
-      width: 20px !important;
-      height: 100% !important;
-      display: grid !important;
-      place-items: center !important;
-      flex: 0 0 20px !important;
-      border-right: 1px solid #dfdfdf !important;
-      background: #f2f2f2 !important;
-      color: #242424 !important;
-      font-size: 12px !important;
-      font-weight: 650 !important;
-      line-height: 20px !important;
+      content: none !important;
+      display: none !important;
     }
 
     body .topic-chip + .topic-chip,
     body .topics .topic-chip.prototype-topic-chip-unified + .topic-chip.prototype-topic-chip-unified {
       margin-left: 2px !important;
+    }
+
+    body .item-kicker-row .topic-chip + .topic-chip {
+      margin-left: 0 !important;
     }
 
     body .cover {
@@ -2143,7 +2189,7 @@
     body .rail-head {
       height: 40px !important;
       padding: 0 !important;
-      border-bottom: 1px solid var(--line) !important;
+      border-bottom: 0 !important;
     }
 
     body .rail-title {
@@ -2194,8 +2240,8 @@
       flex: 0 0 auto !important;
       background: currentColor !important;
       opacity: 0.68 !important;
-      -webkit-mask: url("../../../resources/icons/remixicon/svg/Arrows/arrow-right-line.svg") center / contain no-repeat !important;
-      mask: url("../../../resources/icons/remixicon/svg/Arrows/arrow-right-line.svg") center / contain no-repeat !important;
+      -webkit-mask: url("../../../resources/icons/remixicon/svg/Arrows/arrow-right-s-line.svg") center / contain no-repeat !important;
+      mask: url("../../../resources/icons/remixicon/svg/Arrows/arrow-right-s-line.svg") center / contain no-repeat !important;
     }
 
     body .notice-list,
@@ -2221,9 +2267,15 @@
       padding: 10px 0 !important;
       border: 0 !important;
       border-radius: 0 !important;
-      grid-template-columns: 62px minmax(0, 1fr) !important;
+      grid-template-columns: minmax(0, 1fr) 58px !important;
+      gap: 12px !important;
+      align-items: start !important;
       background: transparent !important;
       box-shadow: none !important;
+    }
+
+    body .activity-copy {
+      min-width: 0 !important;
     }
 
     body .notice-title,
@@ -2243,37 +2295,36 @@
       position: relative !important;
       height: 22px !important;
       width: 58px !important;
-      padding: 0 7px 0 10px !important;
-      border: 0 !important;
-      border-radius: 0 4px 4px 0 !important;
-      justify-content: flex-start !important;
-      background: linear-gradient(90deg, rgba(36, 36, 36, 0.11), rgba(36, 36, 36, 0.045) 62%, rgba(36, 36, 36, 0)) !important;
-      color: #343434 !important;
+      padding: 0 8px !important;
+      border: 1px solid #e8e8e8 !important;
+      border-radius: 4px !important;
+      align-self: start !important;
+      justify-self: end !important;
+      justify-content: center !important;
+      background: #f7f7f7 !important;
+      background-image: none !important;
+      color: #4f4f4f !important;
       font-size: 12px !important;
       line-height: 20px !important;
-      font-weight: 600 !important;
+      font-weight: 580 !important;
       letter-spacing: 0 !important;
       overflow: hidden !important;
     }
 
     body .activity-status::before {
-      content: "" !important;
-      position: absolute !important;
-      left: 0 !important;
-      top: 0 !important;
-      width: 3px !important;
-      height: 100% !important;
-      background: #242424 !important;
-      border-radius: 0 1px 1px 0 !important;
+      content: none !important;
+      display: none !important;
     }
 
     body .activity-status.status-register {
-      background: linear-gradient(90deg, rgba(118, 118, 118, 0.13), rgba(118, 118, 118, 0.05) 62%, rgba(118, 118, 118, 0)) !important;
+      background: #ffffff !important;
+      background-image: none !important;
       color: #4f4f4f !important;
     }
 
     body .activity-status.status-register::before {
-      background: #767676 !important;
+      content: none !important;
+      display: none !important;
     }
 
     body [data-topic-rail-standard] .prototype-topic-more {
@@ -2283,8 +2334,8 @@
     body [data-topic-rail-standard] .rail-head {
       height: 40px !important;
       padding: 0 !important;
-      margin: 0 !important;
-      border-bottom: 1px solid var(--line) !important;
+      margin: 0 0 14px !important;
+      border-bottom: 0 !important;
     }
 
     body [data-topic-rail-standard] .rail-head [data-topic-more].rail-more {
