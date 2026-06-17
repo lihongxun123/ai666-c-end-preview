@@ -216,7 +216,7 @@
       min-width: 340px;
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 18px;
     }
 
     .panel {
@@ -486,7 +486,7 @@
 
     .service-card {
       position: relative;
-      height: 250px;
+      height: 222px;
       padding: 18px;
       overflow: hidden;
       border: 1px solid #f1f1f1;
@@ -516,7 +516,6 @@
 
     .card-top,
     .card-footer,
-    .provider-line,
     .stat-line {
       display: flex;
       align-items: center;
@@ -561,7 +560,8 @@
       color: #4f4f4f;
     }
 
-    .source {
+    .source,
+    .author-name {
       color: #8a8a8a;
       font-size: 12px;
       white-space: nowrap;
@@ -577,7 +577,7 @@
 
     .summary {
       margin: 0;
-      height: 40px;
+      height: 60px;
       color: #4f4f4f;
       font-size: 14px;
       line-height: 20px;
@@ -602,42 +602,16 @@
       font-weight: 650;
     }
 
-    .spec-row {
-      margin-top: 14px;
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 7px;
-    }
-
-    .spec {
-      height: 30px;
-      padding: 0 8px;
-      border-radius: 4px;
-      background: #ffffff;
-      border: 1px solid #e8e8e8;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      color: #8a8a8a;
-      font-size: 12px;
-    }
-
-    .spec strong {
-      color: #242424;
-      font-size: 12px;
-    }
-
     .card-footer {
       position: absolute;
       left: 18px;
       right: 18px;
       bottom: 16px;
-      justify-content: space-between;
+      justify-content: flex-end;
       color: #8a8a8a;
       font-size: 12px;
     }
 
-    .provider-line,
     .stat-line {
       gap: 7px;
     }
@@ -657,22 +631,28 @@
       display: none;
     }
 
+    .rail-card,
     .right-module {
-      padding: 16px;
+      padding: 0 0 2px;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      box-shadow: none;
     }
 
     .right-title {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 10px;
+      margin-bottom: 14px;
     }
 
     .right-title h3 {
       margin: 0;
       color: #242424;
-      font-size: 18px;
-      font-weight: 850;
+      font-size: 16px;
+      line-height: 22px;
+      font-weight: 760;
     }
 
     .right-title a,
@@ -686,11 +666,11 @@
     .gray-text {
       color: #8a8a8a;
       font-size: 13px;
+      line-height: 20px;
     }
 
     .api-entry {
-      background: linear-gradient(90deg, #f6f6f6, #ffffff);
-      border-color: #f1f1f1;
+      background: transparent;
     }
 
     .api-entry .api-row {
@@ -698,6 +678,7 @@
       align-items: center;
       justify-content: space-between;
       gap: 12px;
+      min-height: 42px;
     }
 
     .api-entry strong {
@@ -724,7 +705,7 @@
     .compare-list {
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 12px;
     }
 
     .topic-item,
@@ -734,9 +715,10 @@
       align-items: center;
       justify-content: space-between;
       gap: 10px;
-      min-height: 28px;
+      min-height: 20px;
       color: #4f4f4f;
-      font-size: 14px;
+      font-size: 13px;
+      line-height: 18px;
     }
 
     .topic-name,
@@ -752,7 +734,7 @@
 
     .rank {
       color: #6b6b6b;
-      font-weight: 850;
+      font-weight: 700;
       width: 18px;
       text-align: center;
       flex: 0 0 auto;
@@ -768,10 +750,11 @@
       height: 126px;
       position: relative;
       overflow: hidden;
-      border: 1px solid #f1f1f1;
+      border: 0;
       border-radius: 6px;
       background: linear-gradient(90deg, #f6f6f6, #ffffff);
       color: #242424;
+      padding: 16px;
     }
 
     .ad-banner::after {
@@ -1634,7 +1617,7 @@
       </main>
 
       <aside class="right-rail" data-right-rail>
-        <section class="panel right-module api-entry" data-right-module="api-gray">
+        <section class="rail-card right-module api-entry" data-right-module="api-gray">
           <div class="api-row">
             <div>
               <span class="badge green">灰度</span>
@@ -1645,7 +1628,7 @@
           </div>
         </section>
 
-        <section class="panel right-module" data-right-module="topics">
+        <section class="rail-card right-module" data-right-module="topics" data-topic-rail-standard>
           <div class="right-title">
             <h3>推荐话题</h3>
             <a href="#">更多</a>
@@ -1659,7 +1642,7 @@
           </div>
         </section>
 
-        <section class="panel right-module" data-right-module="hot-services">
+        <section class="rail-card right-module" data-right-module="hot-services">
           <div class="right-title">
             <h3>热门模型服务</h3>
             <a href="#">更多</a>
@@ -1673,7 +1656,7 @@
           </div>
         </section>
 
-        <section class="panel right-module" data-right-module="selection-guide">
+        <section class="rail-card right-module" data-right-module="selection-guide">
           <div class="right-title">
             <h3>选型路径</h3>
             <a href="#">查看</a>
@@ -1686,7 +1669,7 @@
           </div>
         </section>
 
-        <section class="panel right-module ad-banner" data-right-module="ad-banner">
+        <section class="rail-card right-module ad-banner" data-right-module="ad-banner">
           <span class="ad-label">AD</span>
           <h3>模型服务商合作位</h3>
           <p>适合模型厂商、API 平台、开发者工具活动承接。</p>

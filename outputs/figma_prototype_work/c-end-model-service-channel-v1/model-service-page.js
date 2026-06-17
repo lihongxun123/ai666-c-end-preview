@@ -866,6 +866,12 @@
     return (items || []).map((item) => `<li>${escapeHtml(item)}</li>`).join("");
   }
 
+  function cardSummary(item) {
+    return String(item.summary || "")
+      .replace(/，?当前在中转站清单中[^。]*。/, "，由多元拾光官方整理为模型能力入口。")
+      .replace(/中转站清单\s*#?\d*/g, "多元拾光官方");
+  }
+
   function renderCard(item) {
     return `
       <article
@@ -884,22 +890,12 @@
             <span class="badge ${escapeHtml(item.badgeClass)}">${escapeHtml(item.type)}</span>
             <span class="badge ${escapeHtml(item.badgeClass)}">${escapeHtml(item.badge)}</span>
           </div>
-          <span class="source">${escapeHtml(item.source)}</span>
+          <span class="author-name" data-card-author>多元拾光官方</span>
         </div>
         <h3 class="service-title">${escapeHtml(item.title)}</h3>
-        <p class="summary">${escapeHtml(item.summary)}</p>
+        <p class="summary">${escapeHtml(cardSummary(item))}</p>
         <div class="tag-row">${renderTags(item.tags)}</div>
-        <div class="spec-row">
-          <span class="spec">类型 <strong>${escapeHtml(item.type)}</strong></span>
-          <span class="spec">计费 <strong>${escapeHtml(item.billing)}</strong></span>
-          <span class="spec">接口 <strong>${escapeHtml(item.endpoint)}</strong></span>
-        </div>
         <div class="card-footer">
-          <div class="provider-line">
-            <span>中转站清单</span>
-            <span>·</span>
-            <span>${escapeHtml(item.updated)}</span>
-          </div>
           <div class="stat-line">
             <span class="stat"><img class="meta-icon" data-icon src="${icon("Document/article-line.svg")}" alt="" />官方介绍</span>
             <span class="stat"><img class="meta-icon" data-icon src="${icon("Business/links-line.svg")}" alt="" />案例集合</span>
