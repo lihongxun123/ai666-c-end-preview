@@ -1,14 +1,11 @@
 {
-  "generatedAt": "2026-06-22T09:49:33.082Z",
+  "generatedAt": "2026-06-22T10:25:19.248Z",
   "sourceRoot": "outputs/figma_prototype_work",
-  "communitySourceRoot": "outputs/community-homepage-style-exploration",
   "entry": "index.html",
-  "homepage": "outputs/community-homepage-style-exploration/index.html",
-  "legacyHomepage": "outputs/figma_prototype_work/c-end-home-aggregate-feed-v1/index.html",
+  "homepage": "outputs/figma_prototype_work/c-end-home-aggregate-feed-v1/index.html",
   "runtimeAssetVersion": "20260617-model-service-content-v1",
-  "pageCount": 22,
+  "pageCount": 13,
   "prototypePageCount": 13,
-  "communityPageCount": 9,
   "pages": [
     {
       "slug": "c-end-home-aggregate-feed-v1",
@@ -87,81 +84,11 @@
       "label": "社区公告",
       "group": "current-c-end",
       "path": "outputs/figma_prototype_work/c-end-announcement-list-v1/index.html"
-    },
-    {
-      "slug": "community-index",
-      "label": "社区首页",
-      "group": "community-exploration",
-      "path": "outputs/community-homepage-style-exploration/index.html"
-    },
-    {
-      "slug": "community-aigc",
-      "label": "AIGC",
-      "group": "community-exploration",
-      "path": "outputs/community-homepage-style-exploration/aigc.html"
-    },
-    {
-      "slug": "community-aigc-templates",
-      "label": "AIGC 模板库",
-      "group": "community-exploration",
-      "path": "outputs/community-homepage-style-exploration/aigc-templates.html"
-    },
-    {
-      "slug": "community-model-plaza",
-      "label": "模型广场",
-      "group": "community-exploration",
-      "path": "outputs/community-homepage-style-exploration/model-plaza.html"
-    },
-    {
-      "slug": "community-flash",
-      "label": "闪念",
-      "group": "community-exploration",
-      "path": "outputs/community-homepage-style-exploration/flash.html"
-    },
-    {
-      "slug": "community-tutorial",
-      "label": "官方教程",
-      "group": "community-exploration",
-      "path": "outputs/community-homepage-style-exploration/tutorial.html"
-    },
-    {
-      "slug": "community-campaign-ops",
-      "label": "活动运营位",
-      "group": "community-exploration",
-      "path": "outputs/community-homepage-style-exploration/campaign-ops.html"
-    },
-    {
-      "slug": "community-campaign-detail",
-      "label": "活动详情",
-      "group": "community-exploration",
-      "path": "outputs/community-homepage-style-exploration/campaign-detail.html"
-    },
-    {
-      "slug": "community-user-growth",
-      "label": "用户成长轻中心",
-      "group": "community-exploration",
-      "path": "outputs/community-homepage-style-exploration/user-growth.html"
     }
   ],
   "copiedRuntimeRoots": [
     "outputs/figma_prototype_work/_shared",
     "outputs/figma_prototype_work/_assets",
-    "outputs/community-homepage-style-exploration",
-    "assets/image_assets",
-    "assets/video_assets",
     "resources/icons/remixicon/svg"
-  ],
-  "copiedCommunityAssets": [
-    "assets/image_assets/11.png",
-    "assets/image_assets/12.png",
-    "assets/image_assets/15.jpg",
-    "assets/image_assets/17.png",
-    "assets/image_assets/18.png",
-    "assets/image_assets/2.png",
-    "assets/image_assets/3.png",
-    "assets/image_assets/4.png",
-    "assets/video_assets/28_landing.mov",
-    "assets/video_assets/effects_template.mp4",
-    "assets/video_assets/sd2_gen.mp4"
   ]
 }
