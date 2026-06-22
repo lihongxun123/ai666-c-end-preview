@@ -65,11 +65,23 @@
       font-size: 14px;
       font-weight: 600;
     }
+    .primary + .primary {
+      margin-left: 10px;
+      color: var(--ink);
+      background: var(--soft);
+      border: 1px solid var(--line);
+    }
+    .section-title {
+      margin: 34px 0 0;
+      font-size: 17px;
+      line-height: 1.4;
+      font-weight: 700;
+    }
     .grid {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 12px;
-      margin-top: 32px;
+      margin-top: 14px;
     }
     .entry {
       display: flex;
@@ -108,6 +120,8 @@
       .wrap { width: min(100vw - 32px, 680px); margin: 32px auto; }
       .grid { grid-template-columns: 1fr; }
       h1 { font-size: 24px; }
+      .primary { width: 100%; }
+      .primary + .primary { margin-left: 0; margin-top: 10px; }
     }
   </style>
 </head>
@@ -120,7 +134,21 @@
         <p class="subtitle">静态预览包，仅用于产品、运营和设计评审；不连接真实账号、支付、发布、积分或后台数据。</p>
       </div>
     </section>
-    <a class="primary" href="outputs/figma_prototype_work/c-end-home-aggregate-feed-v1/index.html">进入首页原型</a>
+    <a class="primary" href="outputs/community-homepage-style-exploration/index.html">进入社区新版首页</a>
+    <a class="primary" href="outputs/figma_prototype_work/c-end-home-aggregate-feed-v1/index.html">进入旧版 C端原型</a>
+    <h2 class="section-title">社区模块探索稿</h2>
+    <nav class="grid" aria-label="社区模块入口">
+      <a class="entry" href="outputs/community-homepage-style-exploration/index.html"><span>社区首页</span><small>community-index</small></a>
+<a class="entry" href="outputs/community-homepage-style-exploration/aigc.html"><span>AIGC</span><small>community-aigc</small></a>
+<a class="entry" href="outputs/community-homepage-style-exploration/aigc-templates.html"><span>AIGC 模板库</span><small>community-aigc-templates</small></a>
+<a class="entry" href="outputs/community-homepage-style-exploration/model-plaza.html"><span>模型广场</span><small>community-model-plaza</small></a>
+<a class="entry" href="outputs/community-homepage-style-exploration/flash.html"><span>闪念</span><small>community-flash</small></a>
+<a class="entry" href="outputs/community-homepage-style-exploration/tutorial.html"><span>官方教程</span><small>community-tutorial</small></a>
+<a class="entry" href="outputs/community-homepage-style-exploration/campaign-ops.html"><span>活动运营位</span><small>community-campaign-ops</small></a>
+<a class="entry" href="outputs/community-homepage-style-exploration/campaign-detail.html"><span>活动详情</span><small>community-campaign-detail</small></a>
+<a class="entry" href="outputs/community-homepage-style-exploration/user-growth.html"><span>用户成长轻中心</span><small>community-user-growth</small></a>
+    </nav>
+    <h2 class="section-title">当前 C端 13 页原型</h2>
     <nav class="grid" aria-label="C端页面入口">
       <a class="entry" href="outputs/figma_prototype_work/c-end-home-aggregate-feed-v1/index.html"><span>首页</span><small>c-end-home-aggregate-feed-v1</small></a>
 <a class="entry" href="outputs/figma_prototype_work/c-end-flash-channel-v1/index.html"><span>闪念</span><small>c-end-flash-channel-v1</small></a>

@@ -1,6 +1,6 @@
 # AI666 C端公网静态预览包
 
-生成时间：2026-06-17T19:28:22.309Z
+生成时间：2026-06-22T09:30:55.993Z
 
 ## 用途
 
@@ -30,9 +30,22 @@ npm.cmd run validate:c-end:public-preview
 ## 入口
 
 - 根入口：index.html
-- 首页：outputs/figma_prototype_work/c-end-home-aggregate-feed-v1/index.html
+- 社区新版首页：outputs/community-homepage-style-exploration/index.html
+- 旧版 C端首页：outputs/figma_prototype_work/c-end-home-aggregate-feed-v1/index.html
 
-## 页面清单
+## 社区模块探索稿
+
+- 社区首页: outputs/community-homepage-style-exploration/index.html
+- AIGC: outputs/community-homepage-style-exploration/aigc.html
+- AIGC 模板库: outputs/community-homepage-style-exploration/aigc-templates.html
+- 模型广场: outputs/community-homepage-style-exploration/model-plaza.html
+- 闪念: outputs/community-homepage-style-exploration/flash.html
+- 官方教程: outputs/community-homepage-style-exploration/tutorial.html
+- 活动运营位: outputs/community-homepage-style-exploration/campaign-ops.html
+- 活动详情: outputs/community-homepage-style-exploration/campaign-detail.html
+- 用户成长轻中心: outputs/community-homepage-style-exploration/user-growth.html
+
+## 当前 C端 13 页原型
 
 - 首页: outputs/figma_prototype_work/c-end-home-aggregate-feed-v1/index.html
 - 闪念: outputs/figma_prototype_work/c-end-flash-channel-v1/index.html
